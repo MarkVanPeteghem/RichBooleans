@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+<!DOCTYPE chapter PUBLIC '-//OASIS//DTD DocBook XML V4.1.2//EN'
+                      'http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd'>
+-->
+<!DOCTYPE book [
+    <!ENTITY Version "2.2.2">
+    <!ENTITY ChangeLog SYSTEM "changelog.xml">
+    <!ENTITY Install SYSTEM "install.xml">
+    <!ENTITY ReadMe SYSTEM "readme.xml">
+    <!ENTITY Macros SYSTEM "macros.xml">
+	<!ENTITY Extra SYSTEM "extra.xml">
+    <!ENTITY Stringize SYSTEM "stringize.xml">
+]>
+
+<article>
+<articleinfo>
+  <copyright>
+    <year>2004</year>
+    <year>2005</year>
+	<year>2006</year>
+	<year>2007</year>
+	<year>2009</year>
+	<year>2011</year>
+    <holder>Q-Mentum</holder>
+  </copyright>
+  <legalnotice><para>
+    Distributed under the wxWindows Licence
+    (see accompanying file COPYING.LIB, and LICENCE.txt for the exception notice, or online at
+    <ulink url='http://opensource.org/licenses/wxwindows.php'>http://opensource.org/licenses/wxwindows.php</ulink>) 
+  </para></legalnotice>
+  &ReadMe;
+</articleinfo>
+
+&ChangeLog;
+
+<sect1><title>What is a Rich Boolean?</title>
+<para>A Rich Boolean is a macro, that is a bit like a boolean expression,
+e.g. <code>rbEQUAL(a,b)</code> instead of <code>a==b</code>.
+The main difference is that it holds an analysis of the boolean expression, if
+the condition fails. The analysis can be streamed out, and e.g. output
+"`a':&lt;1&gt; == `b':&lt;2&gt; - nok". Between ` and ' are the expressions,
+between &lt; and &gt; are their values. "nok" indicates that the condition
+failed (in some circumstances it is shown when it succeeded, then it would end
+in "ok").</para>
+<para>A Rich Boolean can be assigned to
+an object of the class <classname>RichBool::Bool</classname>. This class
+has a method <code>bool operator()</code>, which tells if the condition
+succeeded or not, and <code>const RichBool::SharedAnalysis&amp; GetAnalysis() const</code>
+that returns a shared pointer to the analysis (it may be NULL). Furthermore some
+objects need to be declared, so usually this is all taken care of with a macro
+(see <xref linkend='macros-to-use-richbooleans' />). See <xref linkend='projects' />
+for some libraries that have such macros.</para>
+<para>A Rich Boolean doesn't always create an analysis, to save time and memory. You can specify (at compiletime or runtime) to do one of the following:
+<itemizedlist mark='bullet'>
+<listitem>only evaluate the arguments of the Rich Boolean macro</listitem>
+<listitem>only evaluate the condition without creating an analysis</listitem>
+<listitem>only create an analysis if the condition fails</listitem>
+<listitem>always create an analysis</listitem>
+</itemizedlist></para>
+<para>Most Rich Boolean macros have a corresponding class, e.g.
+<classname>RichBool::Equal</classname>, which are called Rich Boolean functor classes.
+Objects of these classes are called Rich Boolean functors, and can be used
+in more complex Rich Boolean macros and even in certain Rich Boolean functor classes;
+they can also act as regular functors (function objects) because they have a method <code>operator()(...)</code>.</para>
+</sect1>
+
+<sect1><title>License</title>
+<para>The Rich Booleans package is released under the wxWindows Licence. This is basically the LGPL license,
+but with an exception notice that states that you can use, copy, link, modify and distribute
+the code in binary form under your own terms. So you can use it in e.g. commercial applications
+without having to reveal the source code; you don't even have to mention that you use the Rich Booleans package.</para>
+<para>See the files <filename>COPYING.LIB</filename> and <filename>LICENCE.txt</filename> in the 
+main directory for the complete license, or online at
+<ulink url='http://opensource.org/licenses/wxwindows.php'>http://opensource.org/licenses/wxwindows.php</ulink></para>
+</sect1>
+
+<sect1><title>Support</title>
+<para>To get help with Rich Booleans, or to discuss suggestions, subscribe to the 
+<ulink url='https://lists.sourceforge.net/lists/listinfo/modassert-users'>mailinglist</ulink>.
+This list is for both ModAssert and Rich Booleans, because they usually are used together.</para>
+</sect1>
+
+<sect1 id='projects'><title>Projects that use Rich Booleans</title>
+<sect2><title>ModAssert</title>
+<ulink url='http://sourceforge.net/projects/modassert/'>ModAssert</ulink> is an open source project
+    that allows to use Rich Booleans in 128 different assertion macros. The assertions can optionally have expressions that
+    are shown in case of a failure, a level, a group, and an action to be taken. Failing assertions are passed to
+    loggers and a displayer object that asks the user what to do. The loggers and the displayer object
+    can be set at runtime by the application. You can associate filters with loggers and the displayer,
+	so you can filter out assertions on several criteria. Two dialogs are provided to show
+    the Rich Boolean and the expressions, one for Win32 and one for wxWidgets.
+	There is also code to display the Rich Boolean and the expressions in command line applications.
+	Several loggers are provided that log to a stream, or to the trace window in Win32 applications.
+    For Rich Booleans version &Version;, you need at least ModAssert version 1.3. Note: the examples in
+    this document use the macro <code>MOD_ASSERT</code> from the ModAssert package.
+</sect2>
+<sect2><title>UquoniTest</title>
+<para><ulink url='http://www.q-mentum.com/'>UquoniTest</ulink> is a unit testing package for C++
+    developed by Q-Mentum. Its assertions can use Rich Booleans. The assertions can
+	optionally have expressions that are shown in case of a failure. They stop the test after
+	a failure, but there are variations that continue after a failure, so assertions after it
+	are still evaluated. If the evaluation of the condition in an assertion causes problems,
+	the assertion can be modified so it is ignored, which causes 
+	a warning to remind the developer of the ignored assertion.</para>
+<para>These eight variations of the assertion macro are made possible by using Rich Booleans,
+	because they allow the assertion macros to vary in their behaviour, and leave
+	the analysis to the Rich Boolean (just as with the assertions in ModAssert).</para>
+<para>UquoniTest has other features like: automatic registering of tests, easy fixture tests,
+	parameterized and template tests, integration with assertions in domain code,
+	easy abstract tests (including multiple abstraction levels and multiple inheritance),
+	create test directories (optionally prefilled with files and directories),
+	an extensive mock library,
+	static and dynamic testsuites, custom testlisteners and testwrappers, orthodoxy testing,
+	timeouts on tests, test time measured up to microseconds, and more.
+	Unlike some other unit testing packages for C++, UquoniTest allows you to place
+	breakpoints in test code.</para>
+</sect2>
+</sect1>
+
+<sect1><title>Requirements</title>
+<itemizedlist mark='bullet'>
+<listitem>A C++ compiler that can compile namespaces and templates. There are two features that
+	require partial template specialization, but they can be circumvented if your compiler
+	can't do this. If your compiler can't do this, adjust the header file <filename>richbool/config.hpp</filename>,
+	so that the symbol <code>RICHBOOL_NO_PARTIAL_TEMPLATE_SPECIALIZATION</code> is defined,
+	so other headerfiles exclude that functionality. This is already done for Microsoft Visual C++ 6.0.</listitem>
+<listitem>STL or wxWidgets</listitem>
+</itemizedlist>
+</sect1>
+
+&Install;
+
+<sect1><title>Known problems</title>
+<para>If you use Microsoft Visual C++ 6.0, and optimizations are not disabled
+(e.g. in Release mode), rbDYNAMIC_CASTABLE_REF will crash the application if the casting
+can't be done.</para>
+<para>If you use Microsoft Visual C++ 6.0, the content of a <classname>std::string</classname>
+object will not be escaped with Rich Booleans like <code>rbEQUAL</code>, <code>rbLESS</code>, 
+<code>rbMORE</code> and similar Rich Booleans (<classname>std::wstring</classname> and
+<classname>wxString</classname> objects don't have this problem). But it is recommended
+to use <code>rbSTRING</code> instead anyway, where this problem doesn't occur.</para>
+</sect1>
+
+&Macros;
+
+&Extra;
+
+&Stringize;
+
+<sect1><title>The package RichBoolTest (advanced)</title>
+<para>RichBoolTest, which is in the same download,
+is a package that contains tests for every Rich Boolean in this package. This is mainly of interest
+if you want to write Rich Booleans, but also if you want to see examples of how
+Rich Booleans behave.</para>
+<para>If you want to write Rich Booleans, you should have a look at the RichBoolTest package.
+This is a simple testing framework for Rich Booleans. The tests are easy to understand
+by looking at the existing tests. The tests are self registering, i.e. if you write
+<programlisting>
+    RB_TEST(TestName)
+    {
+        // your tests here
+    )
+</programlisting>
+in a .cpp file, the tests in the body will be automatically executed if the program is launched.
+</para>
+<para>In tests, there are two types of checks: <code>RB_PASS</code> and <code>RB_FAIL</code>.
+The first has a rich boolean macro as its argument, and checks whether it passes. The second
+has a rich boolean macro and a pointer to an <classname>RichBool::Analysis</classname>
+derived object as its arguments, and checks whether the rich boolean macro fails indeed
+with the given <classname>RichBool::Analysis</classname> derived object.
+</para>
+<para>Every test is run four times, each time with a different value for richbool_level.
+It is checked that the Rich Booleans behave as expected for that value of richbool_level,
+e.g. no analysis when it is 0 or 1, always an analysis when it is 3.
+</para>
+</sect1>
+
+<index></index>
+
+</article>

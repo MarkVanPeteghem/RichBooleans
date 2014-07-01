@@ -1,0 +1,100 @@
+# Project: RichBoolTestMacros
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe -D__DEBUG__
+CC   = gcc.exe -D__DEBUG__
+WINDRES = windres.exe
+RES  = 
+OBJ  = GNUWin32/basictest.o GNUWin32/pointertest.o GNUWin32/bindtest.o GNUWin32/person_test.o GNUWin32/evaluate_test.o GNUWin32/or_test.o GNUWin32/and_test.o GNUWin32/typeinfo_test.o GNUWin32/string_test.o GNUWin32/string_locale_test.o GNUWin32/wstring_test.o GNUWin32/xor_test.o GNUWin32/std_exceptions_test.o GNUWin32/notext_test.o GNUWin32/macro_safety.o GNUWin32/getmember_test.o GNUWin32/richbooltest.o GNUWin32/rbtest.o GNUWin32/wrapper_test.o GNUWin32/equal_using_less.o GNUWin32/files_test.o GNUWin32/getarg_test.o GNUWin32/logic_test.o GNUWin32/single_arg_test.o $(RES)
+LINKOBJ  = GNUWin32/basictest.o GNUWin32/pointertest.o GNUWin32/bindtest.o GNUWin32/person_test.o GNUWin32/evaluate_test.o GNUWin32/or_test.o GNUWin32/and_test.o GNUWin32/typeinfo_test.o GNUWin32/string_test.o GNUWin32/string_locale_test.o GNUWin32/wstring_test.o GNUWin32/xor_test.o GNUWin32/std_exceptions_test.o GNUWin32/notext_test.o GNUWin32/macro_safety.o GNUWin32/getmember_test.o GNUWin32/richbooltest.o GNUWin32/rbtest.o GNUWin32/wrapper_test.o GNUWin32/equal_using_less.o GNUWin32/files_test.o GNUWin32/getarg_test.o GNUWin32/logic_test.o GNUWin32/single_arg_test.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -L"../lib" -lrichbool  -g3 
+INCS =  -I"C:/Dev-Cpp/include"  -I"../common" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"../common" 
+BIN  = RichBoolTestMacros.exe
+CXXFLAGS = $(CXXINCS) -ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings   -fexceptions -fexpensive-optimizations -g3
+CFLAGS = $(INCS)   -fexceptions -fexpensive-optimizations -g3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before RichBoolTestMacros.exe all-after
+
+include unittest.mak
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "RichBoolTestMacros.exe" $(LIBS)
+
+GNUWin32/basictest.o: basictest.cpp
+	$(CPP) -c basictest.cpp -o GNUWin32/basictest.o $(CXXFLAGS)
+
+GNUWin32/pointertest.o: pointertest.cpp
+	$(CPP) -c pointertest.cpp -o GNUWin32/pointertest.o $(CXXFLAGS)
+
+GNUWin32/bindtest.o: bindtest.cpp
+	$(CPP) -c bindtest.cpp -o GNUWin32/bindtest.o $(CXXFLAGS)
+
+GNUWin32/person_test.o: person_test.cpp
+	$(CPP) -c person_test.cpp -o GNUWin32/person_test.o $(CXXFLAGS)
+
+GNUWin32/evaluate_test.o: evaluate_test.cpp
+	$(CPP) -c evaluate_test.cpp -o GNUWin32/evaluate_test.o $(CXXFLAGS)
+
+GNUWin32/or_test.o: or_test.cpp
+	$(CPP) -c or_test.cpp -o GNUWin32/or_test.o $(CXXFLAGS)
+
+GNUWin32/and_test.o: and_test.cpp
+	$(CPP) -c and_test.cpp -o GNUWin32/and_test.o $(CXXFLAGS)
+
+GNUWin32/typeinfo_test.o: typeinfo_test.cpp
+	$(CPP) -c typeinfo_test.cpp -o GNUWin32/typeinfo_test.o $(CXXFLAGS)
+
+GNUWin32/string_test.o: string_test.cpp
+	$(CPP) -c string_test.cpp -o GNUWin32/string_test.o $(CXXFLAGS)
+
+GNUWin32/string_locale_test.o: string_locale_test.cpp
+	$(CPP) -c string_locale_test.cpp -o GNUWin32/string_locale_test.o $(CXXFLAGS)
+
+GNUWin32/wstring_test.o: wstring_test.cpp
+	$(CPP) -c wstring_test.cpp -o GNUWin32/wstring_test.o $(CXXFLAGS)
+
+GNUWin32/xor_test.o: xor_test.cpp
+	$(CPP) -c xor_test.cpp -o GNUWin32/xor_test.o $(CXXFLAGS)
+
+GNUWin32/std_exceptions_test.o: std_exceptions_test.cpp
+	$(CPP) -c std_exceptions_test.cpp -o GNUWin32/std_exceptions_test.o $(CXXFLAGS)
+
+GNUWin32/notext_test.o: notext_test.cpp
+	$(CPP) -c notext_test.cpp -o GNUWin32/notext_test.o $(CXXFLAGS)
+
+GNUWin32/macro_safety.o: macro_safety.cpp
+	$(CPP) -c macro_safety.cpp -o GNUWin32/macro_safety.o $(CXXFLAGS)
+
+GNUWin32/getmember_test.o: getmember_test.cpp
+	$(CPP) -c getmember_test.cpp -o GNUWin32/getmember_test.o $(CXXFLAGS)
+
+GNUWin32/richbooltest.o: ../common/richbooltest.cpp
+	$(CPP) -c ../common/richbooltest.cpp -o GNUWin32/richbooltest.o $(CXXFLAGS)
+
+GNUWin32/rbtest.o: ../common/rbtest.cpp
+	$(CPP) -c ../common/rbtest.cpp -o GNUWin32/rbtest.o $(CXXFLAGS)
+
+GNUWin32/wrapper_test.o: wrapper_test.cpp
+	$(CPP) -c wrapper_test.cpp -o GNUWin32/wrapper_test.o $(CXXFLAGS)
+
+GNUWin32/equal_using_less.o: equal_using_less.cpp
+	$(CPP) -c equal_using_less.cpp -o GNUWin32/equal_using_less.o $(CXXFLAGS)
+
+GNUWin32/files_test.o: files_test.cpp
+	$(CPP) -c files_test.cpp -o GNUWin32/files_test.o $(CXXFLAGS)
+
+GNUWin32/getarg_test.o: getarg_test.cpp
+	$(CPP) -c getarg_test.cpp -o GNUWin32/getarg_test.o $(CXXFLAGS)
+
+GNUWin32/logic_test.o: logic_test.cpp
+	$(CPP) -c logic_test.cpp -o GNUWin32/logic_test.o $(CXXFLAGS)
+
+GNUWin32/single_arg_test.o: single_arg_test.cpp
+	$(CPP) -c single_arg_test.cpp -o GNUWin32/single_arg_test.o $(CXXFLAGS)

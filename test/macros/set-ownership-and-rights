@@ -1,0 +1,44 @@
+# This file should be called as a superuser before the tests in this
+# directory are run.
+# If you make a backup after running this script, you should call
+# take-back-files-and-dirs-from-root first, that gives back ownership.
+
+chmod 400 file-owner-r.txt
+chmod 600 file-owner-rw.txt
+chmod 700 file-owner-rwx.txt
+chmod 000 file-owner-n.txt
+chmod 070 file-owner-n-group-rwx.txt
+chmod 700 test.bat
+
+chown root file-group-rwx.txt
+chmod 770  file-group-rwx.txt
+chown root file-group-n.txt
+chmod 700  file-group-n.txt
+chown root file-group-n-other-rwx.txt
+chmod 707  file-group-n-other-rwx.txt
+
+chown root file-other-rwx.txt
+chgrp root file-other-rwx.txt
+chmod 777  file-other-rwx.txt
+chown root file-other-n.txt
+chgrp root file-other-n.txt
+chmod 770  file-other-n.txt
+
+chmod 400 dir-owner-r
+chmod 700 dir-owner-rwx
+chmod 000 dir-owner-n
+
+chown root dir-group-rwx
+chmod 770  dir-group-rwx
+chown root dir-group-n
+chmod 700  dir-group-n
+
+chown root dir-other-rwx
+chgrp root dir-other-rwx
+chmod 777  dir-other-rwx
+chown root dir-other-n
+chgrp root dir-other-n
+chmod 770  dir-other-n
+
+chmod 700  dir-owner-rwx/dir-root
+chown root dir-owner-rwx/dir-root

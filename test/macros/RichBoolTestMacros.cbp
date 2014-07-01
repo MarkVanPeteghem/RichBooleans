@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RichBoolTestMacros" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Mingw">
+				<Option output="RichBoolTestMacros.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output=".objs-mingw" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<Compiler>
+					<Add option="-std=c++98" />
+					<Add option="-g" />
+					<Add directory="..\..\include" />
+					<Add directory="..\common" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\lib\librichbool-mingw.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(TARGET_OUTPUT_FILE)" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Cygwin">
+				<Option platforms="Windows;" />
+				<Option output="RichBoolTestMacros-cygwin.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output=".objs-cygwin" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-std=c++98" />
+					<Add option="-g" />
+					<Add directory="..\..\include" />
+					<Add directory="..\common" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\lib\librichbool-cygwin.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(TARGET_OUTPUT_FILE)" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Mingw;Cygwin;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-std=c++0x" />
+			<Add option="-ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings" />
+			<Add directory="..\..\include" />
+			<Add directory="..\common" />
+		</Compiler>
+		<Unit filename="..\common\rbtest.cpp" />
+		<Unit filename="..\common\richbooltest.cpp" />
+		<Unit filename="and_test.cpp" />
+		<Unit filename="basictest.cpp" />
+		<Unit filename="bindtest.cpp" />
+		<Unit filename="bits_test.cpp" />
+		<Unit filename="equal_using_less.cpp" />
+		<Unit filename="evaluate_test.cpp" />
+		<Unit filename="files_test.cpp" />
+		<Unit filename="getarg_test.cpp" />
+		<Unit filename="getmember_test.cpp" />
+		<Unit filename="logic_test.cpp" />
+		<Unit filename="macro_safety.cpp" />
+		<Unit filename="mfc_test.cpp" />
+		<Unit filename="notext_test.cpp" />
+		<Unit filename="or_test.cpp" />
+		<Unit filename="other_string.hpp" />
+		<Unit filename="person_test.cpp" />
+		<Unit filename="pointertest.cpp" />
+		<Unit filename="predicates.hpp" />
+		<Unit filename="rbtest.hpp" />
+		<Unit filename="regex_test.cpp" />
+		<Unit filename="resource.h" />
+		<Unit filename="single_arg_test.cpp" />
+		<Unit filename="std_exceptions_test.cpp" />
+		<Unit filename="string_locale_test.cpp" />
+		<Unit filename="string_test.cpp" />
+		<Unit filename="typeinfo_test.cpp" />
+		<Unit filename="wrapper_test.cpp" />
+		<Unit filename="wstring_test.cpp" />
+		<Unit filename="wx_classinfo_test.cpp" />
+		<Unit filename="xor_test.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

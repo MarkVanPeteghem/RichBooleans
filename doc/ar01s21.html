@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Writing macros that use rich booleans (advanced)</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s20.html" title="Making your own rich booleans (advanced)"><link rel="next" href="ar01s22.html" title="Processing Rich Booleans (advanced)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Writing macros that use rich booleans (advanced)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s20.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s22.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="macros-to-use-richbooleans"></a>Writing macros that use rich booleans (advanced)</h2></div></div></div><a class="indexterm" name="id535668"></a><a class="indexterm" name="id535673"></a><a class="indexterm" name="id535678"></a><a class="indexterm" name="id535682"></a><a class="indexterm" name="id535687"></a><a class="indexterm" name="id535692"></a><a class="indexterm" name="id535697"></a><p>Rich Booleans are not straight forward to use directly, so it's best to write a macro to use them.
+If you use a library with macros that can have Rich Booleans as an argument (such as ModAssert and UquoniTest),
+you don't have to read this section.</p><p>Macros that have a Rich Boolean as an argument (or one of their arguments), must make
+sure that a non-constant integer called <code class="code">richbool_level</code> is declared
+(locally or globally), as well as two <code class="classname">RichBool::TmpBool</code> objects
+called <code class="code">richbool_tmp1</code> and <code class="code">richbool_tmp2</code> (preferably locally).
+<code class="code">richbool_level</code> tells the Rich Boolean macro whether
+it should evaluate its arguments and its condition.
+</p><div class="itemizedlist"><ul type="bullet"><li style="list-style-type: disc">0 means that only the arguments will be evaluated; in this case
+	the rich boolean will always evaluate to true</li><li style="list-style-type: disc">1 means that the arguments and the condition will be evaluated, but no
+analysis will be created</li><li style="list-style-type: disc">2 means that the arguments and the condition will be evaluated, and an
+analysis will be created if the condition failed</li><li style="list-style-type: disc">3 means that the arguments and the condition will be evaluated, and an
+analysis will be created, even if the condition succeeds</li></ul></div><p>
+Therefore Rich Booleans are usually used inside macros, that define a small local scope where these
+variables are defined.
+</p><p>Rich Booleans usually evaluate to a <code class="classname">RichBool::TmpBool</code>, sometimes to a
+<code class="classname">RichBool::Bool</code> object, which both can be assigned to a <code class="classname">RichBool::Bool</code>
+object. Boolean expressions can also be assigned to such objects, so they both can be used.
+<code class="classname">RichBool::Bool</code> has a method <code class="code">bool operator() const</code>, that tells
+whether the expression evaluated to <code class="literal">true</code> or <code class="literal">false</code>,
+and a method <code class="code">const SharedAnalysis&amp; GetAnalysis() const</code>, that returns the
+<code class="classname">RichBool::Analysis</code> object in a shared pointer if a Rich Boolean was assigned that failed
+(if a boolean was assigned, it is always <code class="literal">NULL</code>).</p><p>Here is an example of how a macro called <code class="code">CHECK</code> could use a Rich Boolean:
+</p><div class="example"><a name="id535792"></a><p class="title"><b>Example 46. Writing a macro that processes a Rich Boolean macro</b></p><div class="example-contents"><pre class="programlisting">
+#define CHECK(condition) \
+	do { \
+		int richbool_level = 2; \
+		RichBool::TmpBool richbool_tmp1, richbool_tmp2; \
+		RichBool::Bool richbool = (condition); \
+		if (!richbool()) \
+			OnFailure(#condition, richbool.GetAnalysis(), \
+			    __FILE__, __LINE__); \
+	} while (false)
+</pre></div></div><p><br class="example-break">
+</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s20.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s22.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Making your own rich booleans (advanced) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Processing Rich Booleans (advanced)</td></tr></table></div></body></html>

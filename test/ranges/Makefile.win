@@ -1,0 +1,100 @@
+# Project: RichBoolTestRanges
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe -D__DEBUG__
+CC   = gcc.exe -D__DEBUG__
+WINDRES = windres.exe
+RES  = 
+OBJ  = GNUWin32/stl_test.o GNUWin32/stub_container_test.o GNUWin32/container_tostring.o GNUWin32/inarray_test.o GNUWin32/rbtest.o GNUWin32/richbooltest.o GNUWin32/unique_test.o GNUWin32/all_test.o GNUWin32/all_unique_test.o GNUWin32/compare_test.o GNUWin32/compare_unordered_test.o GNUWin32/find_in_marked_range.o GNUWin32/find_in_multi_marked_range.o GNUWin32/find_in_range.o GNUWin32/find_ordered_in_range.o GNUWin32/has_test.o GNUWin32/is_multi_subset_of.o GNUWin32/is_multi_subset_of_sorted.o GNUWin32/is_ordered_subset_of.o GNUWin32/is_ordered_subset_of_sorted.o GNUWin32/is_subset_of.o GNUWin32/is_subset_of_sorted.o GNUWin32/sort_to_equal.o GNUWin32/sorted_test.o $(RES)
+LINKOBJ  = GNUWin32/stl_test.o GNUWin32/stub_container_test.o GNUWin32/container_tostring.o GNUWin32/inarray_test.o GNUWin32/rbtest.o GNUWin32/richbooltest.o GNUWin32/unique_test.o GNUWin32/all_test.o GNUWin32/all_unique_test.o GNUWin32/compare_test.o GNUWin32/compare_unordered_test.o GNUWin32/find_in_marked_range.o GNUWin32/find_in_multi_marked_range.o GNUWin32/find_in_range.o GNUWin32/find_ordered_in_range.o GNUWin32/has_test.o GNUWin32/is_multi_subset_of.o GNUWin32/is_multi_subset_of_sorted.o GNUWin32/is_ordered_subset_of.o GNUWin32/is_ordered_subset_of_sorted.o GNUWin32/is_subset_of.o GNUWin32/is_subset_of_sorted.o GNUWin32/sort_to_equal.o GNUWin32/sorted_test.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -L"../lib" -lrichbool  -g3 
+INCS =  -I"C:/Dev-Cpp/include"  -I"../common" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"../common" 
+BIN  = RichBoolTestRanges.exe
+CXXFLAGS = $(CXXINCS) -ansi -pedantic -Wconversion -Wshadow -Wcast-qual -Wwrite-strings    -fexceptions -fexpensive-optimizations -g3
+CFLAGS = $(INCS)   -fexceptions -fexpensive-optimizations -g3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before RichBoolTestRanges.exe all-after
+
+include unittest.mak
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "RichBoolTestRanges.exe" $(LIBS)
+
+GNUWin32/stl_test.o: stl_test.cpp
+	$(CPP) -c stl_test.cpp -o GNUWin32/stl_test.o $(CXXFLAGS)
+
+GNUWin32/stub_container_test.o: stub_container_test.cpp
+	$(CPP) -c stub_container_test.cpp -o GNUWin32/stub_container_test.o $(CXXFLAGS)
+
+GNUWin32/container_tostring.o: container_tostring.cpp
+	$(CPP) -c container_tostring.cpp -o GNUWin32/container_tostring.o $(CXXFLAGS)
+
+GNUWin32/inarray_test.o: inarray_test.cpp
+	$(CPP) -c inarray_test.cpp -o GNUWin32/inarray_test.o $(CXXFLAGS)
+
+GNUWin32/rbtest.o: ../common/rbtest.cpp
+	$(CPP) -c ../common/rbtest.cpp -o GNUWin32/rbtest.o $(CXXFLAGS)
+
+GNUWin32/richbooltest.o: ../common/richbooltest.cpp
+	$(CPP) -c ../common/richbooltest.cpp -o GNUWin32/richbooltest.o $(CXXFLAGS)
+
+GNUWin32/unique_test.o: unique_test.cpp
+	$(CPP) -c unique_test.cpp -o GNUWin32/unique_test.o $(CXXFLAGS)
+
+GNUWin32/all_test.o: all_test.cpp
+	$(CPP) -c all_test.cpp -o GNUWin32/all_test.o $(CXXFLAGS)
+
+GNUWin32/all_unique_test.o: all_unique_test.cpp
+	$(CPP) -c all_unique_test.cpp -o GNUWin32/all_unique_test.o $(CXXFLAGS)
+
+GNUWin32/compare_test.o: compare_test.cpp
+	$(CPP) -c compare_test.cpp -o GNUWin32/compare_test.o $(CXXFLAGS)
+
+GNUWin32/compare_unordered_test.o: compare_unordered_test.cpp
+	$(CPP) -c compare_unordered_test.cpp -o GNUWin32/compare_unordered_test.o $(CXXFLAGS)
+
+GNUWin32/find_in_marked_range.o: find_in_marked_range.cpp
+	$(CPP) -c find_in_marked_range.cpp -o GNUWin32/find_in_marked_range.o $(CXXFLAGS)
+
+GNUWin32/find_in_multi_marked_range.o: find_in_multi_marked_range.cpp
+	$(CPP) -c find_in_multi_marked_range.cpp -o GNUWin32/find_in_multi_marked_range.o $(CXXFLAGS)
+
+GNUWin32/find_in_range.o: find_in_range.cpp
+	$(CPP) -c find_in_range.cpp -o GNUWin32/find_in_range.o $(CXXFLAGS)
+
+GNUWin32/find_ordered_in_range.o: find_ordered_in_range.cpp
+	$(CPP) -c find_ordered_in_range.cpp -o GNUWin32/find_ordered_in_range.o $(CXXFLAGS)
+
+GNUWin32/has_test.o: has_test.cpp
+	$(CPP) -c has_test.cpp -o GNUWin32/has_test.o $(CXXFLAGS)
+
+GNUWin32/is_multi_subset_of.o: is_multi_subset_of.cpp
+	$(CPP) -c is_multi_subset_of.cpp -o GNUWin32/is_multi_subset_of.o $(CXXFLAGS)
+
+GNUWin32/is_multi_subset_of_sorted.o: is_multi_subset_of_sorted.cpp
+	$(CPP) -c is_multi_subset_of_sorted.cpp -o GNUWin32/is_multi_subset_of_sorted.o $(CXXFLAGS)
+
+GNUWin32/is_ordered_subset_of.o: is_ordered_subset_of.cpp
+	$(CPP) -c is_ordered_subset_of.cpp -o GNUWin32/is_ordered_subset_of.o $(CXXFLAGS)
+
+GNUWin32/is_ordered_subset_of_sorted.o: is_ordered_subset_of_sorted.cpp
+	$(CPP) -c is_ordered_subset_of_sorted.cpp -o GNUWin32/is_ordered_subset_of_sorted.o $(CXXFLAGS)
+
+GNUWin32/is_subset_of.o: is_subset_of.cpp
+	$(CPP) -c is_subset_of.cpp -o GNUWin32/is_subset_of.o $(CXXFLAGS)
+
+GNUWin32/is_subset_of_sorted.o: is_subset_of_sorted.cpp
+	$(CPP) -c is_subset_of_sorted.cpp -o GNUWin32/is_subset_of_sorted.o $(CXXFLAGS)
+
+GNUWin32/sort_to_equal.o: sort_to_equal.cpp
+	$(CPP) -c sort_to_equal.cpp -o GNUWin32/sort_to_equal.o $(CXXFLAGS)
+
+GNUWin32/sorted_test.o: sorted_test.cpp
+	$(CPP) -c sorted_test.cpp -o GNUWin32/sorted_test.o $(CXXFLAGS)

@@ -1,0 +1,272 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Using Rich Boolean functors in Rich Boolean macros</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s14.html" title="The available rich booleans"><link rel="next" href="ar01s16.html" title="Expression objects"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using Rich Boolean functors in Rich Boolean macros</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s14.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s16.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="richboolobjects"></a>Using Rich Boolean functors in Rich Boolean macros</h2></div></div></div><a class="indexterm" name="id529416"></a><p>The Rich Booleans that end in _RB, like <code class="code">rb2_RB</code>, and the ones that
+	work on one or two ranges, have a Rich Boolean functor as their last argument,
+	so you have to create such an object.
+	For the ones that work on ranges, you can use a Rich Boolean functor factory like <code class="code">All</code>, <code class="code">Has</code>, <code class="code">Unique</code>
+	or <code class="code">Compare</code>, but you still need to supply another Rich Boolean functor to their factory method.
+Many Rich Boolean macros have a corresponding class, of which you should construct an object to provide
+as that argument. See the previous sections to see what the corresponding functor class of a Rich Boolean is,
+if it has one.</p><p>This allows you to do powerful comparisons of two ranges or containers. E.g. the following checks
+whether the integers in one vector are smaller than the integers in another vector:</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(Less&lt;&gt;()))
+	</pre><p>The following checks whether two vectors of vectors are equal:</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(MakeInContainers(Compare&lt;&gt;().That(Equal&lt;&gt;()))))
+	</pre><p>The following checks whether the integers in one vector of vectors are smaller than
+the integers in another vector of vectors:</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(MakeInContainers(Compare&lt;&gt;().That(Less&lt;&gt;()))) )
+	</pre><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id529469"></a>Getters</h3></div></div></div><p>The classes that correspond to Rich Booleans can have optionally template parameters
+that customize how the value that it uses, is to be retrieved. The default is
+<code class="code">RichBool::Value</code>, which simply returns the value itself.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529481"></a>Dereferencing</h4></div></div></div><a class="indexterm" name="id529485"></a><a class="indexterm" name="id529490"></a><a class="indexterm" name="id529495"></a><a class="indexterm" name="id529500"></a><a class="indexterm" name="id529505"></a><p><code class="code">RichBool::Pointer&lt;class GetValue=RichBool::Value&gt;</code>
+can be used to dereference
+pointers. E.g. the following compares a vector of pointers to integers, with a vector of integers:
+</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;Pointer&lt;&gt;, Value &gt;()))
+	</pre><p>For iterators, smart pointers and other pointerlike objects, use the class
+    <code class="code">RichBool::PointerLike&lt;typename T, class GetValue=RichBool::Value&gt;</code>, where T is the type of
+    the objects that are returned when it is dereferenced.
+    E.g. the following compares a vector of iterators to integers with a vector of integers:
+</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;PointerLike&lt;int&gt;, Value &gt;()))
+	</pre><p>These can be nested, e.g. the following compares a vector of pointers to pointers
+to integers with a vector of integers:
+</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;Pointer&lt;Pointer&gt; &gt;, Value &gt;()))
+	</pre><p>Note: the second template argument <code class="classname">Value</code> isn't necessary in
+    these examples because that is the default type, but it was shown for clarity.</p><p>Note: if your compiler doesn't support partial template specialization, you can't nest
+    <code class="classname">Pointer</code>, but you can use <code class="classname">PointerLike</code> instead.
+</p><p>When you nest, you may run into troubles, because <code class="classname">Pointer</code> and
+	<code class="classname">PointerLike</code> return a const reference, which may refer to a temporary
+	that no longer exists. In these cases, you should use the alternatives <code class="classname">PointerToValue</code> and
+	<code class="classname">PointerLikeToValue</code>, that return a value. Otherwise they are exactly the same as
+	the former.</p><p><code class="classname">PointerLike</code> can also be nested. In this case, the template type that
+    tells which value is returned, should always be the same. The following demonstrates this:
+</p><pre class="programlisting">
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;PointerLike&lt;int, PointerLike&lt;int&gt; &gt;, Value&gt;()))
+</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529584"></a>Using a member of an object</h4></div></div></div><a class="indexterm" name="id529589"></a><a class="indexterm" name="id529593"></a><p>If you want the Rich Boolean to work on a member of a given object instead of the object itself,
+use the template class <code class="classname">GetMember&lt;T, Return&gt;</code> instead of <code class="classname">Value</code>,
+where <code class="classname">T</code> is the type of the object, and <code class="classname">Return</code> is the type
+of the member. The constructor of this template class takes a pointer to a member and a <code class="code">const char*</code>
+value that describes the member (starting with a period for readability).
+The following illustrates this:
+</p><pre class="programlisting">
+class MyClass
+{
+public:
+	int a;
+	...
+};
+
+std::vector&lt;MyClass&gt; vec1, vec2;
+std::vector&lt;int&gt; int_vec;
+
+...
+
+RichBool::GetMember&lt;MyClass, int&gt; gm(&amp;MyClass::a, ".a");
+
+RichBool::Equal&lt;RichBool::GetMember&lt;MyClass, int&gt; &gt; equal_useMemberOfFirst(gm);
+MOD_ASSERT(rbIN_CONTAINERS(vec1, int_vec,
+    Compare&lt;&gt;().That(equal_useMemberOfFirst)));
+
+RichBool::Equal&lt;
+    RichBool::GetMember&lt; MyClass, int&gt;,
+    RichBool::GetMember&lt; MyClass, int&gt;
+    &gt;
+    equal_useMemberOfBoth(gm, gm);
+MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2,
+    Compare&lt;&gt;().That(equal_useMemberOfBoth)));
+</pre><p>
+</p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529625"></a>Using a method of an object</h4></div></div></div><a class="indexterm" name="id529629"></a><a class="indexterm" name="id529634"></a><p>You can do the same with the return value of a method of a given object instead of the object itself,
+using the template class <code class="classname">CallMethod&lt;T, Return&gt;</code> instead of <code class="classname">Value</code>,
+where <code class="classname">T</code> is the type of the object, and <code class="classname">Return</code> is the return type
+of the member. The constructor of this template class takes a pointer to a method and a <code class="code">const char*</code>
+value that describes the method (ideally preceded by a periond). The method should be <code class="code">const</code>.
+The following illustrates this:
+</p><pre class="programlisting">
+class MyClass
+{
+public:
+	int GetA() const;
+	...
+};
+
+std::vector&lt;MyClass&gt; vec1;
+std::vector&lt;int&gt; int_vec;
+
+...
+
+RichBool::CallMethod&lt;MyClass, int&gt; gm(&amp;MyClass::GetA, ".GetA()");
+RichBool::Equal&lt;RichBool::CallMethod&lt;MyClass, int&gt; &gt; equal_useMethod(gm);
+
+MOD_ASSERT(rbIN_CONTAINERS(vec1, int_vec,
+    Compare&lt;&gt;().That(equal_useMethod)));
+</pre><p>
+</p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529669"></a>GetMemberArg and CallMethodArg for older compilers</h4></div></div></div><a class="indexterm" name="id529674"></a><a class="indexterm" name="id529679"></a>
+Note: some older compilers, e.g. Visual C++ 6.0, have problems with the way templates are used
+in the classes <code class="classname">GetMember</code> and <code class="classname">CallMethod</code>.
+If this is the case for your compiler, adjust the file <code class="filename">config.hpp</code>
+in the directory <code class="filename">include/richbool</code>
+so that the symbol <code class="code">RICHBOOL_NO_TEMPLATE_TYPE_LOOKUP</code> is defined.
+This will instruct the preprocessor to remove these classes. Instead you can still use the classes
+<code class="classname">GetMemberArg</code> and <code class="classname">CallMethodArg</code>,
+which have a third mandatory template argument, which is the type that is returned.
+If you don't nest another class in it but the default, this is the same as the second template argument.
+</div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529711"></a>Composing getters</h4></div></div></div><a class="indexterm" name="id529716"></a><p>You can also compose objects of the classes <code class="classname">Pointer</code>,
+<code class="classname">PointerToValue</code>, <code class="classname">PointerLike</code>,
+<code class="classname">PointerLikeToValue</code>, <code class="classname">GetMember</code>, <code class="classname">CallMethod</code>,
+<code class="classname">GetMemberArg</code> and <code class="classname">CallMethodArg</code>
+by making the template argument a class of another, and pass an object of that class to the constructor if
+it is not an empty object (e.g. objects of the classes <code class="classname">GetMember</code> and <code class="classname">CallMethod</code>).
+Then the nesting order is important. First the outer object works on its argument, then the one
+inside it. E.g. if you have pointers to list-iterators
+that hold integers, use
+<code class="code">Pointer&lt;PointerLike&lt;int&gt; &gt;</code>, so that the pointer is dereferenced by <code class="classname">Pointer</code>,
+after which the iterator is dereferenced by .
+If you have list-iterators that hold pointers to integers,
+use <code class="code">PointerLike&lt;int, Pointer&lt;&gt; &gt;</code>, to do the same operations in the opposite order.
+</p><p>If you have a class with a pointer <code class="code">pa</code> to an integer in it, use
+<code class="code">GetMember&lt;MyClass, int, RichBool::Pointer&lt;&gt; &gt; gmp(&amp;MyClass::pa, ".pa")</code>.
+If you do this with <code class="classname">GetMemberArg</code>, use
+<code class="code">GetMemberArg&lt;MyClass, int, int*, RichBool::Pointer&lt;&gt; &gt; gmp(&amp;MyClass::pa, ".pa")</code>,
+because the third template argument is the type that the enclosed.
+</p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529791"></a>Multiple levels of dereferencing</h4></div></div></div><a class="indexterm" name="id529796"></a><p>Rich Boolean functors can also be used in the macros <code class="code">rb1_RB</code>, <code class="code">rb2_RB</code>,
+    <code class="code">rb3_RB</code> and so on. This is only useful if you have e.g. a pointer to a pointer,
+    and want to check if every level of dereferencing is safe. Note that one level of dereferencing is
+    always safe with the Rich Booleans. For two levels, you need <code class="classname">Pointer</code>
+    as a template parameter. Suppose <code class="code">p</code> is a pointer to a pointer to an integer:</p><p>
+		<code class="code">rb2_RB(*p, 5, Equal&lt;Pointer&lt;&gt; &gt;())</code>
+	</p><p>Now if either <code class="code">p</code> or <code class="code">*p</code> is an invalid pointer, it will be safely handled.</p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id529842"></a>Defining custom data retrievers (advanced)</h4></div></div></div><a class="indexterm" name="id529847"></a><a class="indexterm" name="id529851"></a><p>You can also define your own classes to retrieve data, and use these as template parameters
+    in Rich Boolean functors, like you use <code class="classname">Pointer</code> or
+    <code class="classname">GetMember</code>. With the available classes <a href="ar01s15.html" title="Using Rich Boolean functors in Rich Boolean macros">the section called &#8220;Using Rich Boolean functors in Rich Boolean macros&#8221;</a>,
+	this is usually not necessary.
+    If you want to do it, you need to create a class that has these 5 methods:
+    </p><div class="itemizedlist"><ul type="bullet"><li style="list-style-type: disc"><code class="code">ReturnValue operator()(const T &amp;t)</code> to get the desired value from the object</li><li style="list-style-type: disc"><code class="code">bool BadPtrChain(const T &amp;t)</code> to check if the address of the object is valid</li><li style="list-style-type: disc"><code class="code">template&lt;class Stringize_&gt; std::string ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const</code>
+					to convert the value to a string</li><li style="list-style-type: disc"><code class="code">template&lt;typename T&gt; std::string AddressToString(const T *t) const</code> to convert
+					an address to a string (usually the same as in the example below). Its argument will be a pointer to the object
+					that is given to <code class="code">operator()</code>.</li><li style="list-style-type: disc"><code class="code">SharedExpression Convert(SharedExpression expr) const</code> to convert an expression
+					to another expression that adds information to it. The return type should be derived from
+					<code class="classname">Expression</code>. <code class="classname">PrefixedExpression</code>
+					and <code class="classname">SuffixedExpression</code> are useful classes for this, see <a href="ar01s16.html" title="Expression objects">the section called &#8220;Expression objects&#8221;</a></li></ul></div><p>
+Note: replace <code class="classname">std::string</code> by <code class="classname">wxString</code> above if you use
+wxWidgets.</p><p>If you want to nest this in <code class="classname">Pointer</code>, you also need to add a nested template class
+<code class="classname">Return</code> with one template parameter. The template parameter specifies the type that
+is given to <code class="code">operator()</code>. In that template class there should be a typedef <code class="classname">Type</code>
+that is the return type of <code class="code">operator()</code> when an object of the template type is given to it.
+Usually the template parameter doesn't influence the return type (unlike in e.g. <code class="classname">Pointer</code>).
+</p><div class="example"><a name="id529955"></a><p class="title"><b>Example 43. Writing a class to let Rich Boolean functors retrieve a value in a custom way</b></p><div class="example-contents">
+Suppose you have a struct that has two ints:
+<pre class="programlisting">struct TwoInts
+{
+ 	int a, b;
+};</pre>
+and you want to check against one of them, then you can create a struct as follows:
+<pre class="programlisting">struct GetA
+{
+    // the return type of operator() is independent of the type of its argument
+    template&lt;typename T&gt;
+    struct Return { typedef int Type; };
+
+    const int&amp; operator()(const TwoInts &amp;t) const { return t.a; }
+
+    bool BadPtrChain(const TwoInts &amp;t) const
+    {
+        return RichBool::BadPtr(&amp;t);
+    }
+
+    template&lt;class Stringize_&gt;
+    std::string ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const
+    {
+        if (RichBool::BadPtr(&amp;t))
+            return RichBool::PtrToString(&amp;t);
+        else
+            return str(t.a)+" (b="+str(t.b)+")";
+    }
+
+    template&lt;typename T&gt;
+    std::string AddressToString(const T *t) const
+    {
+        return PtrToString(t);
+    }
+
+    RichBool::SharedExpression Convert(RichBool::SharedExpression expr) const
+    {
+        return new RichBool::SuffixedExpression(".a", expr);
+    }
+};</pre>
+You can then use <code class="classname">GetA</code> as the template argument of a Rich Boolean functor as follows:
+<pre class="programlisting">
+    std::vector&lt;int&gt; vecInt;
+    std::vector&lt;TwoInts&gt; vecTwoInts;
+
+    ...
+    
+    RichBool::Equal&lt;RichBool::Value, GetA&gt; rb;
+
+    MOD_ASSERT(rbIN_CONTAINERS(vecInt, vecTwoInts, Compare&lt;&gt;().That(rb)));
+</pre>
+Note: if the member <code class="code">a</code> had been a pointer to an integer, the method <code class="code">BadPtrChain</code>
+could also check if it is a valid pointer:
+<pre class="programlisting">
+    bool BadPtrChain(const TwoInts &amp;t) const
+    {
+        return RichBool::BadPtr(&amp;t) || RichBool::BadPtr(t.a);
+    }
+</pre>
+Then the method <code class="code">ToString</code> should also handle the case where the pointer could have a non-dereferenceable value:
+<pre class="programlisting">
+    template&lt;class Stringize_&gt;
+    String ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const
+    {
+        if (RichBool::BadPtr(&amp;t))
+            return RichBool::PtrToString(&amp;t);
+        else if (RichBool::BadPtr(t.a))
+            return RichBool::PtrToString(&amp;t)+" -&gt; a="+RichBool::PtrToString(t.a);
+        else
+            return str(*t.a)+" (b="+str(t.b)+")";
+    }
+</pre></div></div><br class="example-break"></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id529995"></a>Combining Rich Boolean functors in logical operations</h3></div></div></div><a class="indexterm" name="id530000"></a><a class="indexterm" name="id530005"></a><a class="indexterm" name="id530010"></a><a class="indexterm" name="id530015"></a><a class="indexterm" name="id530019"></a><a class="indexterm" name="id530024"></a><a class="indexterm" name="id530029"></a><a class="indexterm" name="id530034"></a><a class="indexterm" name="id530039"></a><p>Rich Boolean functors can be combined in logical operations by using
+	<code class="code">operator&amp;</code>, <code class="code">operator&amp;&amp;</code>, <code class="code">operator|</code>,
+	<code class="code">operator||</code> and <code class="code">operator^</code>. If <code class="code">a</code> and <code class="code">b</code>
+	are Rich Boolean functors that take the same number of arguments, then
+	</p><div class="itemizedlist"><ul type="bullet"><li style="list-style-type: disc"><code class="code">a &amp; b</code> is a new Rich Boolean functor that succeeds if and only
+		if they both succeed. It doesn't use short circuiting when it creates the analysis,
+		so the conditions of both are then evaluated to give both analyses, and neither when points
+		for partial matching are requested, so the points of both are given.</li><li style="list-style-type: disc"><code class="code">a &amp;&amp; b</code> is a new Rich Boolean functor that succeeds if and only
+		if they both succeed. It always uses short circuiting, so the condition of the second is only
+		evaluated if the first succeeds. This means that the analysis of the second condition may
+		not be available, and partial matching may not work optimal.</li><li style="list-style-type: disc"><code class="code">a | b</code> is a new Rich Boolean functor that succeeds if and only
+		if at least one of them succeeds. It doesn't use short circuiting when it creates the analysis,
+		so the conditions of both are then evaluated to give both analyses, and neither when points
+		for partial matching are requested, so the points of both are given.</li><li style="list-style-type: disc"><code class="code">a || b</code> is a new Rich Boolean functor that succeeds if and only
+		if at least one of them succeeds. It uses short circuiting, so the condition of the second is only
+		evaluated if the first doesn't succeed. This means that the analysis of the second condition may
+		not be available, and partial matching may not work optimal.</li><li style="list-style-type: disc"><code class="code">a ^ b</code> is a new Rich Boolean functor that succeeds if and only
+		if one of them succeeds and the other fails. It never uses short circuiting, since this is
+		not possible with this operator.</li><li style="list-style-type: disc"><code class="code">!a</code> is a new Rich Boolean functor that succeeds if and only
+		if <code class="code">a</code> doesn't succeed.</li></ul></div><p>
+	You should use the versions that don't use short circuiting (i.e. &amp;, | and ^),
+	unless you really have to use the ones that use short circuiting, because the versions
+	that don't use short circuiting always give the analysis of both Rich Boolean functors if it fails.
+	</p><p>Note: you should not use input iterators on combinations of two or more Rich Boolean functors,
+	because the range may be traversed twice. However, negating a Rich Boolean functor is safe with
+	input iterators.</p><p>Examples: the following checks whether for the objects of the class <code class="code">MyClass</code> in
+	<code class="code">vec1</code> and <code class="code">vec2</code> the return value
+	of either <code class="code">GetA()</code> or <code class="code">GetB()</code> is the same:</p><p>
+	</p><pre class="programlisting">  std::vector&lt;MyClass&gt; vec1, vec2;
+  ...
+  typedef CallMethod&lt;MyClass, int&gt; GetInt;
+  GetInt getA(&amp;MyClass::GetA, ".GetA()"), getB(&amp;MyClass::GetB, ".GetB()");
+  Equal&lt;GetInt, GetInt&gt; equalA(getA, getA), equalB(getB, getB);
+  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(equalA | equalB)));
+  </pre><p>
+  The following checks whether <code class="code">vec1</code> is an ordered subset of
+  <code class="code">vec2</code> or have the same elements in any order:
+  </p><pre class="programlisting">  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2,
+        IsOrderedSubSetOf&lt;&gt;() | AllEqualUnordered&lt;&gt;()));</pre><p>
+  The following checks whether <code class="code">vec1</code> is not a subset of <code class="code">vec2</code>:
+	</p><pre class="programlisting">  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, !IsSubSetOf&lt;&gt;()));</pre><p>
+	</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s14.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s16.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The available rich booleans </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Expression objects</td></tr></table></div></body></html>

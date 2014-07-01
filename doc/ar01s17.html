@@ -1,0 +1,45 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Binding parameters on a Rich Boolean functor</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s16.html" title="Expression objects"><link rel="next" href="ar01s18.html" title="Selecting arguments"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Binding parameters on a Rich Boolean functor</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s16.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s18.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id530328"></a>Binding parameters on a Rich Boolean functor</h2></div></div></div><a class="indexterm" name="id530330"></a><a class="indexterm" name="id530335"></a><p>Rich Boolean functors that take two or three arguments can bind one or more of their arguments,
+creating a new Rich Boolean functor that takes one argument less.
+The template classes <code class="classname">template &lt;class RichBool_, typename T&gt; class BindArg&lt;M&gt;Of&lt;N&gt;</code>,
+where N is the number of arguments that the original Rich Boolean functor takes (can be 2 or 3),
+and M is the index of the argument to be binded (between 1 and N), are Rich Boolean functor classes that do this.
+T is the type of the argument you want to bind.
+These classes have two constructors (besides the copy constructor). One takes an argument of type T,
+and is the parameter to be binded. The other one has an extra argument, that is a Rich Boolean functor;
+this is necessary for Rich Boolean functors that are not empty objects (e.g. binding Rich Boolean functors themselves).
+</p><p>Binding a parameter is necessary if e.g. you want to check that every number in an array is less
+than 10.
+</p><pre class="programlisting">
+  RichBool::BindArg2Of2&lt;RichBool::Less&lt;&gt;, int&gt; lessThan10(10);
+  MOD_ASSERT(rbIN_RANGE(b, e, All&lt;&gt;().Are(lessThan10)));
+</pre><p>
+Another interesting example is checking whether the numbers in two containers differ
+by less than a given number.
+</p><pre class="programlisting">
+  RichBool::BindArg3Of3&lt;RichBool::Near&lt;&gt;, double&gt; areClose(0.01);
+  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(areClose)));
+</pre><p>
+Bindings can also be nested, e.g. if you want to check that all the numbers in a range are
+close to a given number:
+</p><pre class="programlisting">
+  typedef RichBool::BindArg3Of3&lt;RichBool::Near&lt;&gt;, double&gt; GeneralNear;
+  GeneralNear generalNear(0.01);
+  RichBool::BindArg2Of2&lt;GeneralNear, double&gt; near5(generalNear, 5.0);
+
+  MOD_ASSERT(rbIN_CONTAINER(vec, All&lt;&gt;().Are(near5)));
+</pre><p>
+If you want to dereference pointers or retrieve data in another way from an argument,
+specify this in the encapsulated rich boolean functor. The binding classes cannot take care of this.
+</p><pre class="programlisting">
+  typedef RichBool::Less&lt;RichBool::Value, RichBool::Pointer&lt;&gt; &gt; LessValPtr;
+  RichBool::BindArg1Of2&lt;LessValPtr, int&gt; rb(5);
+  MOD_ASSERT(rbIN_CONTAINER(vec, All&lt;&gt;().Are(rb)));
+</pre><p>
+The constructor can optionally have text in a const char*, an integer or an
+<code class="classname">Expression</code> as the last argument. If one
+of these is given, it is converted to an expression, and will be used in the generated analysis.
+</p><pre class="programlisting">
+  RichBool::BindArg2Of2&lt;RichBool::Less&lt;&gt;, int&gt; lessThanN(N, "N");
+  MOD_ASSERT(rbIN_RANGE(b, e, All&lt;&gt;().Are(lessThanN)));
+</pre><p>
+</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s16.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s18.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Expression objects </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Selecting arguments</td></tr></table></div></body></html>

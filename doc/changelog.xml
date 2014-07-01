@@ -1,0 +1,396 @@
+<sect1 id='changelog'><title>Change log</title>
+
+<sect2><title>New in version 2.2.1</title>
+<itemizedlist mark='bullet'>
+<listitem>The function GetFileLength is added.</listitem>
+<listitem>Overloads for the function Values for const char* and const wchar_t* are added,
+to allow the usage of string literals of different lengths.</listitem>
+<listitem>The typedefs StringsEqualCS, WStringsEqualCS, StringsEqualCI and WStringsEqualCI are
+added to make string comparisons in containers or arrays easier.</listitem>
+<listitem>Some minor changes for usage in the next version of UquoniTest.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 2.2</title>
+<itemizedlist mark='bullet'>
+<listitem>The Rich Booleans rbREGEXP and rbREGEXP_F use a C++0x regular expression
+to check strings.</listitem>
+<listitem>The Rich Booleans rbIN_VALUES, rbIN_VALUES_CONTAINER, rbIN_VALUES_RANGE,
+rbIN_VALUES_ARRAY, rbIN_CONTAINER_VALUES, rbIN_RANGE_VALUES, rbIN_ARRAY_VALUES
+and rbIN_VALUES_VALUES use a C++0x initializer list to more easily provide values.</listitem>
+<listitem>The overloaded function template Values is added to provide values inline in a Rich Boolean.</listitem>
+<listitem>The Rich Boolean rbBITS_ARE is a generalization of rbBITS_ON and rbBITS_OFF,
+which is at the same time also more readable.</listitem>
+<listitem>The Rich Booleans rbFILE, rbDIRECTORY, rbFILE_EXISTS, rbDIRECTORY_EXISTS and rbDOES_NOT_EXIST
+now can have wide character arguments on Windows (except with the Cygwin compiler).</listitem>
+<listitem>The Rich Booleans rbSTRING_CS, rbSTRING_CI, rbSTRING_BEGINS_WITH_CS, rbSTRING_BEGINS_WITH_CI, 
+rbSTRING_ENDS_WITH_CS, rbSTRING_ENDS_WITH_CI, rbSTRING_CONTAINS_CS and rbSTRING_CONTAINS_CI
+are case sensitive and case insensitive shorthands for rbSTRING, rbSTRING_BEGINS_WITH, rbSTRING_ENDS
+and rbSTRING_CONTAINS.</listitem>
+<listitem>Project files for Visual C++ 2010 are added.</listitem>
+<listitem>The project files for Code::Blocks now have a target for the Cygwin compiler,
+and they set a compiler flag to use C++0x (ignored if not available).</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 2.1</title>
+<itemizedlist mark='bullet'>
+<listitem>There are now Rich Boolean objects IsSubsetOf, IsMultiSubsetOf and IsOrderedSubsetOf
+that can be used in Rich Boolean macros and functors that
+work on two ranges, and check whether the first range is a subset of the second range.
+They have optimized versions IsSubsetOfSorted, IsMultiSubsetOfSorted and IsOrderedSubsetOfSorted
+that can be used if the second range is sorted.
+The Rich Boolean factories MatchesSubsetOf, MatchesMultiSubsetOf,
+MatchesOrderedSubsetOf, IsSubsetOfCustomSorted, IsMultiSubsetOfCustomSorted and
+IsOrderedSubsetOfCustomSorted are generalizations of these.</listitem>
+<listitem>The Rich Boolean AllUnique checks whether all elements in a range are unique.
+The Rich Boolean factory AllPairs is a generalization of this.</listitem>
+<listitem>The macros rbIN_ARRAY_RANGE, rbIN_ARRAY_CONTAINER, rbIN_RANGE_CONTAINER,
+rbIN_CONTAINER_RANGE, rbIN_ARRAY_XCONTAINER, rbIN_RANGE_XCONTAINER and
+rbIN_XCONTAINER_RANGE are added</listitem>
+<listitem>The macros rbLESS_REL_NEAR, rbMORE_REL_NEAR and rbDIFF_REL_NEAR are added</listitem>
+<listitem>The Rich Booleans rbDOESNT_EXIST, rbFILE_EXISTS and rbDIRECTORY_EXISTS
+check whether a file or directory exists or not. The Rich Booleans rbFILE and rbDIRECTORY
+check whether a file or directory exists and has certain properties.</listitem>
+<listitem>Rich Boolean objects can be negated with the unary operator !</listitem>
+<listitem>Macros for making Rich Boolean functor classes from
+Rich Boolean functor core classes of which the constructor takes an argument,
+have been added.</listitem>
+<listitem>A dash is added before the state of an analysis when it is streamed out,
+e.g. '- ok' instead of 'ok'</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 2.0.1</title>
+<itemizedlist mark='bullet'>
+<listitem>The documentation is updated to inform about a common compile error if you use
+Unicode with WxWidgets (which is not yet supported), and a comment is added where the compile
+error occurs.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 2.0</title>
+<itemizedlist mark='bullet'>
+<listitem>Writing custom Rich Booleans is now a lot easier by using classes that wrap
+a custom Rich Boolean Functorcore, which is a lot simpler than writing a Rich Boolean Functor.</listitem>
+<listitem>Writing custom Rich Booleans without a wrapper has changed a little to solve some problems,
+you now need to add 4 methods if your Rich Boolean takes 2 arguments.</listitem>
+<listitem>It is now possible to combine Rich Boolean functors in logical operations</listitem>
+<listitem>Most Rich Boolean macros now have a variation that can be used in assertion
+macros that return a value</listitem>
+<listitem>Comparing of two ranges and of two strings now uses points, so partial matching
+is used when you compare two ranges of containers or strings</listitem>
+<listitem>Pointers can now also be converted to a string</listitem>
+<listitem>The output of Rich Booleans that work on ranges is made more consistent with
+the output of other Rich Booleans (e.g. "range is sorted: `array'-`array+4' - nok" instead of
+"range is not sorted: `array'-`array+4'")</listitem>
+<listitem>A NULL char pointer that is converted to a string now yields the string "\NULL"</listitem>
+<listitem>The Rich Boolean Functor classes wxIsKindOf, wxHasType and wxEqualTypes are 
+renamed to WxIsKindOf, WxHasType and WxEqualTypes because of a collision with a macro in the
+wxWidgets library.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.4.1</title>
+<itemizedlist mark='bullet'>
+<listitem>The conversion of single characters and character pointers
+to a string is now escaped.</listitem>
+<listitem>The warning that no assignment operator could be made for
+GetMember is resolved.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.4</title>
+<itemizedlist mark='bullet'>
+<listitem>The GetValue template parameters of Rich Boolean classes
+now can have a state</listitem>
+<listitem>Two templates classes are added to facilitate using a member
+or method of an object in Rich Boolean objects</listitem>
+<listitem>All macros now evaluate their arguments only once</listitem>
+<listitem>You can now eliminate the literal text in Rich Booleans
+to reduce the executable size</listitem>
+<listitem>The template class Pointer can now also be used in compilers
+that can't do partial template specialization, but can't be nested.</listitem>
+<listitem>The template classes PointerToValue and PointerLikeToValue are added
+that return a value instead of a const reference, to avoid problems when
+they are nested.</listitem>
+<listitem>Project files for Code::Blocks are added</listitem>
+<listitem>A bug in the Compare class using input interators, that caused it
+to walk too far, is solved</listitem>
+<listitem>The way Expression objects are used, is optimized. The class EmptyExpression
+is removed; where it was used, it is replaced by NULL pointers</listitem>
+<listitem>Endl no longer adds a carriage return on Windows,
+since ModAssert no longer needs this</listitem>
+<listitem>On Windows, LARGE_INTEGER and ULARGE_INTEGER can now
+be converted to a string with RichBool::ToString, so they
+can be used in Rich Booleans</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.3.1</title>
+<itemizedlist mark='bullet'>
+<listitem>Warning levels are increased where it is feasible to clean up the remaining warnings</listitem>
+<listitem>Autolinking is now used for Visual C++.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.3</title>
+<itemizedlist mark='bullet'>
+<listitem>The license has changed to the wxWindows licence</listitem>
+<listitem>The Rich Booleans <code>rbSTRING_BEGINS_WITH</code>,
+	<code>rbSTRING_ENDS_WITH</code> and <code>rbSTRING_CONTAINS</code>
+	are added.</listitem>
+<listitem>The Rich Boolean rbEXCEPTION is added that gives information about an exception</listitem>
+<listitem>Rich Booleans that work on one or two ranges, can now also specify the range by giving
+	the begin of the range and the number of elements to check on</listitem>
+<listitem>Undocumented classes and functions are put in the namespace detail inside
+the namespace RichBool</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.2.1</title>
+<para>Solution and project files specific for Microsoft Visual Studio 2005 are added.</para>
+</sect2>
+
+<sect2><title>New in version 1.2</title>
+<itemizedlist mark='bullet'>
+<listitem>The Rich Booleans <code>rbIN_ARRAY</code> and
+<code>rbIN_ARRAYS</code> have been added to perform a check on an entire array
+without having to give its size.</listitem>
+<listitem>Some performance improvements.</listitem>
+<listitem>The Rich Booleans ending in _ARG are deprecated. Instead, you should
+use All, Has, Unique and Compare as Rich Boolean factories in the equivalent
+Rich Booleans without the suffix _ARG.</listitem>
+<listitem>The Rich Boolean factory <classname>CompareUnordered</classname> and the Rich Boolean
+  <classname>AllEqualUnordered</classname> are added.</listitem>
+<listitem>STL and WxWidgets containers can now be converted to a string.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.1</title>
+<itemizedlist mark='bullet'>
+<listitem>The Rich Booleans <code>rbORDER2</code>, <code>rbORDER3</code> and
+<code>rbORDER4</code> have been added to check relations on 2, 3 or 4 expressions
+in a flexible way.</listitem>
+<listitem>The Rich Booleans <code>rbWX_EQUAL_TYPES</code>, <code>rbWX_HAS_TYPE</code> and
+<code>rbWX_IS_KIND_OF</code> have been added to do runtime typechecking with the
+wxWidgets mechanism.</listitem>
+<listitem>The Rich Boolean <code>rbPRED4</code> is added to use a predicate
+that takes four arguments.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 1.0</title>
+<itemizedlist mark='bullet'>
+<listitem>Makefiles with a configure script are added, so compilation should work on
+most UNIX-like systems.</listitem>
+<listitem>The include directory is now called <filename>richbool</filename></listitem>
+<listitem>The Rich Boolean rbSTRING can now work with widecharacter strings.
+Therefore, the template
+classes BasicStrcmp, BasicStrcmpToUpper, BasicStrcmpToLower, BasicCollate,
+BasicCollateToUpper and BasicCollateToLower are added, with typedefs for
+both char and wchar_t. They can also work with basic_string objects that don't
+have the default template arguments.</listitem>
+<listitem>Rich booleans that start with rbIN_STD_CONTAINER are renamed to
+start with rbIN_CONTAINER.</listitem>
+<listitem>Rich booleans that start with rbIN_WX_CONTAINER are renamed to
+start with rbIN_XCONTAINER.</listitem>
+<listitem>The Rich boolean <code>rbBOUNDARY</code> is renamed <code>rbIN_INTERVAL</code>.</listitem>
+<listitem>The Rich boolean <code>rbEQUAL_TYPES</code> now has pointers as arguments instead
+of references.</listitem>
+<listitem>The Rich booleans <code>rbXOR</code>, <code>rbIN_OPEN_INTERVAL</code>,
+<code>rbEQUAL_DATA</code> and <code>rbEQUAL_DATA_BITWISE</code> are added.</listitem>
+<listitem>Custom value getters now can have a prefix or a suffix added to their expression.</listitem>
+<listitem>Comparison of strings now takes care of char pointers that are null.</listitem>
+<listitem>Comparison of strings with collation now takes better care of characters that
+are ignored.</listitem>
+<listitem>Comparison of MFC CStrings can now be done.</listitem>
+<listitem>Only output of strings is now escaped, for efficiency.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.9</title>
+<itemizedlist mark='bullet'>
+<listitem>The Rich Booleans rbEQUAL_STRING, rbSTRCMP_EQUAL and rbSTRICMP_EQUAL
+are replaced by the more generic rbSTRING, which also allows to check if a
+string is lexicographically less than another string, and can use locales.</listitem>
+<listitem>Three Rich booleans are added to do runtime typechecking:
+rbEQUAL_TYPES, rbHAS_TYPE and rbDYNAMIC_CASTABLE.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.8</title>
+<itemizedlist mark='bullet'>
+<listitem>The Rich Booleans that work on ranges and containers
+have been drastically rewritten, to maximize simplicity and
+genericity. It is now possible to check whether a predicate
+applies to all elements, at least one element or exactly one
+element in a range or container. Analysis of such checks can
+give the data of all the elements in the range, or only the ones
+for which the predicate doesn't apply.</listitem>
+<listitem>Analysis of most Rich booleans now contains the
+textual representation of the arguments; if they're used in
+a range or container, the index of the element is shown instead.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.7</title>
+<itemizedlist mark='bullet'>
+<listitem>It is now possible to use partial matches in custom rich booleans,
+which is useful when two ranges of objects are compared (this is also used in
+the rich booleans <code>rbSTD_MAPS_EQUAL</code> and <code>rbWX_MAPS_EQUAL</code>)</listitem>
+<listitem>Code that uses rich booleans can now tell a rich boolean to only
+evaluate the arguments, if required</listitem>
+<listitem>Code that uses rich booleans can now tell a rich boolean to always
+create an analysis, even if the condition succeeds</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.6</title>
+<itemizedlist mark='bullet'>
+<listitem>The rich booleans <code>rbRANGE_SORTED</code>, <code>rbRANGE_SORTED_STRICTLY</code>
+are added that check if a range is sorted, and the rich booleans <code>rbRANGE_ADJACENT_PRED</code>
+and <code>rbRANGE_ADJACENT_RB</code> are added that check a condition on adjacent elements in
+a range</listitem>
+<listitem>The rich booleans <code>rbSTD_MAPS_EQUAL</code> and <code>rbWX_MAPS_EQUAL</code>
+are added that check if two maps are equal</listitem>
+<listitem>Project files for wxWidgets are adjusted to wxWidgets 2.6.1 (include and library
+directories were adjusted)</listitem>
+<listitem>The class <classname>Info</classname> is renamed to <classname>Analysis</classname>,
+to avoid name confusion with the level
+<code>Info</code> in ModAssert, if both namespaces would be used with using; derived classes
+are also renamed accordingly, the method <code>GetInfo</code> of Rich Boolean classes is
+renamed <code>Analyse</code>, and some more minor name changes</listitem>
+<listitem>Rich Boolean classes now have <code>typedef bool Points;</code> added, to take
+future changes into account</listitem>
+<listitem>The output of Rich Booleans now show valid values between parentheses instead of
+curly braces. </listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.5</title>
+<itemizedlist mark='bullet'>
+<listitem>The rich booleans <code>rbRANGE_PRED</code>, <code>rbRANGE_RB</code>,
+    <code>rbRANGE_SP_PRED</code> and <code>rbRANGE_SP_RB</code> have been added
+    to check if all the elements in a range fullfil a given condition.
+    Similar rich booleans have been added for STL containers and wxWidgets containers.</listitem>
+<listitem>You can now bind the arguments of rich booleans with two or three
+    arguments.</listitem>
+<listitem>The macros <code>rbEQUAL_BITWISE</code>, <code>rbBITS_ON</code> and
+    <code>rbBITS_OFF</code> are added to do bitwise checks.</listitem>
+<listitem>The extension of header files is changed to .hpp, and uppercase symbols in
+    filenames were made lowercase.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.4</title>
+<itemizedlist mark='bullet'>
+<listitem>You can now compare a container of pointers to objects with a container of objects,
+    two containers of pointers to objects or even more complex combinations. You can do the same
+    with iterators, smart pointers and other pointerlike objects.</listitem>
+<listitem>The Rich Boolean <code>rbDELTA</code> is renamed <code>rbNEAR</code>.</listitem>
+<listitem>The Rich Boolean <code>rbREL_NEAR</code> has been added that checks
+    whether the absolute value of the difference between two numbers is less than
+    a given percentage of the biggest.</listitem>
+<listitem>If a bad pointer is dereferenced in a Rich Boolean, its address will be shown
+    (if it is recognized as a bad pointer)</listitem>
+<listitem>All <classname>Info</classname> objects now have a flag that indicates whether
+    the condition was ok, not ok or not evaluated</listitem>
+<listitem>Objects of the class <classname>TextInfo</classname> now can have other
+    <classname>Info</classname> objects embedded in them</listitem>
+<listitem><classname>InfoWithStrings</classname> now has a template constructor to customize the
+    comparing of characters</listitem>
+<listitem><code>rbPRED1</code>, <code>rbPRED2</code> and <code>rbPRED3</code> are renamed
+    <code>rb1_PRED</code>, <code>rb2_PRED</code> and <code>rb3_PRED</code></listitem>
+<listitem>Rich Boolean macros <code>rb1_RB</code>, <code>rb2_RB</code> and <code>rb3_RB</code> are added,
+    that take a Rich Boolean object as their last argument</listitem>
+<listitem><classname>Pred2</classname> and <classname>Pred3</classname>
+    now have different stringize template parameters, so their arguments can be serialized
+    in different ways</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.3</title>
+<itemizedlist mark='bullet'>
+<listitem>Rich Booleans <code>rbEQUAL_RANGES_SP2</code>, <code>rbEQUAL_RANGES_SP2_PRED</code>,
+    <code>rbEQUAL_RANGES_SP2_RB</code>, <code>rbEQUAL_ARRAY_RANGE_SP2</code>,
+    <code>rbEQUAL_ARRAY_RANGE_SP2_PRED</code> and <code>rbEQUAL_ARRAY_RANGE_SP2_RB</code>
+    are added to compare two ranges where the second range can be traversed only once,
+    so a single pass algorithm is used for the second range</listitem>
+<listitem>Rich Booleans <code>rbEQUAL_RANGES_SP12</code>, <code>rbEQUAL_RANGES_SP12_PRED</code>
+    and <code>rbEQUAL_RANGES_SP12_RB</code>
+    are added to compare two ranges where both ranges can be traversed only once,
+    so a single pass algorithm is used for both ranges</listitem>
+<listitem>The class <classname>RichBool::Info</classname> and its derived classes no longer
+    have a method <code>GetText</code>. Instead they now have <code>operator&lt;&lt;</code>
+    to stream their data into a stream, which is more efficient.</listitem>
+<listitem>For wxWidgets, streaming is now done to a <classname>wxTextOutputStream</classname>
+    object instead of a <classname>wxString</classname>, which is more efficient when the
+    output is written to a <classname>wxTextOutputStream</classname> object.</listitem>
+<listitem>The Rich Booleans that compare ranges or containers
+    have a new, more consistent name, e.g. <code>rbEQUAL_RANGES_PRED</code>
+    is now <code>rbRANGES_PRED</code> (because they're not necessarily equal), and
+    <code>rbEQUAL_RANGES</code> is now <code>rbRANGES_EQUAL</code> to be consistent with
+    <code>rbRANGES_PRED</code></listitem>
+<listitem>Rich Booleans that compare containers have been renamed. STD_CONT becomes STD_CONTAINER
+    or STD_CONTAINERS (depending on whether one or two containers are involved), and WX_CONT becomes WX_CONTAINER
+    or WX_CONTAINERS (idem). Furthermore the same renaming changes as in the previous item
+    were applied.</listitem>
+<listitem>The order of the arguments for the Rich Boolean <code>rbBOUNDARY</code> has changed.</listitem>
+<listitem>The package RichBoolTest is now in the same download.</listitem>
+<listitem>The text "ranges have different content" in the output of Rich Booleans that compare
+    ranges, has been changed to "predicate doesn't apply on those ranges" if a predicate or
+    rich boolean is used to compare the ranges instead of equality.</listitem>
+<listitem>A bug where comparison of ranges is not done if <code>richbool_check</code>
+    is false, was solved.</listitem>
+<listitem>The method <code>BadPtr</code> now has an extra argument, the size of the object. Some
+    platforms can check for this, like Microsoft Visual C++. If that compiler is used,
+    <code>BadPtr</code> will use the function <code>IsBadReadPtr</code>.</listitem>
+</itemizedlist>
+</sect2>
+
+<sect2><title>New in version 0.2</title>
+<itemizedlist mark='bullet'>
+<listitem>Rich Booleans <code>rbEQUAL_RANGES_RB</code> and <code>rbEQUAL_ARRAY_RANGE_RB</code>
+    to use another Rich Boolean to pairwise compare the elements of two ranges</listitem>
+<listitem>Rich Booleans <code>rbEQUAL_ARRAY_STD_CONT</code>, <code>rbEQUAL_ARRAY_STD_CONT_PRED</code>,
+    <code>rbEQUAL_ARRAY_WX_CONT</code> and <code>rbEQUAL_ARRAY_WX_CONT_PRED</code> to compare
+    a container to an array</listitem>
+<listitem>Rich Booleans <code>rbEQUAL_STD_CONT_RB</code>, <code>rbEQUAL_ARRAY_STD_CONT_RB</code>,
+    <code>rbEQUAL_WX_CONT_RB</code> and <code>rbEQUAL_ARRAY_WX_CONT_RB</code> to
+    to use another Rich Boolean to pairwise compare the elements of two ranges</listitem>
+<listitem>Most Rich Booleans now have a corresponding class with methods
+    <code>bool operator(...)</code> and <code>RichBool::Info* GetInfo(...)</code>,
+    that the Rich Boolean macros call; the classes can be reused in the Rich Booleans mentioned above
+    ending in _RB</listitem>
+<listitem>Rich Booleans <code>rbOR</code> and <code>rbAND</code> to combine Rich Booleans (also
+    <code>rbOR_DE</code>, <code>rbOR_BE</code>, <code>rbAND_DE</code> and <code>rbAND_BE</code>
+    to allow nesting)</listitem>
+<listitem>Rich Boolean <code>rbBOUNDARY</code> to check if a value is between two others</listitem>
+<listitem>Rich Booleans <code>rbPRED1</code>, <code>rbPRED2</code> and <code>rbPRED3</code>
+    to easily use predicates</listitem>
+<listitem>Text returned by many Rich Booleans is made shorter, using operators instead of words;
+    e.g. "{5} == {6} - nok" instead of "expected {5} to be equal to {6}". This way they are also
+    independent of language.</listitem>
+<listitem>Valid values are now shown between { and } instead of &lt; and &gt;, to distinguish easily
+    between values and operators; e.g. "{5} &lt; {4} - nok" instead of "&lt;5&gt; &lt; &lt;4&gt; failed"</listitem>
+<listitem>The class <classname>RichBool::SharedInfo</classname> is added, a shared pointer class for
+    objects of the type <classname>RichBool::Info</classname>. Therefore the method <code>clone()</code>
+    in <classname>RichBool::Info</classname> and derived classes is no longer necessary, and is removed.
+</listitem>
+<listitem>The class <classname>RichBool::InfoWithExpressions</classname> is renamed
+    <classname>RichBool::TextInfo</classname></listitem>
+<listitem>The text <literal>NULL pointer</literal> is replaced by the more accurate
+    <literal>bad pointer</literal></listitem>
+<listitem>A new package called RichBoolTest was made, that contains tests for every Rich Boolean
+    (before the tests were in the package ModAssert).</listitem>
+<listitem>The preprocessor definition RICHBOOL_USE_WX_STRING has been deprecated, use
+RICHBOOL_USE_WX instead. RICHBOOL_USE_WX_STRING will disappear in the next version.</listitem>
+<listitem>Filenames have been shortened so they fit the 8.3 format, to improve portability.</listitem>
+<listitem>The function <code>bool BadPtr()</code> has been improved to detect the usage of uninitialized
+memory with Microsoft Visual C++ (in debug mode).</listitem>
+</itemizedlist>
+</sect2>
+
+</sect1>
+

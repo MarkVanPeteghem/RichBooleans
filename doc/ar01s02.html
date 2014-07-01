@@ -1,0 +1,20 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>What is a Rich Boolean?</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="index.html" title="Rich booleans, version 2.2.2"><link rel="next" href="ar01s03.html" title="License"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">What is a Rich Boolean?</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id502693"></a>What is a Rich Boolean?</h2></div></div></div><p>A Rich Boolean is a macro, that is a bit like a boolean expression,
+e.g. <code class="code">rbEQUAL(a,b)</code> instead of <code class="code">a==b</code>.
+The main difference is that it holds an analysis of the boolean expression, if
+the condition fails. The analysis can be streamed out, and e.g. output
+"`a':&lt;1&gt; == `b':&lt;2&gt; - nok". Between ` and ' are the expressions,
+between &lt; and &gt; are their values. "nok" indicates that the condition
+failed (in some circumstances it is shown when it succeeded, then it would end
+in "ok").</p><p>A Rich Boolean can be assigned to
+an object of the class <code class="classname">RichBool::Bool</code>. This class
+has a method <code class="code">bool operator()</code>, which tells if the condition
+succeeded or not, and <code class="code">const RichBool::SharedAnalysis&amp; GetAnalysis() const</code>
+that returns a shared pointer to the analysis (it may be NULL). Furthermore some
+objects need to be declared, so usually this is all taken care of with a macro
+(see <a href="ar01s21.html" title="Writing macros that use rich booleans (advanced)">the section called &#8220;Writing macros that use rich booleans (advanced)&#8221;</a>). See <a href="ar01s05.html" title="Projects that use Rich Booleans">the section called &#8220;Projects that use Rich Booleans&#8221;</a>
+for some libraries that have such macros.</p><p>A Rich Boolean doesn't always create an analysis, to save time and memory. You can specify (at compiletime or runtime) to do one of the following:
+</p><div class="itemizedlist"><ul type="bullet"><li style="list-style-type: disc">only evaluate the arguments of the Rich Boolean macro</li><li style="list-style-type: disc">only evaluate the condition without creating an analysis</li><li style="list-style-type: disc">only create an analysis if the condition fails</li><li style="list-style-type: disc">always create an analysis</li></ul></div><p>Most Rich Boolean macros have a corresponding class, e.g.
+<code class="classname">RichBool::Equal</code>, which are called Rich Boolean functor classes.
+Objects of these classes are called Rich Boolean functors, and can be used
+in more complex Rich Boolean macros and even in certain Rich Boolean functor classes;
+they can also act as regular functors (function objects) because they have a method <code class="code">operator()(...)</code>.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Rich booleans, version 2.2.2 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> License</td></tr></table></div></body></html>

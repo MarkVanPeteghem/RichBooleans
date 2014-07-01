@@ -1,0 +1,1478 @@
+<sect1 id='richboolobjects'>
+	<indexterm><primary>Rich Boolean functors in Rich Boolean macros</primary></indexterm>
+	<title>Using Rich Boolean functors in Rich Boolean macros</title>
+	<para>The Rich Booleans that end in _RB, like <code>rb2_RB</code>, and the ones that
+	work on one or two ranges, have a Rich Boolean functor as their last argument,
+	so you have to create such an object.
+	For the ones that work on ranges, you can use a Rich Boolean functor factory like <code>All</code>, <code>Has</code>, <code>Unique</code>
+	or <code>Compare</code>, but you still need to supply another Rich Boolean functor to their factory method.
+Many Rich Boolean macros have a corresponding class, of which you should construct an object to provide
+as that argument. See the previous sections to see what the corresponding functor class of a Rich Boolean is,
+if it has one.</para>
+	<para>This allows you to do powerful comparisons of two ranges or containers. E.g. the following checks
+whether the integers in one vector are smaller than the integers in another vector:</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(Less&lt;&gt;()))
+	</programlisting>
+	<para>The following checks whether two vectors of vectors are equal:</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(MakeInContainers(Compare&lt;&gt;().That(Equal&lt;&gt;()))))
+	</programlisting>
+	<para>The following checks whether the integers in one vector of vectors are smaller than
+the integers in another vector of vectors:</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(MakeInContainers(Compare&lt;&gt;().That(Less&lt;&gt;()))) )
+	</programlisting>
+	
+	<sect2><title>Getters</title>
+
+<para>The classes that correspond to Rich Booleans can have optionally template parameters
+that customize how the value that it uses, is to be retrieved. The default is
+<code>RichBool::Value</code>, which simply returns the value itself.</para>
+
+<sect3><title>Dereferencing</title>
+<indexterm><primary>Dereferencing</primary></indexterm>
+<indexterm><primary>Pointer</primary></indexterm>
+<indexterm><primary>PointerLike</primary></indexterm>
+<indexterm><primary>PointerToValue</primary></indexterm>
+<indexterm><primary>PointerLikeToValue</primary></indexterm>
+<para><code>RichBool::Pointer&lt;class GetValue=RichBool::Value&gt;</code>
+can be used to dereference
+pointers. E.g. the following compares a vector of pointers to integers, with a vector of integers:
+</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;Pointer&lt;&gt;, Value &gt;()))
+	</programlisting>
+	<para>For iterators, smart pointers and other pointerlike objects, use the class
+    <code>RichBool::PointerLike&lt;typename T, class GetValue=RichBool::Value&gt;</code>, where T is the type of
+    the objects that are returned when it is dereferenced.
+    E.g. the following compares a vector of iterators to integers with a vector of integers:
+</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;PointerLike&lt;int&gt;, Value &gt;()))
+	</programlisting>
+	<para>These can be nested, e.g. the following compares a vector of pointers to pointers
+to integers with a vector of integers:
+</para>
+	<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;Pointer&lt;Pointer&gt; &gt;, Value &gt;()))
+	</programlisting>
+	<para>Note: the second template argument <classname>Value</classname> isn't necessary in
+    these examples because that is the default type, but it was shown for clarity.</para>
+	<para>Note: if your compiler doesn't support partial template specialization, you can't nest
+    <classname>Pointer</classname>, but you can use <classname>PointerLike</classname> instead.
+</para>
+	<para>When you nest, you may run into troubles, because <classname>Pointer</classname> and
+	<classname>PointerLike</classname> return a const reference, which may refer to a temporary
+	that no longer exists. In these cases, you should use the alternatives <classname>PointerToValue</classname> and
+	<classname>PointerLikeToValue</classname>, that return a value. Otherwise they are exactly the same as
+	the former.</para>
+	<para><classname>PointerLike</classname> can also be nested. In this case, the template type that
+    tells which value is returned, should always be the same. The following demonstrates this:
+</para>
+<programlisting>
+    rbIN_CONTAINERS(vec1, vec2,
+        Compare&lt;&gt;().That(Equal&lt;PointerLike&lt;int, PointerLike&lt;int&gt; &gt;, Value&gt;()))
+</programlisting>
+</sect3>
+
+<sect3><title>Using a member of an object</title>
+<indexterm><primary>Member of an object</primary></indexterm>
+<indexterm><primary>GetMember</primary></indexterm>
+<para>If you want the Rich Boolean to work on a member of a given object instead of the object itself,
+use the template class <classname>GetMember&lt;T, Return&gt;</classname> instead of <classname>Value</classname>,
+where <classname>T</classname> is the type of the object, and <classname>Return</classname> is the type
+of the member. The constructor of this template class takes a pointer to a member and a <code>const char*</code>
+value that describes the member (starting with a period for readability).
+The following illustrates this:
+<programlisting>
+class MyClass
+{
+public:
+	int a;
+	...
+};
+
+std::vector&lt;MyClass&gt; vec1, vec2;
+std::vector&lt;int&gt; int_vec;
+
+...
+
+RichBool::GetMember&lt;MyClass, int&gt; gm(&amp;MyClass::a, ".a");
+
+RichBool::Equal&lt;RichBool::GetMember&lt;MyClass, int&gt; &gt; equal_useMemberOfFirst(gm);
+MOD_ASSERT(rbIN_CONTAINERS(vec1, int_vec,
+    Compare&lt;&gt;().That(equal_useMemberOfFirst)));
+
+RichBool::Equal&lt;
+    RichBool::GetMember&lt; MyClass, int&gt;,
+    RichBool::GetMember&lt; MyClass, int&gt;
+    &gt;
+    equal_useMemberOfBoth(gm, gm);
+MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2,
+    Compare&lt;&gt;().That(equal_useMemberOfBoth)));
+</programlisting>
+</para>
+</sect3>
+
+<sect3><title>Using a method of an object</title>
+<indexterm><primary>Method of an object</primary></indexterm>
+<indexterm><primary>CallMethod</primary></indexterm>
+<para>You can do the same with the return value of a method of a given object instead of the object itself,
+using the template class <classname>CallMethod&lt;T, Return&gt;</classname> instead of <classname>Value</classname>,
+where <classname>T</classname> is the type of the object, and <classname>Return</classname> is the return type
+of the member. The constructor of this template class takes a pointer to a method and a <code>const char*</code>
+value that describes the method (ideally preceded by a periond). The method should be <code>const</code>.
+The following illustrates this:
+<programlisting>
+class MyClass
+{
+public:
+	int GetA() const;
+	...
+};
+
+std::vector&lt;MyClass&gt; vec1;
+std::vector&lt;int&gt; int_vec;
+
+...
+
+RichBool::CallMethod&lt;MyClass, int&gt; gm(&amp;MyClass::GetA, ".GetA()");
+RichBool::Equal&lt;RichBool::CallMethod&lt;MyClass, int&gt; &gt; equal_useMethod(gm);
+
+MOD_ASSERT(rbIN_CONTAINERS(vec1, int_vec,
+    Compare&lt;&gt;().That(equal_useMethod)));
+</programlisting>
+</para>
+</sect3>
+
+<sect3><title>GetMemberArg and CallMethodArg for older compilers</title>
+<indexterm><primary>GetMemberArg</primary></indexterm>
+<indexterm><primary>CallMethodArg</primary></indexterm>
+Note: some older compilers, e.g. Visual C++ 6.0, have problems with the way templates are used
+in the classes <classname>GetMember</classname> and <classname>CallMethod</classname>.
+If this is the case for your compiler, adjust the file <filename>config.hpp</filename>
+in the directory <filename>include/richbool</filename>
+so that the symbol <code>RICHBOOL_NO_TEMPLATE_TYPE_LOOKUP</code> is defined.
+This will instruct the preprocessor to remove these classes. Instead you can still use the classes
+<classname>GetMemberArg</classname> and <classname>CallMethodArg</classname>,
+which have a third mandatory template argument, which is the type that is returned.
+If you don't nest another class in it but the default, this is the same as the second template argument.
+</sect3>
+
+<sect3><title>Composing getters</title>
+<indexterm><primary>Composing getters</primary></indexterm>
+<para>You can also compose objects of the classes <classname>Pointer</classname>,
+<classname>PointerToValue</classname>, <classname>PointerLike</classname>,
+<classname>PointerLikeToValue</classname>, <classname>GetMember</classname>, <classname>CallMethod</classname>,
+<classname>GetMemberArg</classname> and <classname>CallMethodArg</classname>
+by making the template argument a class of another, and pass an object of that class to the constructor if
+it is not an empty object (e.g. objects of the classes <classname>GetMember</classname> and <classname>CallMethod</classname>).
+Then the nesting order is important. First the outer object works on its argument, then the one
+inside it. E.g. if you have pointers to list-iterators
+that hold integers, use
+<code>Pointer&lt;PointerLike&lt;int&gt; &gt;</code>, so that the pointer is dereferenced by <classname>Pointer</classname>,
+after which the iterator is dereferenced by .
+If you have list-iterators that hold pointers to integers,
+use <code>PointerLike&lt;int, Pointer&lt;&gt; &gt;</code>, to do the same operations in the opposite order.
+</para>
+<para>If you have a class with a pointer <code>pa</code> to an integer in it, use
+<code>GetMember&lt;MyClass, int, RichBool::Pointer&lt;&gt; &gt; gmp(&amp;MyClass::pa, ".pa")</code>.
+If you do this with <classname>GetMemberArg</classname>, use
+<code>GetMemberArg&lt;MyClass, int, int*, RichBool::Pointer&lt;&gt; &gt; gmp(&amp;MyClass::pa, ".pa")</code>,
+because the third template argument is the type that the enclosed.
+</para>
+</sect3>
+
+<sect3><title>Multiple levels of dereferencing</title>
+	<indexterm><primary>Multiple levels of dereferencing</primary></indexterm>
+	<para>Rich Boolean functors can also be used in the macros <code>rb1_RB</code>, <code>rb2_RB</code>,
+    <code>rb3_RB</code> and so on. This is only useful if you have e.g. a pointer to a pointer,
+    and want to check if every level of dereferencing is safe. Note that one level of dereferencing is
+    always safe with the Rich Booleans. For two levels, you need <classname>Pointer</classname>
+    as a template parameter. Suppose <code>p</code> is a pointer to a pointer to an integer:</para>
+	<para>
+		<code>rb2_RB(*p, 5, Equal&lt;Pointer&lt;&gt; &gt;())</code>
+	</para>
+	<para>Now if either <code>p</code> or <code>*p</code> is an invalid pointer, it will be safely handled.</para>
+</sect3>
+	
+<sect3><title>Defining custom data retrievers (advanced)</title>
+<indexterm><primary>Defining custom data retrievers</primary></indexterm>
+<indexterm><primary>Custom data retrievers</primary></indexterm>
+<para>You can also define your own classes to retrieve data, and use these as template parameters
+    in Rich Boolean functors, like you use <classname>Pointer</classname> or
+    <classname>GetMember</classname>. With the available classes <xref linkend='richboolobjects'/>,
+	this is usually not necessary.
+    If you want to do it, you need to create a class that has these 5 methods:
+    <itemizedlist mark='bullet'>
+				<listitem><code>ReturnValue operator()(const T &amp;t)</code> to get the desired value from the object</listitem>
+				<listitem><code>bool BadPtrChain(const T &amp;t)</code> to check if the address of the object is valid</listitem>
+				<listitem><code>template&lt;class Stringize_&gt; std::string ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const</code>
+					to convert the value to a string</listitem>
+				<listitem><code>template&lt;typename T&gt; std::string AddressToString(const T *t) const</code> to convert
+					an address to a string (usually the same as in the example below). Its argument will be a pointer to the object
+					that is given to <code>operator()</code>.</listitem>
+				<listitem><code>SharedExpression Convert(SharedExpression expr) const</code> to convert an expression
+					to another expression that adds information to it. The return type should be derived from
+					<classname>Expression</classname>. <classname>PrefixedExpression</classname>
+					and <classname>SuffixedExpression</classname> are useful classes for this, see <xref linkend='expressions' /></listitem>
+			</itemizedlist>
+Note: replace <classname>std::string</classname> by <classname>wxString</classname> above if you use
+wxWidgets.</para>
+<para>If you want to nest this in <classname>Pointer</classname>, you also need to add a nested template class
+<classname>Return</classname> with one template parameter. The template parameter specifies the type that
+is given to <code>operator()</code>. In that template class there should be a typedef <classname>Type</classname>
+that is the return type of <code>operator()</code> when an object of the template type is given to it.
+Usually the template parameter doesn't influence the return type (unlike in e.g. <classname>Pointer</classname>).
+</para>
+<example><title>Writing a class to let Rich Boolean functors retrieve a value in a custom way</title>
+Suppose you have a struct that has two ints:
+<programlisting>struct TwoInts
+{
+ 	int a, b;
+};</programlisting>
+and you want to check against one of them, then you can create a struct as follows:
+<programlisting>struct GetA
+{
+    // the return type of operator() is independent of the type of its argument
+    template&lt;typename T&gt;
+    struct Return { typedef int Type; };
+
+    const int&amp; operator()(const TwoInts &amp;t) const { return t.a; }
+
+    bool BadPtrChain(const TwoInts &amp;t) const
+    {
+        return RichBool::BadPtr(&amp;t);
+    }
+
+    template&lt;class Stringize_&gt;
+    std::string ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const
+    {
+        if (RichBool::BadPtr(&amp;t))
+            return RichBool::PtrToString(&amp;t);
+        else
+            return str(t.a)+" (b="+str(t.b)+")";
+    }
+
+    template&lt;typename T&gt;
+    std::string AddressToString(const T *t) const
+    {
+        return PtrToString(t);
+    }
+
+    RichBool::SharedExpression Convert(RichBool::SharedExpression expr) const
+    {
+        return new RichBool::SuffixedExpression(".a", expr);
+    }
+};</programlisting>
+You can then use <classname>GetA</classname> as the template argument of a Rich Boolean functor as follows:
+<programlisting>
+    std::vector&lt;int&gt; vecInt;
+    std::vector&lt;TwoInts&gt; vecTwoInts;
+
+    ...
+    
+    RichBool::Equal&lt;RichBool::Value, GetA&gt; rb;
+
+    MOD_ASSERT(rbIN_CONTAINERS(vecInt, vecTwoInts, Compare&lt;&gt;().That(rb)));
+</programlisting>
+Note: if the member <code>a</code> had been a pointer to an integer, the method <code>BadPtrChain</code>
+could also check if it is a valid pointer:
+<programlisting>
+    bool BadPtrChain(const TwoInts &amp;t) const
+    {
+        return RichBool::BadPtr(&amp;t) || RichBool::BadPtr(t.a);
+    }
+</programlisting>
+Then the method <code>ToString</code> should also handle the case where the pointer could have a non-dereferenceable value:
+<programlisting>
+    template&lt;class Stringize_&gt;
+    String ToString(const TwoInts &amp;t, const Stringize_ &amp;str) const
+    {
+        if (RichBool::BadPtr(&amp;t))
+            return RichBool::PtrToString(&amp;t);
+        else if (RichBool::BadPtr(t.a))
+            return RichBool::PtrToString(&amp;t)+" -> a="+RichBool::PtrToString(t.a);
+        else
+            return str(*t.a)+" (b="+str(t.b)+")";
+    }
+</programlisting>
+</example>
+</sect3>
+</sect2>
+	
+	<sect2><title>Combining Rich Boolean functors in logical operations</title>
+	<indexterm><primary>Combining Rich Boolean functors in logical operations</primary></indexterm>
+	<indexterm><primary>Rich Boolean functors in logical operations</primary></indexterm>
+	<indexterm><primary>Logical operations on Rich Boolean functors</primary></indexterm>
+	<indexterm><primary>operator&amp;</primary></indexterm>
+	<indexterm><primary>operator&amp;&amp;</primary></indexterm>
+	<indexterm><primary>operator|</primary></indexterm>
+	<indexterm><primary>operator||</primary></indexterm>
+	<indexterm><primary>operator^</primary></indexterm>
+	<indexterm><primary>operator!</primary></indexterm>
+	<para>Rich Boolean functors can be combined in logical operations by using
+	<code>operator&amp;</code>, <code>operator&amp;&amp;</code>, <code>operator|</code>,
+	<code>operator||</code> and <code>operator^</code>. If <code>a</code> and <code>b</code>
+	are Rich Boolean functors that take the same number of arguments, then
+	<itemizedlist mark='bullet'>
+		<listitem><code>a &amp; b</code> is a new Rich Boolean functor that succeeds if and only
+		if they both succeed. It doesn't use short circuiting when it creates the analysis,
+		so the conditions of both are then evaluated to give both analyses, and neither when points
+		for partial matching are requested, so the points of both are given.</listitem>
+		<listitem><code>a &amp;&amp; b</code> is a new Rich Boolean functor that succeeds if and only
+		if they both succeed. It always uses short circuiting, so the condition of the second is only
+		evaluated if the first succeeds. This means that the analysis of the second condition may
+		not be available, and partial matching may not work optimal.</listitem>
+		<listitem><code>a | b</code> is a new Rich Boolean functor that succeeds if and only
+		if at least one of them succeeds. It doesn't use short circuiting when it creates the analysis,
+		so the conditions of both are then evaluated to give both analyses, and neither when points
+		for partial matching are requested, so the points of both are given.</listitem>
+		<listitem><code>a || b</code> is a new Rich Boolean functor that succeeds if and only
+		if at least one of them succeeds. It uses short circuiting, so the condition of the second is only
+		evaluated if the first doesn't succeed. This means that the analysis of the second condition may
+		not be available, and partial matching may not work optimal.</listitem>
+		<listitem><code>a ^ b</code> is a new Rich Boolean functor that succeeds if and only
+		if one of them succeeds and the other fails. It never uses short circuiting, since this is
+		not possible with this operator.</listitem>
+		<listitem><code>!a</code> is a new Rich Boolean functor that succeeds if and only
+		if <code>a</code> doesn't succeed.</listitem>
+	</itemizedlist>
+	You should use the versions that don't use short circuiting (i.e. &amp;, | and ^),
+	unless you really have to use the ones that use short circuiting, because the versions
+	that don't use short circuiting always give the analysis of both Rich Boolean functors if it fails.
+	</para>
+	<para>Note: you should not use input iterators on combinations of two or more Rich Boolean functors,
+	because the range may be traversed twice. However, negating a Rich Boolean functor is safe with
+	input iterators.</para>
+	<para>Examples: the following checks whether for the objects of the class <code>MyClass</code> in
+	<code>vec1</code> and <code>vec2</code> the return value
+	of either <code>GetA()</code> or <code>GetB()</code> is the same:</para>
+	<para>
+	<programlisting>  std::vector&lt;MyClass&gt; vec1, vec2;
+  ...
+  typedef CallMethod&lt;MyClass, int&gt; GetInt;
+  GetInt getA(&amp;MyClass::GetA, ".GetA()"), getB(&amp;MyClass::GetB, ".GetB()");
+  Equal&lt;GetInt, GetInt&gt; equalA(getA, getA), equalB(getB, getB);
+  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(equalA | equalB)));
+  </programlisting>
+  The following checks whether <code>vec1</code> is an ordered subset of
+  <code>vec2</code> or have the same elements in any order:
+  <programlisting>  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2,
+        IsOrderedSubSetOf&lt;&gt;() | AllEqualUnordered&lt;&gt;()));</programlisting>
+  The following checks whether <code>vec1</code> is not a subset of <code>vec2</code>:
+	<programlisting>  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, !IsSubSetOf&lt;&gt;()));</programlisting>
+	</para>
+	</sect2>
+
+</sect1>
+
+<sect1 id='expressions'><title>Expression objects</title>
+	<indexterm><primary>Expression objects</primary></indexterm>
+	<indexterm><primary>IndexExpression</primary></indexterm>
+	<indexterm><primary>TextExpression</primary></indexterm>
+	<indexterm><primary>StringExpression</primary></indexterm>
+	<indexterm><primary>PrefixedExpression</primary></indexterm>
+	<indexterm><primary>SuffixedExpression</primary></indexterm>
+	<indexterm><primary>SharedExpression</primary></indexterm>
+	<para>The class <classname>Expression</classname> (in the RichBool namespace)
+	is an abstract base class for expressions.
+	Objects of these classes contain the description of the arguments that are given to a Rich Boolean macro.
+	This can be e.g. text or an index.</para>
+	<para><classname>Expression</classname> has these methods:
+	<itemizedlist mark='bullet'>
+	<listitem><code>virtual Expression::Type GetType() const</code>:
+	returns an enum to indentify the type of expression</listitem>
+	<listitem><code>bool operator==(const Expression &amp;expr) const</code>:
+	returns whether the other expression is the same</listitem>
+	<listitem><code>virtual operator std::string() const</code>: returns a conversion of the expression to a string
+	(if you use wxWidgets, a <classname>wxString</classname> is returned)</listitem>
+	<listitem><code>virtual Expression* Clone() const</code>: returns a clone of the expression</listitem>
+	</itemizedlist>
+	</para>
+	<para>The following concrete classes are derived from <classname>Expression</classname> in the RichBool namespace:
+	<itemizedlist mark='bullet'>
+	<listitem><classname>IndexExpression</classname>: used to represent the index in a container; used in Rich Booleans
+		that work on ranges and containers</listitem>
+	<listitem><classname>TextExpression</classname>: used to hold the expression as a <code>const char *</code>
+		that is given in the constructor; that text is not copied, so the pointer has to exist as long as the expression object exists</listitem>
+	<listitem><classname>StringExpression</classname>: used to hold the expression as a <classname>std::string</classname> object
+		(or a <classname>wxString</classname> object if you use wxWidgets) that is given in the constructor;
+		that string is copied</listitem>
+	<listitem><classname>PrefixedExpression</classname>: used to add a prefix to an expression; its constructor
+		takes a <code>const char *</code> pointer with the prefix (which is not copied) and a
+		<classname>SharedExpression</classname> object;
+		its method to convert to a string will return the prefix followed by the conversion of the contained expression
+		to a string</listitem>
+	<listitem><classname>SuffixedExpression</classname>: used to add a suffix to an expression; its constructor
+		takes a <code>const char *</code> pointer with the suffix (which is not copied) and a
+		<classname>SharedExpression</classname> object;
+		its method to convert to a string will return the conversion of the contained expression
+		to a string followed by the suffix</listitem>
+	</itemizedlist>
+	</para>
+</sect1>
+
+<sect1>
+	<indexterm><primary>Binding parameters on a Rich Boolean functor</primary></indexterm>
+	<indexterm><primary>BindArg</primary></indexterm>
+	<title>Binding parameters on a Rich Boolean functor</title>
+	<para>Rich Boolean functors that take two or three arguments can bind one or more of their arguments,
+creating a new Rich Boolean functor that takes one argument less.
+The template classes <classname>template &lt;class RichBool_, typename T&gt; class BindArg&lt;M&gt;Of&lt;N&gt;</classname>,
+where N is the number of arguments that the original Rich Boolean functor takes (can be 2 or 3),
+and M is the index of the argument to be binded (between 1 and N), are Rich Boolean functor classes that do this.
+T is the type of the argument you want to bind.
+These classes have two constructors (besides the copy constructor). One takes an argument of type T,
+and is the parameter to be binded. The other one has an extra argument, that is a Rich Boolean functor;
+this is necessary for Rich Boolean functors that are not empty objects (e.g. binding Rich Boolean functors themselves).
+</para>
+	<para>Binding a parameter is necessary if e.g. you want to check that every number in an array is less
+than 10.
+<programlisting>
+  RichBool::BindArg2Of2&lt;RichBool::Less&lt;&gt;, int&gt; lessThan10(10);
+  MOD_ASSERT(rbIN_RANGE(b, e, All&lt;&gt;().Are(lessThan10)));
+</programlisting>
+Another interesting example is checking whether the numbers in two containers differ
+by less than a given number.
+<programlisting>
+  RichBool::BindArg3Of3&lt;RichBool::Near&lt;&gt;, double&gt; areClose(0.01);
+  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().That(areClose)));
+</programlisting>
+Bindings can also be nested, e.g. if you want to check that all the numbers in a range are
+close to a given number:
+<programlisting>
+  typedef RichBool::BindArg3Of3&lt;RichBool::Near&lt;&gt;, double&gt; GeneralNear;
+  GeneralNear generalNear(0.01);
+  RichBool::BindArg2Of2&lt;GeneralNear, double&gt; near5(generalNear, 5.0);
+
+  MOD_ASSERT(rbIN_CONTAINER(vec, All&lt;&gt;().Are(near5)));
+</programlisting>
+If you want to dereference pointers or retrieve data in another way from an argument,
+specify this in the encapsulated rich boolean functor. The binding classes cannot take care of this.
+<programlisting>
+  typedef RichBool::Less&lt;RichBool::Value, RichBool::Pointer&lt;&gt; &gt; LessValPtr;
+  RichBool::BindArg1Of2&lt;LessValPtr, int&gt; rb(5);
+  MOD_ASSERT(rbIN_CONTAINER(vec, All&lt;&gt;().Are(rb)));
+</programlisting>
+The constructor can optionally have text in a const char*, an integer or an
+<classname>Expression</classname> as the last argument. If one
+of these is given, it is converted to an expression, and will be used in the generated analysis.
+<programlisting>
+  RichBool::BindArg2Of2&lt;RichBool::Less&lt;&gt;, int&gt; lessThanN(N, "N");
+  MOD_ASSERT(rbIN_RANGE(b, e, All&lt;&gt;().Are(lessThanN)));
+</programlisting>
+</para>
+</sect1>
+
+<sect1><title>Selecting arguments</title>
+<indexterm><primary>Selecting arguments</primary></indexterm>
+<indexterm><primary>Get1Arg</primary></indexterm>
+<indexterm><primary>Get2Args</primary></indexterm>
+<indexterm><primary>Get3Args</primary></indexterm>
+<indexterm><primary>Get4Args</primary></indexterm>
+<indexterm><primary>Get5Args</primary></indexterm>
+<para>When combining Rich Boolean functors, it may happen that one of the functors
+has to do a check on only one of the arguments. You can do this with the template function
+<code>Get1Arg&lt;N&gt;(RB)</code>, where <code>N</code> is the index of the argument
+that you want (starting counting at 1), and the argument is the Rich Boolean functor
+that you want to use on the single argument.</para>
+<para>The following checks whether for corresponding elements in <code>vec1</code> and <code>vec2</code>,
+the elements are the same or the first is <code>0</code>:
+<programlisting>  std::vector&lt;int&gt; vec1, vec2;
+  ...
+  MOD_ASSERT(rbIN_CONTAINERS(vec1, vec2, Compare&lt;&gt;().
+    That(Equal&lt;&gt;()|Get1Arg&lt;1&gt;(EqualTo(0)))));
+  </programlisting>
+</para>
+<para>There are also similar functions <code>GetNArgs&lt;...&gt;(RB)</code>, where N can be
+from 2 to 5, but these are only useful in UquoniTest.</para>
+<para>This doesn't work with Microsoft Visual Studio 6, but you can use an alternative syntax:
+<code>Get1Arg_&lt;N&gt;()(RB)</code>.</para>
+</sect1>
+
+<sect1><title>Removing the text from analyses</title>
+<indexterm><primary>Removing the text from analyses</primary></indexterm>
+<indexterm><primary>RICHBOOL_NO_TEXT</primary></indexterm>
+	<para>If you define the symbol <code>RICHBOOL_NO_TEXT</code> before including
+	<filename>"richbool/richbool.hpp"</filename>, the analyses will not contain
+	the expressions of the top level. So instead of
+	<screen>`a':&lt;1&gt; == `b':&lt;2&gt; - nok</screen>
+	you would see
+	<screen>&lt;1&gt; == &lt;2&gt; - nok</screen>
+	Note that nested analyses usually still contain the expression, because they
+	are index expressions, not text expressions. So you would still see
+    <screen>predicate does not apply on ranges
+M: [0]:&lt;4&gt; == [2]:&lt;4&gt; - ok
+M: [1]:&lt;6&gt; == [0]:&lt;6&gt; - ok
+M: [3]:&lt;10&gt; == [3]:&lt;10&gt; - ok
+1: [2]:&lt;8&gt; X  - nok
+2: X [1]:&lt;7&gt; - nok</screen>
+	where the text expressions that contain the arrays are not visible, but
+	the index expressions are still visible.</para>
+	<para>
+	The advantage of defining the symbol <code>RICHBOOL_NO_TEXT</code>
+	is that the size of your executable is reduced.
+	For executables that are distributed to customers, the loss of the text
+	is not so bad, because the expressions can still be looked up in the
+	source code, and it shouldn't happen so often. For applications that
+	you're still working on, it is better to not define the symbol,
+	because the text helps you to identify the problem easier, and looking it up
+	in the source code is not so practical then.</para>
+</sect1>
+
+<sect1><title>Making your own rich booleans (advanced)</title>
+<indexterm><primary>Making your own rich booleans</primary></indexterm>
+<indexterm><primary>Creating your own rich booleans</primary></indexterm>
+
+<para>To make your own Rich Booleans, you need to make a Rich Boolean functor
+class, and if you want to use it standalone define a macro that uses that class.
+Defining the macro is best done by simply defining it as <code>rbn_RB</code>,
+where n is the number of arguments (between 1 and 4) that your Rich Boolean takes,
+that takes the arguments of your Rich Boolean macro followed by an instance of your class.
+You can do the same with <code>rbvn_p_RB</code> for Rich Booleans that should be
+used in assertions that return a value, where <code>n</code> is the number of arguments (between 1 and 4),
+and <code>p</code> is the index (starting at 1)
+of the argument that has to be retured, so it is between 1 and <code>n</code>.
+Here is an example for a Rich Boolean that takes two arguments:
+<programlisting>class MyRichBool
+{
+	...
+};
+
+#define rbMY_RICHBOOL(a,b) rb2_RB(a,b, MyRichBool())
+#define rbvMY_RICHBOOL(a,b) rbv2_1_RB(a,b, MyRichBool())</programlisting>
+</para>
+
+<sect2><title>Writing Rich Boolean functor classes using the wrappers</title>
+<indexterm><primary>Wrappers to make Rich Boolean functor classes</primary></indexterm>
+<indexterm><primary>Writing Rich Boolean functor classes using the wrappers</primary></indexterm>
+<para>A Rich Boolean functor is somewhat like a functor in the usual sense, but it is more
+than that because it can also create an analysis of the condition that it tests,
+for which it has an extra method.
+The easiest way to make a Rich Boolean functor class is by using
+the classes <classname>RichBool::WrappernArg</classname>, where n can range from 1
+to 4 and indicates the number of arguments that it takes. This is a class template, of which
+the first template argument should be a class that does the essential work, the Rich Boolean Functor Core.
+The actual Rich Boolean functor class should derive from <classname>RichBool::WrappernArg&lt;MyFunctorCore, ...&gt;</classname>
+where <code>MyFunctorCore</code> is the functor core class. <code>MyFunctorCore</code>
+should be followed by n <code>GetValue</code> template class parameters and one <code>Stringize</code>
+template class parameter, that are ideally template class parameters of your Rich Boolean functor.
+<classname>RichBool::WrappernArg&lt;MyCheck, ...&gt;</classname> has
+two constructors, one that takes n template GetValue arguments, and a second that also has these
+but preceded by an object of your functor core class (otherwise its default constructor is called).</para>
+<para>If your rich boolean functor core is not a template class, and has only a default constructor,
+you can define your rich boolean functor with the macro
+<code>RICHBOOL_WRAPPERnARG(functor, core)</code>, where n is the number of arguments (from 1 to 4),
+<code>core</code> is the class of your Rich Boolean
+Functor Core and <code>functor</code> the name of your Rich Boolean Functor.</para>
+
+<para>This functor core class can be made in three ways.</para>
+
+<sect3><title>RichBool::FunctorCore</title>
+<indexterm><primary>FunctorCore</primary></indexterm>
+<para>The easiest is to derive your Rich Boolean Functor Core
+from <classname>RichBool::FunctorCore</classname>,
+and to add the method <code>bool operator(...) const</code>,
+that takes the arguments of the Rich Boolean and returns whether the condition succeeds.
+You can also add <code>const char* GetTextBeforep() const</code>,
+where p is between 1 and the number of arguments, and is placed before the p-th argument,
+and <code>const char* GetTextAfterp() const</code> that is placed after the p-th argument.
+You don't have to add all of these, but it is recommended to add several because it makes the analysis
+more readable.</para>
+<para>Optionally you can add values in the analysis that are not an argument of the Rich Boolean,
+e.g. a value that is stored in the functor core object to compare it with arguments.
+To do so, add the method <code>std::string GetExtraValuep() const</code>, where p is again between
+1 and the number of arguments. This means you can add more than one extra value.
+This will appear in the analysis after the argument with the same index.
+You can also add <code>SharedExpression GetExtraExpressionp() const</code>
+that returns the expression of the extra value, and will be shown before the p-th value.
+You can also add <code>const char* GetTextBeforeExtrap() const</code>,
+where p is between 1 and the number of arguments, and is placed before the p-th extra value and expression,
+and <code>const char* GetTextAfterExtrap() const</code> that is placed after the p-th extra value.
+You don't have to add all of these, but it is recommended to add several because it makes the analysis
+more readable.</para>
+<para>Optionally you can add values in the analysis that are calculated from the arguments,
+e.g. a difference of two arguments.
+To do so, add the method <code>std::string GetResultp(...) const</code>, that
+has the same arguments as <code>bool operator()(...) const </code>, and where p is again between
+1 and the number of arguments. This means you can add more than one calculated value.
+This will appear in the analysis after the argument with the same index.
+You can also add <code>const char* GetTextBeforeResultp() const</code>,
+where n is between 1 and the number of arguments, and is placed before the p-th result,
+and <code>const char* GetTextAfterResultp() const</code> that is placed after the p-th result.
+You don't have to add all of these, but it is recommended to add several because it makes the analysis
+more readable.</para>
+<para>Here is an example on how to do it for a Rich Boolean that checks whether two integers
+are equal modulo 5:
+<programlisting>class EqualModulo5Core: public RichBool::FunctorCore
+{
+public:
+	bool operator()(int a, int b) const
+	{
+		return a%5==b%5;
+	}
+
+	const char* GetTextAfter1() const
+	{
+		return "%5";
+	}
+
+	const char* GetTextBefore2() const
+	{
+		return " == ";
+	}
+	const char* GetTextAfter2() const
+	{
+		return "%5";
+	}
+
+	std::string GetResult1(int a, int ) const
+	{
+		return RichBool::ToString(a%5);
+	}
+	const char* GetTextBeforeResult1() const
+	{
+		return ":";
+	}
+
+	std::string GetResult2(int , int b) const
+	{
+		return RichBool::ToString(b%5);
+	}
+	const char* GetTextBeforeResult2() const
+	{
+		return ":";
+	}
+};
+
+template &lt;class GV1=RichBool::Value, class GV2=RichBool::Value,
+  class Stringize=RichBool::MakeString&gt;
+struct EqualModulo5: public
+  RichBool::Wrapper2Arg&lt;EqualModulo5Core, GV1, GV2, Stringize&gt;
+{
+	EqualModulo5(GV1 gv1=GV1(), GV2 gv2=GV2()):
+		RichBool::Wrapper2Arg&lt;EqualModulo5Core, GV1, GV2, Stringize&gt;(gv1, gv2)
+	{}
+};
+
+#define rbEQUAL_MODULO_5(a,b) rb2_RB(a,b, EqualModulo5())
+#define rbvEQUAL_MODULO_5(a,b) rbv2_1_RB(a,b, EqualModulo5())</programlisting>
+</para>
+<para>The drawback is that the generated
+analyses can contain only text, the values of the arguments, extra values and calculated values
+(so you could not generate an analysis
+like that of e.g. <code>rbEQUAL_BITWISE</code>), but that is sufficient in most cases.</para>
+</sect3>
+
+<sect3><title>Writing Rich Boolean functor classes with a custom analysis</title>
+<indexterm><primary>CustomFunctorCore</primary></indexterm>
+<para>If you need a more elaborate analysis,
+(e.g. you want to add a bit representation),
+you should use the alternative method of creating the class
+that checks the condition, namely by deriving it from
+<classname>RichBool::CustomFunctorCore&lt;false&gt;</classname>
+instead of <classname>RichBool::FunctorCore</classname>, and adding the methods
+<code>bool operator()(...)</code> (similar to the one as with <classname>RichBool::FunctorCore</classname>)
+and <code>Analysis* Analyse</code>, that has the arguments of the Rich Boolean,
+each immediately followed by a const reference to a <classname>std::string</classname> object (that will contain
+the value of the argument as a string) and a
+<classname>SharedExpression</classname> object (that describes the argument), and a boolean after all these
+that indicates whether the condition succeeded (sometimes an analysis is wanted
+even if the condition succeeded). This method is only called if an analysis is
+needed, so it should never return NULL.</para>
+<para>In addition you can add the same methods as with <classname>RichBool::FunctorCore</classname>,
+except <code>std::string GetResultn(...) const</code> and the methods
+that give the text before and after a result (they wouldn't be used).
+These are called if one or more of the arguments contains a non-dereferenceable value,
+so your <code>Analyse</code> method cannot be called and an analysis similar to the one
+as with <classname>RichBool::FunctorCore</classname> is created instead.
+
+<programlisting>class EqualModulo5Core: public RichBool::CustomFunctorCore&lt;false&gt;
+{
+public:
+  bool operator()(int a, int b) const
+  {
+    return a%5==b%5;
+  }
+
+  RichBool::Analysis* Analyse(
+    int a, const std::string &amp;str1, SharedExpression expr1,
+    int b, const std::string &amp;str2, SharedExpression expr2,
+    bool ok) const
+  {
+    ...
+  }
+
+  const char* GetTextAfter1() const
+  {
+    return "%5";
+  }
+
+  const char* GetTextBefore2() const
+  {
+    return " == ";
+  }
+  const char* GetTextAfter2() const
+  {
+    return "%5";
+  }
+};
+
+template &lt;class GV1=RichBool::Value, class GV2=RichBool::Value,
+  class Stringize=RichBool::MakeString&gt;
+struct EqualModulo5: public
+  RichBool::Wrapper2Arg&lt;EqualModulo5Check, GV1, GV2, Stringize&gt;
+{
+  EqualModulo5(GV1 gv1=GV1(), GV2 gv2=GV2()):
+    RichBool::Wrapper2Arg&lt;EqualModulo5Check, GV1, GV2, Stringize&gt;(gv1, gv2)
+  {}
+};
+
+#define rbEQUAL_MODULO_5(a,b) rb2_RB(a,b, EqualModulo5())
+#define rbvEQUAL_MODULO_5(a,b) rbv2_RB(a,b, EqualModulo5())</programlisting>
+</para>
+<para>Objects of the class <classname>Expression</classname> represent the expression of
+an argument of a rich boolean. They have the method <code>operator std::string() const</code>,
+so you can assign them to a <classname>std::string</classname> object or give them as the argument
+of a function where a <classname>std::string</classname> is needed. <classname>Expression</classname>
+objects therefore allow to delay creation of a string until
+it is needed, to improve performance. They can be constructed with a string object or a
+<code>const char*</code> (when it describes an element that is used directly in a rich boolean) or a <code>size_t</code>
+(when it describes an element in a range). They can also be converted to <code>bool</code> because they have
+the method <code>operator bool() const</code>; if they were created
+with the default constructor, they return <literal>false</literal>, otherwise they return
+<literal>true</literal>. The class <classname>SharedExpression</classname> is a shared pointer
+to <classname>Expression</classname> objects, so you can dereference them to get the expression.</para>
+</sect3>
+
+<sect3><title>Writing Rich Boolean functor classes with a custom analysis, where Analyse does the checking</title>
+<indexterm><primary>CustomFunctorCore</primary></indexterm>
+<para>In some rare cases, you need to check the condition and create the analysis at the same time,
+or checking the condition first can only be done in a non-performant way, e.g. if you do a check
+on input iterators. This is less efficient, because if it turns out that the condition succeeded,
+you have to destroy the analysis that you create.</para>
+<para>If you need this, you can do this by deriving your functor core from
+<classname>RichBool::CustomFunctorCore&lt;true&gt;</classname>
+instead of <classname>RichBool::CustomFunctorCore&lt;false&gt;</classname>, and adding the methods
+<code>bool operator()(...)</code> (similar to the one as with <classname>RichBool::FunctorCore</classname>)
+and <code>Analysis* Analyse</code>, that has now the arguments of the Rich Boolean,
+each immediately followed by an expression and a stringizer object,
+and a boolean after all these
+that indicates whether an analysis is wanted when the condition succeeds.
+The expression and the stringizer object should be template types, because they
+can be different types. In the present version of Rich Booleans, the expression arguments
+can be <code>size_t</code> or <code>const char*</code>, and the stringizer objects can
+only be empty objects, so it is best to pass them both by value.</para>
+<para>If the condition succeeds, the method should return NULL, except if the boolean in the arguments
+is true. If the condition fails, it should not return NULL.
+If you have to make an analysis, you can make <classname>Expression</classname> objects
+from the expression argument, by passing it to the function <code>RichBool::MakeExpression</code>,
+and get a string representation of each argument by giving it to <code>operator()</code> of the
+stringizer object. This allows you to delay the creation of the expression and string until you need them.
+</para>
+<para><code>bool operator()(...)</code> and <code>Analysis* Analyse</code> will never be both
+called when you use a functor object.</para>
+<para>Note: <code>bool operator()(...)</code> is still necessary, because sometimes the calling
+code doesn't want an analysis but still wants to know if the condition succeeds (e.g. in ModAssert in a
+<code>MOD_CHECK</code> macro when reporting for checks is disabled).</para>
+<para>In addition you can add the same methods as with <classname>RichBool::FunctorCore</classname>,
+except <code>std::string GetResultn(...) const</code> and the methods
+that give the text before and after a result (they wouldn't be used).
+These are called if one or more of the arguments contains a non-dereferenceable value,
+so your <code>Analyse</code> method cannot be called and an analysis similar to the one
+as with <classname>RichBool::FunctorCore</classname> is created instead.
+
+<programlisting>class EqualModulo5Core: public RichBool::CustomFunctorCore&lt;true&gt;
+{
+public:
+  bool operator()(int a, int b) const
+  {
+    return a%5==b%5;
+  }
+
+  template &lt;typename Expr1, typename Expr2,
+      class Stringize1, class Stringize2&gt;
+  RichBool::Analysis* Analyse(int a, Expr1 expr1, Stringize1 str1,
+    int b, Expr2 expr2, Stringize2 str2,
+    bool analysisIfSuccess) const
+  {
+    ...
+    GeneralAnalysis *ga = new GeneralAnalysis(false);
+
+    ga.AddExpression(RichBool::MakeExpression(expr1), ": ");
+    ga.AddValue(str1(a), true);
+    // true, because it's a valid value if we get here
+    ...
+    ga.AddExpression(RichBool::MakeExpression(expr2), ": ");
+    ga.AddValue(str2(b), true);
+    // true, because it's a valid value if we get here
+    ...
+  }
+
+  const char* GetTextAfter1() const
+  {
+    return "%5";
+  }
+
+  const char* GetTextBefore2() const
+  {
+    return " == ";
+  }
+  const char* GetTextAfter2() const
+  {
+    return "%5";
+  }
+};
+
+template &lt;class GV1=RichBool::Value, class GV2=RichBool::Value,
+  class Stringize=RichBool::MakeString&gt;
+struct EqualModulo5: public 
+  RichBool::Wrapper2Arg&lt;EqualModulo5Check, GV1, GV2, Stringize&gt;
+{
+  EqualModulo5(GV1 gv1=GV1(), GV2 gv2=GV2()):
+    RichBool::Wrapper2Arg&lt;EqualModulo5Check, GV1, GV2, Stringize&gt;(gv1, gv2)
+  {}
+};
+
+#define rbEQUAL_MODULO_5(a,b) rb2_RB(a,b, EqualModulo5())
+#define rbvEQUAL_MODULO_5(a,b) rbv2_RB(a,b, EqualModulo5())</programlisting>
+
+</para>
+</sect3>
+
+<sect3><title>Adding partial matching</title>
+<indexterm><primary>Adding partial matching</primary></indexterm>
+<indexterm><primary>Partial matching</primary></indexterm>
+<indexterm><primary>GetPoints</primary></indexterm>
+<para>When comparing two ranges with your Rich Boolean, it might be interesting to indicate whether there is
+a partial match. When several elements don't match, a partial match will be shown
+in preference. To do this, add a typedef of a number type (preferably an integer) to
+<classname>Points</classname> in your rich boolean functor core class. Furthermore
+you should add the methods <code>Points GetPoints(const T &amp;t1, const T &amp;t2) const</code>,
+that returns a number that is higher as the match is better,
+and <code>Points GetGood()</code> that returns the maximum value that <code>GetPoints</code>
+can return. Here is an example of a Rich Boolean that compares two integers, and uses 10 minus
+the absolute value of the difference as points, or zero if that number is negative:
+
+<programlisting>struct EqualPCore: public RichBool::FunctorCore
+{
+	typedef unsigned int Points;
+
+	bool operator()(int a, int b) const
+	{
+		return a==b;
+	}
+
+	const char* GetTextBefore2() const
+	{
+		return " == ";
+	}
+
+	Points GetPoints(int a, int b) const
+	{
+		int diff = abs(a-b);
+		return diff &gt; 10 ? 0 : 10-diff;
+	}
+	Points GetGood() const
+	{
+		return 10;
+	}
+};
+
+template &lt;class GV1=RichBool::Value, class GV2=RichBool::Value,
+  class Stringize=RichBool::MakeString&gt;
+struct EqualP: public
+  RichBool::Wrapper2Arg&lt;EqualPCore, GV1, GV2, Stringize&gt;
+{
+  EqualP(GV1 gv1=GV1(), GV2 gv2=GV2()):
+    RichBool::Wrapper2Arg&lt;EqualModulo5Check, GV1, GV2, Stringize&gt;(gv1, gv2)
+  {}
+};
+
+#define rbEQUALP(a,b) rb2_RB(a,b, EqualP())
+#define rbvEQUALP(a,b) rbv2_RB(a,b, EqualP())</programlisting>
+This can also be done with functor cores that are derived from <classname>RichBool::CustomFunctorCore</classname>.
+</para>
+</sect3>
+
+</sect2>
+
+<sect2>
+<title>Writing a Rich Boolean Functor without the wrappers</title>
+<indexterm><primary>Writing a Rich Boolean Functor without the wrappers</primary></indexterm>
+<indexterm><primary>Making a Rich Boolean Functor without the wrappers</primary></indexterm>
+<indexterm><primary>Creating a Rich Boolean Functor without the wrappers</primary></indexterm>
+<para>In case that using a wrapper is not sufficient for you (which is unlikely), or you need to adjust a custom
+Rich Boolean Functor that was made before the Rich Boolean Functor Wrappers were introcduced,
+you can do so as explained in this section.
+A Rich Boolean Functor class should have
+the members <code>bool operator(...) const</code> and and <code>RichBool::Analysis* Analyse(...) const</code>.
+<code>bool operator(...) const</code> has the same arguments as the rich boolean macro
+(these can be of course, and often are, template arguments), and should return whether
+the condition is true or not.
+<code>RichBool::Analysis* Analyse(...) const</code> also has the same arguments as the rich boolean macro,
+followed by a number of <classname>Expr</classname> arguments, which should be templates (one for each argument of the
+Rich Boolean macro), and an extra argument, <code>bool analyseOnSucceed</code>.
+It should return <literal>NULL</literal> if the condition is true and
+<code>analyseOnSucceed</code> is false,
+and a non-NULL pointer to a <classname>RichBool::Analysis</classname> object otherwise.
+This object could be of a class that is provided with the RichBool package
+(<classname>RichBool::GeneralAnalysis</classname> can be useful in many cases), or your own type
+(in this case, remember to let <code>GetType()</code> return a string that is unique to your class,
+code that processes <classname>RichBool::Analysis</classname> objects like dialog boxes and loggers may rely on this).
+</para>
+<para>The <classname>Expr</classname> arguments can be converted to <classname>Expression</classname> objects
+with the function <code>RichBool::MakeExpression</code>, that takes such an argument and returns
+a <classname>Expression</classname> object. Objects of the class <classname>Expression</classname> represent the expression of
+an argument of a rich boolean. It can be converted to a string object. <classname>Expression</classname>
+objects therefore allow to delay creation of a string until
+it is needed, to improve performance. In this version of the Rich Booleans they can be constructed with a string object or a
+<code>const char*</code> (when a rich boolean is used directly) or a <code>size_t</code>
+(when it is in a range). They can also be converted to <code>bool</code>; if they were created
+with the default constructor, they return <literal>false</literal> which means there is no expression, otherwise they return
+<literal>true</literal>.</para>
+<para>If your rich boolean has two arguments, and you plan to use the rich boolean class in the
+comparison of two ranges (e.g. with <code>Compare&lt;...&gt;</code>), you should add 4 methods.
+The first two are <code>GetString1</code> and <code>GetString2</code>,
+that take one argument, respectively the first and second argument of the Rich Boolean,
+and return a string object. The easiest is to return <code>RichBool::ToString(arg)</code>.
+The next two methods are <code>IsValid1</code> and <code>IsValid2</code>, that take one argument,
+respectively the first and second argument of the Rich Boolean, and return a boolean that indicates whether
+the value can be dereferenced well. You should also add a typedef
+<classname>Points</classname> that tells which scoring mechanism is used to dynamically find which
+elements in the ranges should be matched with each other. For now
+we will use <classname>bool</classname>, that simply tells whether two elements match or not.</para>
+	<para>So usually a Rich Boolean Functor class looks like
+<programlisting>
+class MyRichBool
+{
+public:
+    typedef RichBool::MakeString Stringize1;
+    typedef RichBool::MakeString Stringize2;
+    typedef bool Points;
+    
+    bool operator(int a, int b) const
+    {
+        ...
+    }
+    template &lt;typename Expr1, typename Expr2&gt;
+    RichBool::Analysis* Analyse(int a, int b,
+		Expr1 expr1, Expr2 expr2,
+		bool analyseIfSuccess) const
+    {
+        ...
+    }
+    std::string GetString1(int a) const
+    {
+        return RichBool::ToString(a);
+    }
+    std::string GetString2(int b) const
+    {
+        return RichBool::ToString(b);
+    }
+    bool IsValid1(int ) const
+    {
+        // we don't dereference anything, so always return true
+        return true;
+    }
+    bool IsValid2(int ) const
+    {
+        // we don't dereference anything, so always return true
+        return true;
+    }
+};
+
+#define rbMY_RICH_BOOL(a,b) rb2_RB(a,b, MyRichBool())
+#define rbvMY_RICH_BOOL(a,b) rbv2_1_RB(a,b, MyRichBool())
+</programlisting></para>
+	<para>When comparing ranges, it might be interesting to indicate whether there is
+a partial match. When several elements don't match, a partial match will be shown
+in preference. To do this, change the typedef of <classname>Points</classname> in
+your Rich Boolean Functor class from <classname>bool</classname> to a numeric type. Furthermore
+you should add the methods <code>Points GetPoints(const T &amp;t1, const T &amp;t2) const</code>,
+that returns a number that is higher as the match is better,
+and <code>Points GetGood()</code> that returns the maximum value that <code>GetPoints</code>
+can return.</para>
+	<para>
+		<example><title>A Rich Boolean for the class <classname>Person</classname></title>
+Suppose you have a class <classname>Person</classname>:
+<programlisting>
+class Person
+{
+public:
+    std::string firstName, surName;
+    Date birthDate;
+};
+</programlisting>
+If you often need to check if two <classname>Person</classname> objects are the same, you could write
+a custom Rich Boolean:
+<programlisting>
+class EqualPersons
+{
+public:
+  typedef bool Points;
+
+  bool operator()(const Person &amp;person1, const Person &amp;person2) const
+  {
+    return person1==person2;
+  }
+
+  template &lt;typename Expr1, typename Expr2&gt;
+  RichBool::Analysis* Analyse(const Person &amp;person1, const Person &amp;person2,
+            Expr1 expr1, Expr2 expr2,
+            bool analyseOnSucceed=false) const
+  {
+    bool ok = person1==person2;
+    if (ok &amp;&amp; !analyseOnSucceed)
+        return 0;
+    RichBool::GeneralAnalysis *analysis = new RichBool::GeneralAnalysis(ok);
+    if (expr1 &amp;&amp; expr2)
+    {
+      analysis->AddText("Comparison of ")
+        ->AddExpression(RichBool::MakeExpression(expr1))
+        ->AddText(" and ")
+        ->AddExpression(RichBool::MakeExpression(expr2))
+        ->AddText(":")->AddNewLine();
+    }
+	
+    analysis->("first names: ")
+      ->AddAnalysis(
+        RichBool::Equal&lt;&gt;().Analyse(person1.firstName, person2.firstName,
+          "1", "2", true))
+      ->AddNewLine();
+    analysis->AddText("surnames: ")
+      ->AddAnalysis(
+        RichBool::Equal&lt;&gt;().Analyse(person1.surName, person2.surName,
+          "1", "2", true))
+      ->AddNewLine();
+    analysis->AddText("birthdates: ")
+      ->AddAnalysis(
+        RichBool::Equal&lt;&gt;().Analyse(person1.birthDate, person2.birthDate,
+          "1", "2", true))
+      ->AddNewLine();
+    return analysis;
+  }
+  std::string GetString1(const Person &amp;person1) const
+  {
+    return RichBool::ToString(person1);
+  }
+  std::string GetString2(const Person &amp;person2) const
+  {
+    return RichBool::ToString(person2);
+  }
+  // we don't dereference anything, so always return true
+  bool IsValid1(const Person &amp;) const { return true; }
+  bool IsValid2(const Person &amp;) const { return true; }
+};
+
+#define EQUAL_PERSONS(person1, person2) \
+	rb2_RB(person1, person2, EqualPersons())
+</programlisting>
+</example>
+</para>
+<para>Note that the constructor of most classes derived from <classname>RichBool::Analysis</classname>
+have a boolean as argument, that indicates whether the condition succeeded or not.
+</para>
+<para>Also note that we give text strings to <code>RichBool::Equal::Analyse</code> where it
+takes template <classname>Expr</classname> arguments, just like <code>Person::Analyse</code>.
+We could also pass <code>expr1</code> and <code>expr2</code>, but that may be a long expression,
+and is already in the analysis.</para>
+<para>Also note that the last argument that we pass to <code>RichBool::Equal::Analyse</code>
+is <literal>true</literal>, which means that we want an analysis even if the comparison of
+that part succeeds. This makes the debugging information more useful.</para>
+
+<para>If you want to take advantage of partial matching when two ranges of
+<classname>Person</classname> objects are compared, the class
+<classname>EqualPersons</classname> should be changed to this:
+<example>
+			<programlisting>
+class EqualPersons
+{
+public:
+  typedef int Points;
+
+  Points GetPoints(const Person &amp;person1, const Person &amp;person2) const
+  {
+    return
+      (person1.firstName==person2.firstName ? 1 : 0)+
+      (person1.surName  ==person2.surName   ? 1 : 0)+
+      (person1.birthDate==person2.birthDate ? 1 : 0);      
+  }
+
+  Points GetGood()
+  {
+    return 3;
+  }
+
+  ...  
+};
+</programlisting>
+</example>
+</para>
+</sect2>
+
+<sect2><title>Creating a Rich Boolean without the macros rbn_RB</title>
+<indexterm><primary>Creating a Rich Boolean without the macros rbn_RB</primary></indexterm>
+<indexterm><primary>Making a Rich Boolean without the macros rbn_RB</primary></indexterm>
+<para>In exceptional cases you may need to write a Rich Boolean for which you can't use
+a Rich Boolean Functor, so you can't use the macros <code>rbn_RB</code> as described above.
+Some examples of such Rich Booleans are <code>rbAND</code> and <code>rbOR</code>.</para>
+<para>If you do this, you should know
+that a Rich Boolean macro should evaluate to a <classname>RichBool::TmpBool</classname> object.
+This is a simple class that contains a pointer to an object of the abstract type <classname>RichBool::Analysis</classname>
+and a boolean. This class is necessary to prevent accidental use with boolean operators, which would cast the
+pointer to <literal>true</literal> or <literal>false</literal>. The class also allows to assign boolean
+values to it, so boolean expressions can still be used instead of Rich Booleans.
+Objects of this class can only be constructed
+with a boolean or a pointer to an object of the type <classname>RichBool::Analysis</classname> as argument,
+which can be <literal>NULL</literal>. If a <classname>RichBool::Analysis</classname> pointer is given,
+a <literal>NULL</literal> pointer means success, a non-<literal>NULL</literal> pointer can mean failure or
+success, depending on what <code>GetState()</code> returns.</para>
+<para>A Rich Boolean macro should check the value of <code>richbool_level</code>, which tells how
+specific the evaluation should be:
+<itemizedlist mark='bullet'>
+			<listitem>0 means that only the arguments should be evaluated; you should return <code>RichBool::TmpBool(true)</code></listitem>
+			<listitem>1 means that the arguments and the condition should be evaluated, but no
+    analysis should be created; you should return <code>RichBool::TmpBool(b)</code>, where <code>b</code>
+states whether the condition succeeded</listitem>
+			<listitem>2 means that the arguments and the condition should be evaluated, and an
+    analysis should be created if the condition failed; you should return <code>RichBool::TmpBool(analysis)</code>, where
+<code>analysis</code> is NULL if the condition failed</listitem>
+			<listitem>3 means that the arguments and the condition should be evaluated, and an
+    analysis should be created, even if the condition succeeds; you should return <code>RichBool::TmpBool(analysis)</code>, where
+<code>analysis</code> is the analysis, that is not NULL</listitem>
+</itemizedlist>
+</para>
+</sect2>
+
+<sect2><title>Creating an analysis</title>
+<indexterm><primary>Creating an analysis</primary></indexterm>
+<indexterm><primary>Analysis, creating</primary></indexterm>
+<indexterm><primary>State</primary></indexterm>
+<indexterm><primary>Analysis::State</primary></indexterm>
+<indexterm><primary>Ok</primary></indexterm>
+<indexterm><primary>NotOk</primary></indexterm>
+<indexterm><primary>NotEvaluated</primary></indexterm>
+<para>Analyses should be given as pointers to objects of classes that are derived from
+<classname>RichBool::Analysis</classname>. If you derive a class from this class,
+you should implement three virtual methods:
+<itemizedlist mark='bullet'>
+	<listitem><code>void StreamOut(std::ostream &amp;stream, int indent) const</code>:
+	this method should stream out the analysis to the stream. <code>indent</code> tells
+	how many spaces should come after a newline. It should not end with a newline or whitespace.</listitem>
+	<listitem><code>const std::string&amp; GetType() const</code>:
+	this method should return a string that uniquely identifies the type.</listitem>
+	<listitem><code>bool Equals(const Analysis* analysis) const</code>:
+	this protected method should return whether it is equal to <code>analysis</code>.
+	The method can safely assume that <code>analysis</code> is of the same type,
+	so it can be casted to the derived type.</listitem>
+</itemizedlist>
+<classname>RichBool::Analysis</classname> has two constructors. The first takes a boolean that
+indicates whether the condition was true or false. The second takes an enumerated value
+<classname>RichBool::Analysis::State</classname>, that can be <code>Ok</code>, <code>NotOk</code>
+or <code>NotEvaluated</code>. The last is used in Rich Booleans that should evaluate more than one
+condition, but don't always do them all due to short circuiting.
+Note that <code>NotOk</code> could mean that the condition failed or that one of the arguments
+is a non-dereferenceable value; in a future version there will be a distinction between these.
+</para>
+<para>You can also use one of the provided classes that are derived from <classname>RichBool::Analysis</classname>
+discussed below.</para>
+
+<sect3><title>GeneralAnalysis</title>
+<indexterm><primary>GeneralAnalysis</primary></indexterm>
+<indexterm><primary>MakeGeneralAnalysis</primary></indexterm>
+<para>This is a class that can contain plain text, values, expressions and other analyses.
+It is easier to use it with the class <classname>RichBool::MakeGeneralAnalysis</classname>.
+Its constructor takes a boolean that indicates whether the condition succeeded,
+and creates a <classname>RichBool::GeneralAnalysis</classname> on the heap.
+This object is returned when the <classname>RichBool::MakeGeneralAnalysis</classname> object
+is casted to a pointer to <classname>RichBool::Analysis</classname>.
+It has these methods, that all return a reference to the object itself, so the
+methods can be used in a chain:
+<itemizedlist mark='bullet'>
+	<listitem><code>operator()(const detail::String &amp;str, bool validPtr)</code>:
+	this adds the value of an argument of the Rich Boolean converted to a string
+	to the analysis; the boolean indicates whether it could be safely dereferenced</listitem>
+	<listitem><code>template&lt;typename T, class GetValue, class Stringize_&gt;
+		operator()(const T &amp;t, GetValue getValue, Stringize_ str)</code>:
+	this converts the first argument to a string using the second and third argument,
+	and adds the string to the analysis</listitem>
+	<listitem><code>operator()(const char *text)</code>:
+	this adds plain text to the analysis</listitem>
+	<listitem><code>operator()(const std::string &amp;text)</code>:
+	this adds plain text to the analysis</listitem>
+	<listitem><code>expr(SharedExpression expression, const char *sz)</code>:
+	this adds an expression and a separator (e.g. ":") to the analysis</listitem>
+	<listitem><code>idx(int n, const char *sz)</code>:
+	this adds an index expression and a separator (e.g. ":") to the analysis</listitem>
+	<listitem><code>expr(const char *expression, const char *sz)</code>:
+	this adds a textual expression and a separator (e.g. ":") to the analysis</listitem>
+	<listitem><code>result(const std::string &amp;text)</code>:
+	this adds the value of a result to the analysis, typically
+	something that was calculated from the arguments of the Rich Boolean</listitem>
+	<listitem><code>operator()(SharedAnalysis otherAnalysis)</code>:
+	this adds an analysis to the analysis</listitem>
+	<listitem><code>operator()()</code>:
+	this adds a newline to the analysis</listitem>
+</itemizedlist>
+</para>
+</sect3>
+
+<sect3><title>CombinedAnalysis</title>
+<indexterm><primary>CombinedAnalysis</primary></indexterm>
+<para>The constructor of this class takes two <classname>RichBool::Bool</classname>
+objects each containing the result of a condition (from a Rich Boolean or a boolean expression)
+and a boolean that tells whether the combined condition is true or not.</para>
+</sect3>
+
+<sect3><title>OrAnalysis</title>
+<indexterm><primary>OrAnalysis</primary></indexterm>
+<para>This class is derived from <classname>RichBool::CombinedAnalysis</classname>.
+Its constructor takes two <classname>RichBool::Bool</classname>
+objects each containing the result of a condition (from a Rich Boolean or a boolean expression).</para>
+</sect3>
+
+<sect3><title>AndAnalysis</title>
+<indexterm><primary>AndAnalysis</primary></indexterm>
+<para>This class is derived from <classname>RichBool::CombinedAnalysis</classname>.
+Its constructor takes two <classname>RichBool::Bool</classname>
+objects each containing the result of a condition (from a Rich Boolean or a boolean expression).</para>
+</sect3>
+
+<sect3><title>XorAnalysis</title>
+<indexterm><primary>XorAnalysis</primary></indexterm>
+<para>This class is derived from <classname>RichBool::CombinedAnalysis</classname>.
+Its constructor takes two <classname>RichBool::Bool</classname>
+objects each containing the result of a condition (from a Rich Boolean or a boolean expression).</para>
+</sect3>
+
+<sect3><title>BriefAnalysisOfTwoSequences</title>
+<indexterm><primary>BriefAnalysisOfTwoSequences</primary></indexterm>
+<para>This class is used to compare two sequences, where each element of the sequence
+and the connection between two corresponding elements of the sequences, can be represented
+by a single character (e.g. a string or bits). It has two constructors. The first constructor takes two
+<classname>RichBool::SharedExpression</classname> objects, that represent the two sequences,
+and three <code>const char *</code> strings, with the text that should be added before, in between
+and after these expressions. The second constructor takes three
+<classname>RichBool::SharedExpression</classname> objects, that represent the two sequences and additional data
+(e.g. a buffer size),
+and four <code>const char *</code> strings, with text that should be added before, in between
+and after these expressions, and after the additional data. It has these methods:
+<itemizedlist mark='bullet'>
+	<listitem><code>void SetString1(const std::string &amp;str)</code>:
+	this sets the first sequence, where every element of the sequence is
+	represented by one character</listitem>
+	<listitem><code>void SetString2(const std::string &amp;str)</code>:
+	this sets the second sequence, where every element of the sequence is
+	represented by one character</listitem>
+	<listitem><code>void SetStringDiff(const std::string &amp;str)</code>:
+	this sets the connections between elements of the sequences,
+	where every connection is represented by one character</listitem>
+	<listitem><code>void SetTitle1(const char *title)</code>:
+	this sets the title shown before the first sequence; this should be short</listitem>
+	<listitem><code>void SetTitle2(const char *title)</code>:
+	this sets the title shown before the second sequence; this should be short</listitem>
+	<listitem><code>void SetTitleDiff(const char *title)</code>:
+	this sets the title shown before the connections of the sequences; this should be short</listitem>
+	<listitem><code>void SetBlockSize(int blockSize)</code>:
+	this sets the size of the blocks in which the sequences are shown;
+	each block is separated by a space</listitem>
+	<listitem><code>void SetBlocksPerLine(int blocksPerLine)</code>:
+	sets the number of blocks shown per line</listitem>
+</itemizedlist>
+If you don't call <code>void SetBlockSize(int blockSize)</code> and
+<code>void SetBlocksPerLine(int blocksPerLine)</code>, or you set them
+both to 0, the sequences are shown on one line. <code>void SetTitle1(const char *title)</code>,
+<code>void SetTitle2(const char *title)</code> and <code>void SetTitleDiff(const char *title)</code>
+should have text of the same length.
+</para>
+</sect3>
+
+<sect3><title>Single</title>
+<indexterm><primary>Single</primary></indexterm>
+<para>This class is used when two ranges are compared, and an element cannot be matched or even
+mismatched to an element of the other range (due to dynamic matching or an abundance in one
+of the ranges). Its state can only be set in its two constructors:
+<itemizedlist mark='bullet'>
+	<listitem><code>Single(int idx, int total, const detail::String &amp;value,
+			SharedExpression expr, bool valid)</code>:
+	<code>idx</code> indicates the range (usually 0 or 1), <code>total</code> the
+	number of ranges (usually 2), <code>value</code> the string with the data of the element,
+	<code>expr</code> the expression of the element, and <code>valid</code>
+	indicates whether it could be dereferenced well.</listitem>
+	<listitem><code>template &lt;typename T&gt; Single(const T &amp;t, int idx, int total, const detail::String &amp;value,
+			SharedExpression expr, bool valid)</code>:
+	<code>idx</code> indicates the range (usually 0 or 1), <code>total</code> the
+	number of ranges (usually 2), <code>value</code> the string with the data of the element,
+	<code>expr</code> the expression of the element, and <code>valid</code>
+	indicates whether it could be dereferenced well.</listitem>
+</itemizedlist>
+</para>
+</sect3>
+</sect2>
+</sect1>
+
+<sect1 id='macros-to-use-richbooleans'>
+	<title>Writing macros that use rich booleans (advanced)</title>
+<indexterm><primary>Writing macros that use rich booleans</primary></indexterm>
+<indexterm><primary>Creating macros that use rich booleans</primary></indexterm>
+<indexterm><primary>richbool_level</primary></indexterm>
+<indexterm><primary>TmpBool</primary></indexterm>
+<indexterm><primary>Bool</primary></indexterm>
+<indexterm><primary>richbool_tmp1</primary></indexterm>
+<indexterm><primary>richbool_tmp2</primary></indexterm>
+	<para>Rich Booleans are not straight forward to use directly, so it's best to write a macro to use them.
+If you use a library with macros that can have Rich Booleans as an argument (such as ModAssert and UquoniTest),
+you don't have to read this section.</para>
+	<para>Macros that have a Rich Boolean as an argument (or one of their arguments), must make
+sure that a non-constant integer called <code>richbool_level</code> is declared
+(locally or globally), as well as two <classname>RichBool::TmpBool</classname> objects
+called <code>richbool_tmp1</code> and <code>richbool_tmp2</code> (preferably locally).
+<code>richbool_level</code> tells the Rich Boolean macro whether
+it should evaluate its arguments and its condition.
+<itemizedlist mark='bullet'>
+	<listitem>0 means that only the arguments will be evaluated; in this case
+	the rich boolean will always evaluate to true</listitem>
+	<listitem>1 means that the arguments and the condition will be evaluated, but no
+analysis will be created</listitem>
+	<listitem>2 means that the arguments and the condition will be evaluated, and an
+analysis will be created if the condition failed</listitem>
+	<listitem>3 means that the arguments and the condition will be evaluated, and an
+analysis will be created, even if the condition succeeds</listitem>
+</itemizedlist>
+Therefore Rich Booleans are usually used inside macros, that define a small local scope where these
+variables are defined.
+</para>
+	<para>Rich Booleans usually evaluate to a <classname>RichBool::TmpBool</classname>, sometimes to a
+<classname>RichBool::Bool</classname> object, which both can be assigned to a <classname>RichBool::Bool</classname>
+object. Boolean expressions can also be assigned to such objects, so they both can be used.
+<classname>RichBool::Bool</classname> has a method <code>bool operator() const</code>, that tells
+whether the expression evaluated to <literal>true</literal> or <literal>false</literal>,
+and a method <code>const SharedAnalysis&amp; GetAnalysis() const</code>, that returns the
+<classname>RichBool::Analysis</classname> object in a shared pointer if a Rich Boolean was assigned that failed
+(if a boolean was assigned, it is always <literal>NULL</literal>).</para>
+	<para>Here is an example of how a macro called <code>CHECK</code> could use a Rich Boolean:
+<example>
+			<title>Writing a macro that processes a Rich Boolean macro</title>
+			<programlisting>
+#define CHECK(condition) \
+	do { \
+		int richbool_level = 2; \
+		RichBool::TmpBool richbool_tmp1, richbool_tmp2; \
+		RichBool::Bool richbool = (condition); \
+		if (!richbool()) \
+			OnFailure(#condition, richbool.GetAnalysis(), \
+			    __FILE__, __LINE__); \
+	} while (false)
+</programlisting>
+		</example>
+</para>
+</sect1>
+
+<sect1>
+	<title>Processing Rich Booleans (advanced)</title>
+<indexterm><primary>Processing Rich Booleans</primary></indexterm>
+<indexterm><primary>TmpBool</primary></indexterm>
+<indexterm><primary>Bool</primary></indexterm>
+	<para>Eventually, the macros that use Rich Booleans will pass these on to display or log the information
+in it. If you use a library that processes Rich Booleans, you don't have to worry about this.</para>
+	<para>A Rich Boolean macro evaluates to a <classname>RichBool::Bool</classname> or
+<classname>RichBool::TmpBool</classname> object, which both can be assigned to a <classname>RichBool::Bool</classname>
+object. A <classname>RichBool::Bool</classname> has a method <code>const SharedAnalysis&amp; GetAnalysis() const</code>,
+that returns a shared pointer that holds a <classname>RichBool::Analysis</classname> object. The shared pointer
+has the <code>operator->()</code>, so all methods of <classname>RichBool::Analysis</classname> can be used through that.
+It also has <code>operator bool()</code>, which is false if a <literal>NULL</literal> pointer was given,
+so <code>!analysis</code> can be used to check if that was the case.</para>
+	<para>The class <classname>RichBool::Analysis</classname> has a virtual method <code>void
+streamout(std::ostream &amp;stream) const</code>, which is called by
+<code>std::ostream &amp; operator&lt;&lt;(std::ostream &amp;stream,
+const RichBool::Analysis &amp;analysis)</code> (<classname>std::ostream</classname>
+is replaced by <classname>wxTextOutputStream</classname> if you use wxWidgets).
+Derived classes implement this method to give the debugging information in plain text.
+This way you can stream the data to a file, a string or to the screen.
+The method <code>RichBool::ToString</code> can convert a <classname>RichBool::Analysis</classname>
+object to a string using <code>operator&lt;&lt;</code> (but it's more efficient to stream
+it to a stream with operator&lt;&lt;).</para>
+<para>However, depending on the medium where the information is stored or displayed, it may be interesting
+to cast to the actual class, and take advantage of the mediums functionality. E.g. when you store the
+information in a HTML page, you could use colors or bold text to emphasize the values in a <classname>
+RichBool::GeneralAnalysis</classname> object, and distinguish between valid and invalid values.
+For this purpose the base class <classname>RichBool::Analysis</classname> has a virtual method
+<code>const std::string&amp; GetType() const</code> (or
+<code>const wxString&amp; GetType() const</code> if you use wxWidgets).
+In each derived class a unique name is returned here. A more
+efficient way to do this would be to return an enum, but since <classname>RichBool::Analysis</classname>
+derived classes can be developed independently from the classes that process them, this wouldn't be easy.
+Another way to do it would be by using RTTI, but since not everyone likes to use that, this alternative was added.
+</para>
+</sect1>
+
+<sect1><title>Considerations related to macros</title>
+<indexterm><primary>Considerations related to macros</primary></indexterm>
+<para>Some programmers avoid macros because of the problems that are associated
+with them. However, the macros in the Rich Booleans package are constructed
+with great care, to avoid these dangers.
+<itemizedlist mark='bullet'>
+<listitem>The arguments of the macros are evaluated only once. Therefore constructions like
+<code>rbEQUAL(a++, b++)</code> are safe and do what you would expect. But remember that if you
+use them in an assertion macro, e.g. <code>MOD_ASSERT</code>, the Rich Boolean may be 
+eliminated, so then it is best to have no side effects in the Rich Boolean, but it is still safe in a
+<code>MOD_VERIFY</code> or <code>MOD_CHECK</code> macro, because in these they will always
+be evaluated.</listitem>
+<listitem>The arguments of the macros are separated by commas and parentheses from other expressions
+in the macros, so they can't interfere with these other expressions in the macros</listitem>
+<listitem>The Rich Boolean macros cannot be used as statements, so the problem
+of using a macro in a if-else construct is not of concern here</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1><title>Thread safety</title>
+<indexterm><primary>Thread safety</primary></indexterm>
+<para>The Rich Booleans package is unaware of threads, i.e. it doesn't lock.</para>
+<para>Normally, if a Rich Boolean creates an analysis object, which is held in a
+<classname>SharedAnalysis</classname> object, this analysis is processed on the same
+thread and destroyed after that. E.g. ModAssert and UquoniTest do this.
+Because it usually stays on the same thread,
+a shared pointer implementation that is not thread safe was chosen for better
+performance.</para>
+<para>If for some reason you do need the analysis in another thread,
+make sure that no <classname>SharedAnalysis</classname> objects pointing to the same analysis are created
+or released at the same time on different threads. Otherwise you can clone the analysis
+by calling its method <code>Clone()</code>, and pass it to a <classname>SharedAnalysis</classname> object
+on the other thread.</para>
+<para>If this recommendation is followed, Rich Booleans is thread safe</para>
+</sect1>
+
+<sect1><title>Exception safety</title>
+<indexterm><primary>Exception safety</primary></indexterm>
+<para>The Rich Booleans package never throws an exception itself.</para>
+<para>Many template methods will call your code, which may throw exceptions.
+Where necessary, care is taken that no resources will leak. Code in the Rich Booleans
+package doesn't catch exceptions that are thrown in your code.</para>
+</sect1>
+
+<sect1><title>Warning levels</title>
+<indexterm><primary>Warning levels</primary></indexterm>
+<para>Where possible, the Rich Booleans are compiled with the highest warning levels.
+In some cases this was not possible:
+<itemizedlist mark='bullet'>
+<listitem>With Visual C++ 6.0, there are too many warnings in the STL headers,
+so it is set to level 3 for building the library, and probably also best for code that uses Rich Booleans</listitem>
+<listitem>With any version of Visual C++ there will be a warning about unreachable code in
+<filename>richbool/getvalue.hpp</filename></listitem>
+<listitem>With gcc, -W and -Wall should not be used in code that uses Rich Boolean macros, because
+there will be warnings about the lefthand of a comma operator not having any effect.
+The flags -ansi -pedantic -Wconversion -Wshadow -Wcast-qual -Wwrite-strings can be used,
+the Rich Booleans don't produce warnings if these are enabled. But -pedantic should be omitted if you
+use wxWidgets, because this gives an error in some of the header files of wxWidgets.</listitem>
+</itemizedlist>
+</para>
+</sect1>

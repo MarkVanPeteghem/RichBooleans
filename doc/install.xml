@@ -1,0 +1,172 @@
+<sect1><title>Installation</title>
+<indexterm><primary>Installation</primary></indexterm>
+<para>Download the file and decompress its contents to a directory.</para>
+
+<sect2><title>Build the library</title>
+Below are instructions to build the Rich Booleans library in the configurations that you need.
+You only need to build the RichBool library. The other projects whose name contains 'test'
+are only provided for experienced users who wish to test
+their own Rich Booleans, or test the existing Rich Booleans
+in different ways than was already done (although it is unlikely that this is necessary).
+<sect3><title>Using the Visual Studio project files</title>
+<para>Please use the workspace, solution and project files that are specific to the version of your compiler
+(<filename>*.dsw</filename> and <filename>*.dsp</filename> for 6.0,
+<filename>*7.1.sln</filename> and <filename>*7.1.vcproj</filename> for .NET 2003,
+<filename>*8.0.sln</filename> and <filename>*8.0.vcproj</filename> for .NET 2005,
+<filename>*9.0.sln</filename> and <filename>*9.0.vcproj</filename> for .NET 2008).
+Converting these files to another version may require adjustments.</para>
+<para>Note that these project files are not tested with Visual Studio Express. For Visual Studio Express
+you probably just need to exclude the files that begin with 'mfc'.</para>
+<para>The included Visual Studio project files have many configurations. The configurations that
+have ST in their name (Debug ST, Release ST) are for applications built with the Single-Threaded
+option, the ones that have MT in their name (Debug MT, ...) are for applications built with the Multithreaded
+option, and the ones that have MTD in their name (Debug MTD, Debug Wx MTD, ...) are for applications built with the Multithreaded DLL
+option.</para>
+<para>The configurations that have Wx in their name (Debug Wx MTD, Release Wx MTD) are for use with wxWidgets;
+these have only been tested without Unicode support, and with the static library version.
+For wxWidgets, there are only configuations with MTD in their name, because the wxWidgets libraries
+are built with the Multithreaded DLL option by default, and the Multithreaded configuration of
+wxWidgets is not well supported.</para>
+<para>The libraries are built in the directory <filename>lib</filename>.</para>
+</sect3>
+<sect3><title>Using the GNU makefiles</title>
+<para>To use the GNU makefiles, enter the command <code>./configure</code>, followed by <code>make</code>.
+You can also build the wxWidgets version by entering the command
+<code>./configure --with-wx</code> instead of <code>./configure</code>,
+this defines the symbol <code>RICHBOOL_USE_WX</code> during compilation.</para>
+</sect3>
+<sect3><title>Using the Windows makefiles for Mingw gcc</title>
+<para>The makefiles <filename>Makefile.win</filename> in several directories can be used to build
+the Rich Booleans library and the tests, but you will probably have to adjust the directories
+for the include files and library files.
+They have only one configuration, the one that doesn't use wxWidgets.</para>
+</sect3>
+<sect3><title>Using the Code::Blocks project files</title>
+<para>The files with the extension <filename>cbp</filename> and <filename>workspace</filename> in several directories are respectively Code::Blocks project files and workspaces.
+They have only one configuration, the one that doesn't use wxWidgets.</para>
+</sect3>
+<sect3><title>Other compilers</title>
+<para>Create a library project (or makefile), add the <filename>include</filename> directory to
+the include path, and add all the .cpp files, except the ones that start with 'mfc'.</para>
+</sect3>
+</sect2>
+
+<sect2><title>Adjusting your development environment to use Rich Booleans</title>
+	<para>To use Rich Booleans in your application or library,
+	you need to specify the include and library directory.
+	There are two options to do this: one option makes the Rich Booleans available
+	to all your projects, the other option is to specify it only for the projects
+	in which you want to use Rich Booleans. The first option is preferred,
+	especially if you plan to use Rich Booleans in many projects. There is no
+	danger for confusion with include files from other libraries with the same name,
+	as long as you keep the include files in the <filename>richbool</filename> directory
+	and only add its parent directory to the include path.</para>
+	<para>This section describes how to make Rich Booleans available to
+	<emphasis>all</emphasis> your projects.</para>
+
+    <sect3><title>Microsoft Visual C++</title>
+    <para>Add the directory called
+	<filename>include</filename> in the RichBool directory to the VC++ include directories
+    (Tools -> Options -> Projects and solutions -> VC++ Directories,
+	and select Include files in the combo box on the right),
+    and add the directory called <filename>lib</filename> in the RichBool directory to the VC++ include directories
+    (Tools -> Options -> Projects and solutions -> VC++ Directories, and select Library files in the combo box on the right)</para>
+	</sect3>
+    
+    <sect3><title>gcc</title>
+    <para>Install the library in
+	<filename>/usr/local/lib/</filename> and the header files (the directory <filename>richbool</filename>,
+	not only the headerfiles in it) in
+	<filename>/usr/local/include</filename> (or in other directories that are respectively in LIBRARY_PATH
+	and CPLUS_INCLUDE_PATH). You can do this with the command <code>make install</code>
+	as a superuser (if you already ran <code>./configure</code> or <code>./configure --with-wx</code>),
+	this builds the library and installs it in
+	<filename>/usr/local/lib/</filename> and puts
+	the header files in <filename>/usr/local/include</filename>.
+	An alternative is to add the directories to LIBRARY_PATH and CPLUS_INCLUDE_PATH.</para>
+	</sect3>
+	
+    <sect3><title>Other compilers</title>
+	<para>For other compilers, consult the documentation of your compiler.</para>
+	</sect3>
+
+</sect2>
+</sect1>
+
+<sect1><title>Adding Rich Booleans to individual projects</title>
+If you chose to not make the Rich Booleans available to all your projects
+(as explained in the previous section),
+you have to setup every project that uses it correctly as explained in this section.
+Make sure that the headerfiles can be included, and that the libraries can be found.
+<itemizedlist>
+    <listitem>For Microsoft Visual C++, it is best to make an environment variable called RICHBOOL,
+	that contains the directory where the Rich Booleans are, to make upgrading easier.
+    Then add <filename>$(RICHBOOL)/include</filename> to your include path
+    (Project Settings -> C/C++ -> Preprocessor).
+    Add <filename>$(RICHBOOL)/lib</filename> to your additional library path (Project Settings -> Link -> Input).
+    </listitem>
+    <listitem>For gcc, use the -I and -L command line options to specify the include and
+	library directories.</listitem>
+    <listitem>For other compilers, consult the documentation of your compiler.</listitem>
+</itemizedlist>
+</sect1>
+
+<sect1><title>Linking to the Rich Booleans library</title>
+<para>Link the Rich Booleans library with your executable (unless you use Visual C++, then the necessary
+libraries are linked automatically; this probably also works with Borland C++ builder, but this has not been tested).</para>
+<para>Note: if you use Visual C++ and link statically to the MFC library,
+you might have to include <filename>afxwin.h</filename>
+in at least one source file, to force the linker to link with the correct libraries, to avoid link errors.</para>
+</sect1>
+
+<sect1><title>Using Rich Booleans</title>
+<para>Rich booleans can be used on their own, but it's not the easiest way to use them.
+Usually you need them when you use another library that uses
+them (see <xref linkend='projects'/>).
+If that library includes the headerfiles for the rich booleans you need, you don't need
+to include them in your sourcecode, but you might have to add others. Otherwise, you just include
+<filename>richbool/richbool.hpp</filename> (or others for specific Rich Booleans).</para>
+</sect1>
+
+<sect1><title>Possible problems when upgrading</title>
+<para>If you use Microsoft Visual C++ or Borland C++, the autolinking mechanism may
+cause link errors if some <filename>.obj</filename> files still contain the instruction to link to the
+old version. In that case you should rebuild your application entirely.</para>
+<para>If you use ModAssert as well, you may have to rebuild these libraries as well.</para>
+</sect1>
+
+<sect1 id='ChooseYourStrings'><title>Choose your strings</title>
+<indexterm><primary>String type</primary></indexterm>
+<para>Most macros in this package suppose that their arguments can be converted to a string,
+so that their values can be displayed. If you provide an argument
+of a type that can't be converted to a string, a compile error will be given.</para>
+<para>At present, the rich booleans can use two types of strings to show values, <classname>std::string</classname>
+and <classname>wxString</classname> of the wxWidgets library. By default, <classname>std::string</classname> is used.
+If you want to use <classname>wxString</classname>, you should add the symbol <code>RICHBOOL_USE_WX</code>
+in your makefile or project, and link with the richbool library that is also built with this symbol.
+See <xref linkend='stringize' /> for more information.
+</para>
+<para>Wide characters strings cannot be used yet to stream objects into, not even with <classname>wxString</classname>.
+If you use <classname>wxString</classname> and get a compile error in <filename>portability.hpp</filename>,
+you probably use unicode characters, so you should switch to Ansi strings or multi-byte strings.
+By default VC++ 2005 uses unicode characters; you can change this in the project properties,
+more specifically the entry Character Set under General.
+But wide characters strings can be streamed into ordinary characters strings, where necessary escaping is added.
+On some compilers a single wide character will be considered an unsigned short, so it will be shown as a number.
+If your compiler can distinguish a single wide character from an unsigned short, adjust the file
+<filename>richbool/config.hpp</filename> so that <code>RICHBOOL_WCHAR_T_IS_USHORT</code> is <code>0</code>.
+With Visual C++ 6.0 this is not possible. With Visual C++ 2003 and later it is possible if you set a switch in
+the project settings: C/C++ -> Language -> Treat w_char_t as Built-in charater. With (recent versions of) gcc
+it is always possible, so you don't have to adjust this.</para>
+<sect2><title>Escaping</title>
+<para>All output of string objects and characters by Rich Booleans is escaped. So non-printable characters
+are converted to their hexadecimal value, preceded by a backslash and a character 'x'. Some values are converted to the way
+they would appear in source code, like <literal>'\n'</literal> and <literal>'\t'</literal>.
+A backslash is converted to <literal>'\\'</literal>.</para>
+<para>For efficiency, escaping is not done for objects of other classes
+and primitive types.
+If you define a stream operator for your own objects, make sure only printable characters are outputted
+to keep the output readable; otherwise you may overload the method <code>RichBool::ToString</code>
+(see <xref linkend='stringize' />), which by default uses the stream operator.</para>
+</sect2>
+</sect1>

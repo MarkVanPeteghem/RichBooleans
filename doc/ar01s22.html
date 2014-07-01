@@ -1,0 +1,28 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Processing Rich Booleans (advanced)</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s21.html" title="Writing macros that use rich booleans (advanced)"><link rel="next" href="ar01s23.html" title="Considerations related to macros"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Processing Rich Booleans (advanced)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s21.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s23.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id535805"></a>Processing Rich Booleans (advanced)</h2></div></div></div><a class="indexterm" name="id535811"></a><a class="indexterm" name="id535816"></a><a class="indexterm" name="id535820"></a><p>Eventually, the macros that use Rich Booleans will pass these on to display or log the information
+in it. If you use a library that processes Rich Booleans, you don't have to worry about this.</p><p>A Rich Boolean macro evaluates to a <code class="classname">RichBool::Bool</code> or
+<code class="classname">RichBool::TmpBool</code> object, which both can be assigned to a <code class="classname">RichBool::Bool</code>
+object. A <code class="classname">RichBool::Bool</code> has a method <code class="code">const SharedAnalysis&amp; GetAnalysis() const</code>,
+that returns a shared pointer that holds a <code class="classname">RichBool::Analysis</code> object. The shared pointer
+has the <code class="code">operator-&gt;()</code>, so all methods of <code class="classname">RichBool::Analysis</code> can be used through that.
+It also has <code class="code">operator bool()</code>, which is false if a <code class="literal">NULL</code> pointer was given,
+so <code class="code">!analysis</code> can be used to check if that was the case.</p><p>The class <code class="classname">RichBool::Analysis</code> has a virtual method <code class="code">void
+streamout(std::ostream &amp;stream) const</code>, which is called by
+<code class="code">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;stream,
+const RichBool::Analysis &amp;analysis)</code> (<code class="classname">std::ostream</code>
+is replaced by <code class="classname">wxTextOutputStream</code> if you use wxWidgets).
+Derived classes implement this method to give the debugging information in plain text.
+This way you can stream the data to a file, a string or to the screen.
+The method <code class="code">RichBool::ToString</code> can convert a <code class="classname">RichBool::Analysis</code>
+object to a string using <code class="code">operator&lt;&lt;</code> (but it's more efficient to stream
+it to a stream with operator&lt;&lt;).</p><p>However, depending on the medium where the information is stored or displayed, it may be interesting
+to cast to the actual class, and take advantage of the mediums functionality. E.g. when you store the
+information in a HTML page, you could use colors or bold text to emphasize the values in a <code class="classname">
+RichBool::GeneralAnalysis</code> object, and distinguish between valid and invalid values.
+For this purpose the base class <code class="classname">RichBool::Analysis</code> has a virtual method
+<code class="code">const std::string&amp; GetType() const</code> (or
+<code class="code">const wxString&amp; GetType() const</code> if you use wxWidgets).
+In each derived class a unique name is returned here. A more
+efficient way to do this would be to return an enum, but since <code class="classname">RichBool::Analysis</code>
+derived classes can be developed independently from the classes that process them, this wouldn't be easy.
+Another way to do it would be by using RTTI, but since not everyone likes to use that, this alternative was added.
+</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s21.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s23.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Writing macros that use rich booleans (advanced) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Considerations related to macros</td></tr></table></div></body></html>

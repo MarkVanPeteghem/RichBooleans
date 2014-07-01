@@ -1,0 +1,104 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Converting objects to a string</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s26.html" title="Warning levels"><link rel="next" href="ar01s28.html" title="The package RichBoolTest (advanced)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Converting objects to a string</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s26.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s28.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="stringize"></a>Converting objects to a string</h2></div></div></div><p>Rich Booleans convert values to a string to provide extra information.
+By default the string type is <code class="classname">std::string</code>, but if you
+defined the symbol <code class="code">RICHBOOL_USE_WX</code> it is <code class="classname">wxString</code>.
+<code class="classname">RichBool::detail::String</code> is typedef'ed to the appropriate one of these
+two classes, and is used internally throughout the Rich Booleans package, but you never
+need this type directly, except when you write extensions that need to work in both environments.
+Normally you should use <code class="classname">std::string</code> or <code class="classname">wxString</code>
+if you write extensions, depending on which you need.</p><p>In the default situation the STL mechanism is used to convert to a <code class="classname">std::string</code>
+object, i.e. with <code class="code">std::ostream&amp; operator&lt;&lt;(std::ostream &amp;os, const T &amp;obj)</code>,
+and a <code class="classname">std::ostringstream</code> is given as the first argument.
+If you use wxWidgets and therefore defined the symbol <code class="code">RICHBOOL_USE_WX</code>, the overloaded function
+<code class="code">wxTextOutputStream&amp; operator&lt;&lt;(wxTextOutputStream &amp;str, const T &amp;obj)</code>
+is used instead, and a <code class="classname">wxTextOutputStream</code> object that writes to a
+<code class="classname">wxMemoryOutputStream</code> object is given as the first argument,
+to convert the object to a <code class="classname">wxString</code> object.
+All the headerfiles that the richbool headerfiles need, are then included automatically, provided you added the necessary include path.</p><p>With both mechanisms, primitive types can already be converted to strings, as well as string objects and
+<code class="code">const char*</code> values, without the need for writing conversion functions.</p><p>One obvious way to be able to use objects in Rich Booleans, is to overload the streamout operator.
+This is most convenient, because you can reuse that in other situations.</p><p>Another way to do it is to overload the function <code class="code">RichBool::ToString</code>,
+that should have one argument, an object of your class (usually by const reference), and
+return a <code class="classname">std::string</code> (or <code class="classname">wxString</code> if you use wxWidgets).
+This can be handy if you want objects of a certain class streamed in a different way for Rich Booleans.
+</p><div class="example"><a name="id540631"></a><p class="title"><b>Example 47. Overloading RichBool::ToString</b></p><div class="example-contents"><pre class="programlisting">
+class MyClass
+{
+public:
+	// ...
+};
+
+namespace RichBool
+{
+	inline std::string ToString(const MyClass &amp;obj)
+	{
+		// ...
+	}
+}</pre></div></div><p><br class="example-break">
+Note: here it is done inline, but this is of course not necessary.</p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id540642"></a>STL containers</h3></div></div></div><p>If you use the STL mechanism, <code class="code">RichBool::ToString</code> is already overloaded for <code class="classname">std::vector</code>,
+<code class="classname">std::list</code>, <code class="classname">std::deque</code>, <code class="classname">std::set</code>
+<code class="classname">std::multiset</code>, <code class="classname">std::map</code> and <code class="classname">std::multimap</code>.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id540679"></a>Compilers that can't do partial template specialization</h4></div></div></div><p>However, if your compiler can't do partial template specialization,
+this is only done for containers with default allocators and predicates that contain <code class="code">char</code>, <code class="code">short</code>, <code class="code">int</code>,
+<code class="code">long</code>, <code class="code">unsigned char</code>, <code class="code">unsigned short</code>, <code class="code">unsigned int</code>,
+<code class="code">unsigned long</code>, <code class="code">float</code>, <code class="code">double</code>, <code class="code">std::string</code> or <code class="code">const char*</code>,
+and not at all for <code class="classname">std::map</code> and <code class="classname">std::multimap</code>.
+For other containers, use the appropriate macro from the list below at global scope. From that point on,
+RichBool can convert containers of that type to a string.
+</p><div class="itemizedlist"><ul type="bullet"><li style="list-style-type: disc">If you want to do it for another non-associative container, use the macro <code class="code">RICHBOOL_CONTAINER_TO_STRING</code>
+with the container type as the argument.</li><li style="list-style-type: disc">For maps with default predicate and allocator,
+use the macro <code class="code">RICHBOOL_STD_MAP_TO_STRING</code> with the keytype and valuetype as arguments.</li><li style="list-style-type: disc">For maps with a non-default predicate and the default allocator,
+use the macro <code class="code">RICHBOOL_STD_MAP_TO_STRING_P</code> with the keytype, valuetype and predicate type as arguments.</li><li style="list-style-type: disc">For maps with a non-default predicate and allocator,
+use the macro <code class="code">RICHBOOL_STD_MAP_TO_STRING_PA</code> with the keytype, valuetype, predicate type and allocator type as arguments.</li><li style="list-style-type: disc">For multimaps with default predicate and allocator,
+use the macro <code class="code">RICHBOOL_STD_MULTIMAP_TO_STRING</code> with the keytype and valuetype as arguments.</li><li style="list-style-type: disc">For multimaps with a non-default predicate and the default allocator,
+use the macro <code class="code">RICHBOOL_STD_MULTIMAP_TO_STRING_P</code> with the keytype, valuetype and predicate type as arguments.</li><li style="list-style-type: disc">For multimaps with a non-default predicate and allocator,
+use the macro <code class="code">RICHBOOL_STD_MULTIMAP_TO_STRING_PA</code> with the keytype, valuetype, predicate type and allocator type as arguments.
+</li><li style="list-style-type: disc">For containers that contains pairs, e.g. a vector of pairs, or a map where the keytype or valuetype is a pair,
+additionally use the macro <code class="code">RICHBOOL_PAIR_TO_STRING</code> with the two types as the arguments.</li></ul></div><p>
+</p><div class="example"><a name="id540802"></a><p class="title"><b>Example 48. Defining a STL container to string conversion</b></p><div class="example-contents"><pre class="programlisting">
+#include &lt;richbool/richbool.hpp&gt;
+
+RICHBOOL_CONTAINER_TO_STRING(std::vector&lt;MyClass&gt;)
+
+void foo()
+{
+	std::vector&lt;MyClass&gt; vec1, vec2;
+	// ...
+	MOD_ASSERT(rb2_PRED(vec1, vec2, MyPredicate()));
+}
+
+typedef std::pair&lt;float, std::string&gt; PairFloatString;
+RICHBOOL_PAIR_TO_STRING(float, std::string)
+RICHBOOL_STD_MAP_TO_STRING(int, PairFloatString)
+
+void bar()
+{
+	std::map&lt;int, std::pair&lt;float, std::string&gt; &gt; mymap;
+	// ...
+	MOD_ASSERT(rb1_PRED(mymap, MyMapPredicate()));
+}</pre></div></div><p><br class="example-break">
+Note: these macros have no effect with compilers that can do partial template specialization,
+so you can use them in code that should compile under different compilers.</p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id540814"></a>Containers with overloaded non-member functions begin and end</h3></div></div></div><p>If you use the WxWidgets mechanism, by default no containers can be converted to a string. The same applies
+for other containers. However, if you have overloaded non-member functions <code class="code">begin</code> and <code class="code">end</code>
+that return iterators over the whole container (see <a href="ar01s14.html#xiterator" title="Containers with overloaded funtions begin() and end()">the section called &#8220;Containers with overloaded funtions <code class="code">begin()</code> and <code class="code">end()</code>&#8221;</a>),
+you can do it with the macro <code class="code">RICHBOOL_XCONTAINER_TO_STRING</code>
+with the container type as the argument.</p><div class="example"><a name="id540838"></a><p class="title"><b>Example 49. Defining a WxWidgets container to string conversion</b></p><div class="example-contents"><pre class="programlisting">
+#include &lt;richbool/richbool.hpp&gt;
+
+WX_DEFINE_ARRAY_INT(int, IntArray);
+WX_DEFINE_ARRAY_ITERATOR_P(int, IntArray, IntArrayIterator)
+RICHBOOL_XCONTAINER_TO_STRING(IntArray)
+
+void foo()
+{
+	IntArray vec1, vec2;
+	// ...
+	MOD_ASSERT(rb2_PRED(vec1, vec2, MyPredicate()));
+}</pre></div></div><br class="example-break"></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id540847"></a>When converting containers to a string is needed</h3></div></div></div><p>Note however that all this is not necessary if you use Rich Booleans that work on containers like <code class="code">rbIN_CONTAINER</code>.
+It might however be necessary if you create custom Rich Booleans that work on containers, or a Rich Boolean
+that takes a predicate that works on a container, like with <code class="code">rb1_PRED</code>.
+You would also need it with some other Rich Booleans that can have a container as an argument,
+e.g. <code class="code">rbEQUAL</code>, but <code class="code">rbIN_CONTAINERS</code> is better suited for that.</p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id540871"></a>Windows types that can be converted to a string</h3></div></div></div><p>On windows, <code class="classname">LARGE_INTEGER</code> and <code class="classname">ULARGE_INTEGER</code>
+have an overloaded function <code class="code">RichBool::ToString</code>, so you can use these in
+Rich Booleans.</p><p>If you use MFC, you can also convert objects of the type
+<code class="classname">POINT</code>, <code class="classname">CPoint</code>, <code class="classname">SIZE</code>,
+<code class="classname">CSize</code>, <code class="classname">RECT</code>, <code class="classname">CRect</code>
+and <code class="classname">CTime</code> to a string. Include the file
+<code class="filename">richbool/mfcstream.hpp</code> to do so.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s26.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s28.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Warning levels </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The package RichBoolTest (advanced)</td></tr></table></div></body></html>

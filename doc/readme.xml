@@ -1,0 +1,46 @@
+  <title>Rich booleans, version &Version;</title>
+  <subtitle>An advanced portable framework for C++ that provides extra information to the user if a condition fails</subtitle>
+  <author>
+  <email>info@q-mentum.com</email>
+  </author>
+  <corpauthor><ulink url='http://www.q-mentum.com'>Q-Mentum</ulink></corpauthor>
+  <abstract id='readme'>
+    <para>The Rich Booleans framework is a set of macros that hold extra information
+		if the condition in them fails,
+        so a developer better understands what goes wrong.
+		They allow modularization of assertions and other constructs
+        that check conditions, so on the one hand we can have different types of assertion macros
+        (e.g. in the <ulink url='http://sourceforge.net/projects/modassert/'>ModAssert</ulink> package we have
+        <code>MOD_ASSERT</code>, <code>MOD_VERIFY</code>, <code>MOD_ASSERT_P</code>, ...),
+        and on the other hand macros that replace booleans in the assertion
+        macros to provide extra information. So one could write
+        <code>MOD_ASSERT(rbEQUAL(a,b))</code>, <code>MOD_VERIFY(rbLESS(foo(), 10))</code>, etc.
+        These Rich Booleans could be reused in other situations, like an assertion macro in a unit
+        testing framework, or in contracts. The macros just have to know how to handle a rich boolean.
+    </para>
+    <para>This is a big improvement over the traditional assert function in C and C++. In different
+        libraries, macros were written to extend
+        the assert function, like <code>ASSERT_EQUAL(a,b)</code> to give a short explanation like
+        <msgtext>"lefthand is &lt;9&gt;, righthand is &lt;10&gt;"</msgtext>.
+        However, such a macros functionality can't be reused in any way if we want to have
+        a similar <code>VERIFY_EQUAL</code>
+        (which should still evaluate its arguments in non-debug mode),
+        or an <code>ASSERT_EQUAL_MSG</code> (to add a message). The Rich Booleans library allows to write
+        modular assertions (like in the ModAssert library), that allow such reuse.
+    </para>
+    <para>Over 90 interesting rich booleans are in this library, like <code>rbSTRING</code>
+        that shows where two strings are different (taking care of mismatches and insertions in an intelligent way),
+        and similar ones for ranges of iterators and STL containers, or <code>rbFILE</code> that
+		checks whether a file has certain properties. They can be combined to make powerful
+        checks, like checking whether the integer values in one vector are smaller than those in another vector,
+        comparing two vectors of vectors, comparing a vector of objects to a vector of pointers to objects,
+        or combining rich booleans with logical operations. Most Rich Booleans also allow binding of parameters,
+        so one could e.g. check if all the integers in a vector are smaller than a given number.
+    </para>
+    <para>The Rich Boolean macros are carefully constructed so they evaluate their arguments
+	only once, and add parentheses around arguments where necessary.</para>
+    <para>It is released under the <ulink url='http://opensource.org/licenses/wxwindows.php'>wxWindows Licence</ulink>,
+    so it can be used in both open source and commercial applications, without requiring provision of source,    or runtime acknowledgements.</para>
+	<para>Support is available through the
+	<ulink url='https://lists.sourceforge.net/lists/listinfo/modassert-users'>mailinglist</ulink>.</para>
+  </abstract>

@@ -1,0 +1,26 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Choose your strings</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s11.html" title="Possible problems when upgrading"><link rel="next" href="ar01s13.html" title="Known problems"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Choose your strings</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s11.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s13.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ChooseYourStrings"></a>Choose your strings</h2></div></div></div><a class="indexterm" name="id503197"></a><p>Most macros in this package suppose that their arguments can be converted to a string,
+so that their values can be displayed. If you provide an argument
+of a type that can't be converted to a string, a compile error will be given.</p><p>At present, the rich booleans can use two types of strings to show values, <code class="classname">std::string</code>
+and <code class="classname">wxString</code> of the wxWidgets library. By default, <code class="classname">std::string</code> is used.
+If you want to use <code class="classname">wxString</code>, you should add the symbol <code class="code">RICHBOOL_USE_WX</code>
+in your makefile or project, and link with the richbool library that is also built with this symbol.
+See <a href="ar01s27.html" title="Converting objects to a string">the section called &#8220;Converting objects to a string&#8221;</a> for more information.
+</p><p>Wide characters strings cannot be used yet to stream objects into, not even with <code class="classname">wxString</code>.
+If you use <code class="classname">wxString</code> and get a compile error in <code class="filename">portability.hpp</code>,
+you probably use unicode characters, so you should switch to Ansi strings or multi-byte strings.
+By default VC++ 2005 uses unicode characters; you can change this in the project properties,
+more specifically the entry Character Set under General.
+But wide characters strings can be streamed into ordinary characters strings, where necessary escaping is added.
+On some compilers a single wide character will be considered an unsigned short, so it will be shown as a number.
+If your compiler can distinguish a single wide character from an unsigned short, adjust the file
+<code class="filename">richbool/config.hpp</code> so that <code class="code">RICHBOOL_WCHAR_T_IS_USHORT</code> is <code class="code">0</code>.
+With Visual C++ 6.0 this is not possible. With Visual C++ 2003 and later it is possible if you set a switch in
+the project settings: C/C++ -&gt; Language -&gt; Treat w_char_t as Built-in charater. With (recent versions of) gcc
+it is always possible, so you don't have to adjust this.</p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id503257"></a>Escaping</h3></div></div></div><p>All output of string objects and characters by Rich Booleans is escaped. So non-printable characters
+are converted to their hexadecimal value, preceded by a backslash and a character 'x'. Some values are converted to the way
+they would appear in source code, like <code class="literal">'\n'</code> and <code class="literal">'\t'</code>.
+A backslash is converted to <code class="literal">'\\'</code>.</p><p>For efficiency, escaping is not done for objects of other classes
+and primitive types.
+If you define a stream operator for your own objects, make sure only printable characters are outputted
+to keep the output readable; otherwise you may overload the method <code class="code">RichBool::ToString</code>
+(see <a href="ar01s27.html" title="Converting objects to a string">the section called &#8220;Converting objects to a string&#8221;</a>), which by default uses the stream operator.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s11.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s13.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Possible problems when upgrading </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Known problems</td></tr></table></div></body></html>

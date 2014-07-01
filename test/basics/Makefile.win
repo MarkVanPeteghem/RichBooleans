@@ -1,0 +1,76 @@
+# Project: RichBoolTestBasics
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe -D__DEBUG__
+CC   = gcc.exe -D__DEBUG__
+WINDRES = windres.exe
+RES  = 
+OBJ  = GNUWin32/streamtest.o GNUWin32/analysis_equal.o GNUWin32/getbestpath_test.o GNUWin32/expression_test.o GNUWin32/tmpbool_test.o GNUWin32/bool_test.o GNUWin32/end_condition_test.o GNUWin32/version_test.o GNUWin32/richbooltest.o GNUWin32/rbtest.o GNUWin32/wrappertest.o GNUWin32/getarg_test.o GNUWin32/logic_test.o GNUWin32/relation_test.o GNUWin32/safecheck.o GNUWin32/swap_test.o $(RES)
+LINKOBJ  = GNUWin32/streamtest.o GNUWin32/analysis_equal.o GNUWin32/getbestpath_test.o GNUWin32/expression_test.o GNUWin32/tmpbool_test.o GNUWin32/bool_test.o GNUWin32/end_condition_test.o GNUWin32/version_test.o GNUWin32/richbooltest.o GNUWin32/rbtest.o GNUWin32/wrappertest.o GNUWin32/getarg_test.o GNUWin32/logic_test.o GNUWin32/relation_test.o GNUWin32/safecheck.o GNUWin32/swap_test.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -L"../lib" -lrichbool  -g3 
+INCS =  -I"C:/Dev-Cpp/include"  -I"../common" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"../common" 
+BIN  = RichBoolTestBasics.exe
+CXXFLAGS = $(CXXINCS) -ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings    -fexceptions -fexpensive-optimizations -g3
+CFLAGS = $(INCS)   -fexceptions -fexpensive-optimizations -g3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before RichBoolTestBasics.exe all-after
+
+include unittest.mak
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "RichBoolTestBasics.exe" $(LIBS)
+
+GNUWin32/streamtest.o: streamtest.cpp
+	$(CPP) -c streamtest.cpp -o GNUWin32/streamtest.o $(CXXFLAGS)
+
+GNUWin32/analysis_equal.o: analysis_equal.cpp
+	$(CPP) -c analysis_equal.cpp -o GNUWin32/analysis_equal.o $(CXXFLAGS)
+
+GNUWin32/getbestpath_test.o: getbestpath_test.cpp
+	$(CPP) -c getbestpath_test.cpp -o GNUWin32/getbestpath_test.o $(CXXFLAGS)
+
+GNUWin32/expression_test.o: expression_test.cpp
+	$(CPP) -c expression_test.cpp -o GNUWin32/expression_test.o $(CXXFLAGS)
+
+GNUWin32/tmpbool_test.o: tmpbool_test.cpp
+	$(CPP) -c tmpbool_test.cpp -o GNUWin32/tmpbool_test.o $(CXXFLAGS)
+
+GNUWin32/bool_test.o: bool_test.cpp
+	$(CPP) -c bool_test.cpp -o GNUWin32/bool_test.o $(CXXFLAGS)
+
+GNUWin32/end_condition_test.o: end_condition_test.cpp
+	$(CPP) -c end_condition_test.cpp -o GNUWin32/end_condition_test.o $(CXXFLAGS)
+
+GNUWin32/version_test.o: version_test.cpp
+	$(CPP) -c version_test.cpp -o GNUWin32/version_test.o $(CXXFLAGS)
+
+GNUWin32/richbooltest.o: ../common/richbooltest.cpp
+	$(CPP) -c ../common/richbooltest.cpp -o GNUWin32/richbooltest.o $(CXXFLAGS)
+
+GNUWin32/rbtest.o: ../common/rbtest.cpp
+	$(CPP) -c ../common/rbtest.cpp -o GNUWin32/rbtest.o $(CXXFLAGS)
+
+GNUWin32/wrappertest.o: wrappertest.cpp
+	$(CPP) -c wrappertest.cpp -o GNUWin32/wrappertest.o $(CXXFLAGS)
+
+GNUWin32/getarg_test.o: getarg_test.cpp
+	$(CPP) -c getarg_test.cpp -o GNUWin32/getarg_test.o $(CXXFLAGS)
+
+GNUWin32/logic_test.o: logic_test.cpp
+	$(CPP) -c logic_test.cpp -o GNUWin32/logic_test.o $(CXXFLAGS)
+
+GNUWin32/relation_test.o: relation_test.cpp
+	$(CPP) -c relation_test.cpp -o GNUWin32/relation_test.o $(CXXFLAGS)
+
+GNUWin32/safecheck.o: safecheck.cpp
+	$(CPP) -c safecheck.cpp -o GNUWin32/safecheck.o $(CXXFLAGS)
+
+GNUWin32/swap_test.o: swap_test.cpp
+	$(CPP) -c swap_test.cpp -o GNUWin32/swap_test.o $(CXXFLAGS)

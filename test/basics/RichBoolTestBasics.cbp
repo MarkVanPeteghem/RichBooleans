@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RichBoolTestBasics" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Mingw">
+				<Option output="RichBoolTestBasics.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output=".objs-mingw" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="1" />
+				<Compiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\common" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\lib\librichbool-mingw.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(TARGET_OUTPUT_FILE)" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Cygwin">
+				<Option platforms="Windows;" />
+				<Option output="RichBoolTestBasics-cygwin.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output=".objs-cygwin" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\common" />
+				</Compiler>
+				<Linker>
+					<Add library="..\..\lib\librichbool-cygwin.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(TARGET_OUTPUT_FILE)" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Mingw;Cygwin;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings" />
+		</Compiler>
+		<ExtraCommands>
+			<Add after="$(TARGET_OUTPUT_FILE)" />
+			<Mode after="always" />
+		</ExtraCommands>
+		<Unit filename="analysis_equal.cpp" />
+		<Unit filename="bit_iterator.cpp" />
+		<Unit filename="bitsare_match_test.cpp" />
+		<Unit filename="bool_test.cpp" />
+		<Unit filename="end_condition_test.cpp" />
+		<Unit filename="expression_test.cpp" />
+		<Unit filename="getarg_test.cpp" />
+		<Unit filename="getbestpath_test.cpp" />
+		<Unit filename="logic_test.cpp" />
+		<Unit filename="rbtest.hpp" />
+		<Unit filename="relation_test.cpp" />
+		<Unit filename="resource.h" />
+		<Unit filename="safecheck.cpp" />
+		<Unit filename="shared_memory_test.cpp" />
+		<Unit filename="streamtest.cpp" />
+		<Unit filename="swap_test.cpp" />
+		<Unit filename="tmpbool_test.cpp" />
+		<Unit filename="values_test.cpp" />
+		<Unit filename="version_test.cpp" />
+		<Unit filename="wrappertest.cpp" />
+		<Unit filename="..\common\rbtest.cpp" />
+		<Unit filename="..\common\rbtest.hpp" />
+		<Unit filename="..\common\richbooltest.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

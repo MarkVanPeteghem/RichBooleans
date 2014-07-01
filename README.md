@@ -1,4 +1,12 @@
 RichBooleans
 ============
 
-Macros for use in C++ assertions, that give more information about what went wrong.
+The Rich Booleans framework is a set of macros that hold extra information if the condition in them fails, so a developer better understands what goes wrong. They allow modularization of assertions and other constructs that check conditions, so on the one hand we can have different types of assertion macros (e.g. in the ModAssert package we have MOD_ASSERT, MOD_VERIFY, MOD_ASSERT_P, ...), and on the other hand macros that replace booleans in the assertion macros to provide extra information. So one could write MOD_ASSERT(rbEQUAL(a,b)), MOD_VERIFY(rbLESS(foo(), 10)), etc. These Rich Booleans could be reused in other situations, like an assertion macro in a unit testing framework, or in contracts. The macros just have to know how to handle a rich boolean.
+
+This is a big improvement over the traditional assert function in C and C++. In different libraries, macros were written to extend the assert function, like ASSERT_EQUAL(a,b) to give a short explanation like "lefthand is <9>, righthand is <10>". However, such a macros functionality can't be reused in any way if we want to have a similar VERIFY_EQUAL (which should still evaluate its arguments in non-debug mode), or an ASSERT_EQUAL_MSG (to add a message). The Rich Booleans library allows to write modular assertions (like in the ModAssert library), that allow such reuse.
+
+Over 90 interesting rich booleans are in this library, like rbSTRING that shows where two strings are different (taking care of mismatches and insertions in an intelligent way), and similar ones for ranges of iterators and STL containers, or rbFILE that checks whether a file has certain properties. They can be combined to make powerful checks, like checking whether the integer values in one vector are smaller than those in another vector, comparing two vectors of vectors, comparing a vector of objects to a vector of pointers to objects, or combining rich booleans with logical operations. Most Rich Booleans also allow binding of parameters, so one could e.g. check if all the integers in a vector are smaller than a given number.
+
+The Rich Boolean macros are carefully constructed so they evaluate their arguments only once, and add parentheses around arguments where necessary.
+
+It is released under the wxWindows Licence, so it can be used in both open source and commercial applications, without requiring provision of source, or runtime acknowledgements.

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="RichBool">
+		<Project filename="RichBool.cbp" />
+		<Project filename="test/basics/RichBoolTestBasics.cbp" />
+		<Project filename="test/macros/RichBoolTestMacros.cbp" active="1" />
+		<Project filename="test/ranges/RichBoolTestRanges.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

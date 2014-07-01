@@ -1,0 +1,3442 @@
+<sect1>
+	<title>The available rich booleans</title>
+	<indexterm><primary>Rich Boolean macros</primary></indexterm>
+
+	<para>All the classes mentioned in this section are in the namespace RichBool,
+    which is omitted in the text for brevity.</para>
+	<para>Note: Many Rich Booleans have two versions, one that starts with <code>rb</code> followed by uppercase
+	letters or digits, and another that starts with <code>rbv</code> followed by uppercase letters or digits.
+	The Rich Booleans of the first kind are meant for assertion
+	macros that don't return a value, the Rich Booleans of the second kind are meant for assertion
+	macros that do return a value. The difference has to do with implementation issues.
+	An assertion macro that returns a value will usually
+	return the first argument of the Rich Boolean, but there are some exceptions,
+	which are mentionned in the documentation of the Rich Booleans in question below.</para>
+	<para>If you use Visual C++ 6 and use a literal string in a Rich Boolean that returns a value,
+	you should cast it to <code>const char*</code>, due to a limitation of this compiler.
+	<programlisting>// does not work with Visual C++ 6:
+const char *name = MOD_VERIFY_V(rbvFILE_EXISTS("file.txt"));
+	
+// ok:
+const char *name = MOD_VERIFY_V(rbvFILE_EXISTS((const char*)"file.txt"));
+	</programlisting></para>
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Comparing values</secondary></indexterm>
+		<indexterm><primary>Comparing values</primary></indexterm>
+		<title>Comparing values</title>
+		<para>To use the Rich Booleans in this section, include <filename>richbool/richbool.hpp</filename>
+        Note: the parameters of these Rich Booleans can have different types, as long as the
+        required operators and function are overloaded for them. E.g. for <code>rbEQUAL(a,b)</code>
+        you can give a <classname>std::string</classname> object and a character literal, because
+        <code>operator==</code> is defined on these.</para>
+		<sect3>
+			<indexterm><primary>rbEQUAL</primary></indexterm>
+			<title>
+				<code>rbEQUAL(a,b), rbvEQUAL(a,b)</code>
+			</title>
+			<para>This macro checks whether its arguments are equal (with <code>operator==</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1&gt; == `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Equal&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbEQUAL_PTR</primary></indexterm>
+			<title>
+				<code>rbEQUAL_PTR(a,b), rbvEQUAL_PTR(a,b)</code>
+			</title>
+			<para>This macro checks whether its arguments, which should be pointers, are equal
+        (with <code>operator==</code>). Upon
+        failure, it converts its arguments to strings, and if they are considered valid pointers, the values that
+        they point to will also be converted to a string, which will all be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>(0x0012feb0 -> 1) == (0x0012feac -> 1) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>(0x0012feb0 -> 1) == (0x00000000) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualPtr&lt;class GetValue1=Value, class GetValue2=Value &gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbLESS</primary></indexterm>
+			<title>
+				<code>rbLESS(a,b), rbvLESS(a,b)</code>
+			</title>
+			<para>This macro checks whether <code>a</code> is less than <code>b</code> (with <code>operator&lt;</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;3&gt; &lt; `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Less&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbLESS_OR_EQUAL</primary></indexterm>
+			<title>
+				<code>rbLESS_OR_EQUAL(a,b), rbvLESS_OR_EQUAL(a,b)</code>
+			</title>
+			<para>This macro checks whether <code>a</code> is less than or equal to <code>b</code> (with <code>operator&lt;=</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;3&gt; &lt;= `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>LessOrEqual&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbMORE</primary></indexterm>
+			<title>
+				<code>rbMORE(a,b), rbvMORE(a,b)</code>
+			</title>
+			<para>This macro checks whether <code>a</code> is bigger than <code>b</code> (with <code>operator&gt;</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &gt; `b':&lt;3&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>More&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbMORE_OR_EQUAL</primary></indexterm>
+			<title>
+				<code>rbMORE_OR_EQUAL(a,b), rbvMORE_OR_EQUAL(a,b)</code>
+			</title>
+			<para>This macro checks whether <code>a</code> is more than or equal to <code>b</code> (with <code>operator&gt;=</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &gt;= `b':&lt;3&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>MoreOrEqual&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbDIFF</primary></indexterm>
+			<title>
+				<code>rbDIFF(a,b), rbvDIFF(a,b)</code>
+			</title>
+			<para>This macro checks whether its arguments are different (with <code>operator!=</code>). Upon
+        failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; != `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Diff&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbEQUAL_USING_LESS</primary></indexterm>
+			<title>
+				<code>rbEQUAL_USING_LESS(a,b), rbvEQUAL_USING_LESS(a,b)</code>
+			</title>
+			<para>This macro checks whether its arguments are equal, but using <code>operator&lt;</code>
+			instead of <code>operator==</code> (i.e. by evaluating <code>!(a&lt;b) &amp;&amp; !(b&lt;a)</code>).
+			Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1&gt; == `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualUsingLess&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbEQUAL_USING_MORE</primary></indexterm>
+			<title>
+				<code>rbEQUAL_USING_MORE(a,b), rbvEQUAL_USING_MORE(a,b)</code>
+			</title>
+			<para>This macro checks whether its arguments are equal, but using <code>operator&gt;</code>
+			instead of <code>operator==</code> (i.e. by evaluating <code>!(a&gt;b) &amp;&amp; !(b&gt;a)</code>).
+			Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1&gt; == `b':&lt;2&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualUsingMore&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_INTERVAL</primary></indexterm>
+			<title>
+				<code>rbIN_INTERVAL(val, low, high), rbvIN_INTERVAL(val, low, high)</code>
+			</title>
+			<para>This macro checks whether <code>val</code> is in the closed interval <code>low</code> and <code>high</code>.
+        It only uses <code>operator&lt;</code> on the arguments. Upon
+        failure, it converts its arguments to strings, which will be shown with the message that <code>val</code> was
+        not in the interval of <code>low</code> and <code>high</code>.</para>
+			<para>It is recommended to use the Rich Boolean <code>rbORDER3</code> instead, which is more flexible, unless
+			the concept of an interval (or range) is important in your code and you want to express that by using this Rich Boolean.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`val':&lt;6&gt; in [`low':&lt;2&gt;, `high':&lt;4&gt;] - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InInterval&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_OPEN_INTERVAL</primary></indexterm>
+			<title>
+				<code>rbIN_OPEN_INTERVAL(val, low, high), rbvIN_OPEN_INTERVAL(val, low, high)</code>
+			</title>
+			<para>This macro checks whether <code>val</code> is in the open interval (<code>low</code>, <code>high</code>).
+        It only uses <code>operator&lt;</code> on the arguments. Upon
+        failure, it converts its arguments to strings, which will be shown with the message that <code>val</code> was
+        not in the open interval of <code>low</code> and <code>high</code>.</para>
+			<para>It is recommended to use the Rich Boolean <code>rbORDER3</code> instead, which is more flexible, unless
+			the concept of an interval (or range) is important in your code and you want to express that by using this Rich Boolean.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`val':&lt;4&gt; in (`low':&lt;2&gt;, `high':&lt;4&gt;) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InInterval&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER2</primary></indexterm>
+			<title>
+				<code>rbORDER2(a, op, b), rbvORDER2(a, op, b)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code> and <code>b</code> satisfy the relation
+			<code>op</code>. <code>op</code> can be <code>==</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &lt; `b':&lt;1&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order2&lt;class Relation, class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation</classname> can be any of <classname>EqualRelation</classname>,
+			    <classname>LessRelation</classname>, <classname>LessOrEqualRelation</classname>,
+			    <classname>MoreRelation</classname>, <classname>MoreOrEqualRelation</classname> and
+			    <classname>DifferentRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER3</primary></indexterm>
+			<title>
+				<code>rbORDER3(a, op1, b, op2, c), rbvORDER3(a, op1, b, op2, c)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code>, <code>b</code> and <code>c</code> satisfy the relations
+			<code>a op1 b</code> and <code>b op2 c</code>. <code>op1</code> and <code>op2</code> can be <code>==</code>,
+			<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>Note: Assertion macros that return a value, and have <code>rbvORDER3</code> as the condition, will
+			return the third argument (i.e. the second value), not the first value.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &lt; `b':&lt;1&gt; &lt; `c':&lt;3&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order3&lt;class Relation1, class Relation2, class GetValue1=Value, class GetValue2=Value,
+				class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation1</classname> and <classname>Relation2</classname> can be any of <classname>EqualRelation</classname>,
+			    <classname>LessRelation</classname>, <classname>LessOrEqualRelation</classname>,
+			    <classname>MoreRelation</classname>, <classname>MoreOrEqualRelation</classname> and
+			    <classname>DifferentRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER4</primary></indexterm>
+			<title>
+				<code>rbORDER4(a, op1, b, op2, c, op3, d)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code>, <code>b</code>, <code>c</code>
+			and <code>d</code> satisfy the relations <code>a op1 b</code>, <code>b op2 c</code> and
+			<code>c op3 d</code>. <code>op1</code>, <code>op2</code> and <code>op3</code> can be <code>==</code>,
+			<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1&gt; &lt; `b':&lt;2&gt; &lt;= `c':&lt;2&gt; &lt; `d':&lt;0&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order4&lt;class Relation1, class Relation2, class Relation3, class GetValue1=Value, 
+				class GetValue2=Value, class GetValue3=Value, class GetValue4=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation1</classname>, <classname>Relation2</classname> and <classname>Relation3</classname>
+				can be any of <classname>EqualRelation</classname>,
+			    <classname>LessRelation</classname>, <classname>LessOrEqualRelation</classname>,
+			    <classname>MoreRelation</classname>, <classname>MoreOrEqualRelation</classname> and
+			    <classname>DifferentRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbNEAR</primary></indexterm>
+			<title>
+				<code>rbNEAR(a,b,diff), rbvNEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether its two first arguments are close enough,
+			i.e. if their difference isn't more than the third argument. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>fabs(`a':&lt;1.0&gt;-`b':&lt;2.0&gt;) = 1 &lt;= `diff':&lt;0.1&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Near&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbLESS_NEAR</primary></indexterm>
+			<title>
+				<code>rbLESS_NEAR(a,b,diff), rbvLESS_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether first argument is less than the second,
+			 but allowing a tolerance of <code>diff</code>, i.e. if the first is between <code>b</code>
+			 and <code>b+diff</code>, it is still accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>less</emphasis> strict than <code>rbLESS</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; &lt;~`b':&lt;2.0&gt; (difference is &lt;1&gt;, `diff':&lt;0.1&gt; allowed) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>LessNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbMORE_NEAR</primary></indexterm>
+			<title>
+				<code>rbMORE_NEAR(a,b,diff), rbvMORE_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether the first argument is more than the second,
+			 but allowing a tolerance of <code>diff</code>, i.e. if the first is between <code>b</code>
+			 and <code>b-diff</code>, it is still accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>less</emphasis> strict than <code>rbMORE</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; &gt;~`b':&lt;2.0&gt; (difference is &lt;1&gt;, `diff':&lt;0.1&gt; allowed) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>MoreNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDIFF_NEAR</primary></indexterm>
+			<title>
+				<code>rbDIFF_NEAR(a,b,diff), rbvIFF_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether the first argument is different from the second,
+			 requiring a tolerance of <code>diff</code>, i.e. if the first is between <code>b-diff</code>
+			 and <code>b+diff</code>, it is neither accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>more</emphasis> strict than <code>rbDIFF</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; &gt;~`b':&lt;2.0&gt; (difference is &lt;1&gt;, `diff':&lt;0.1&gt; allowed) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>MoreNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_INTERVAL_NEAR</primary></indexterm>
+			<title>
+				<code>rbIN_INTERVAL_NEAR(val, low, high, diff), rbvIN_INTERVAL_NEAR(val, low, high, diff)</code>
+			</title>
+			<para>This macro checks whether <code>val</code> is in the closed interval <code>low</code> and <code>high</code>.
+        It only uses <code>operator&lt;</code> on the arguments. Upon
+        failure, it converts its arguments to strings, which will be shown with the message that <code>val</code> was
+        not in the interval of <code>low</code> and <code>high</code>.</para>
+			<para>It is recommended to use the Rich Boolean <code>rbORDER3</code> instead, which is more flexible, unless
+			the concept of an interval (or range) is important in your code and you want to express that by using this Rich Boolean.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`val':&lt;6&gt; in [`low':&lt;2&gt;, `high':&lt;4&gt;] - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InIntervalNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER2_NEAR</primary></indexterm>
+			<title>
+				<code>rbORDER2_NEAR(a, op, b, diff), rbvORDER2_NEAR(a, op, b, diff)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code> and <code>b</code> satisfy the relation
+			<code>op</code>, allowing a tolerance of <code>diff</code>.
+			<code>op</code> can be <code>==</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &lt;~ `b':&lt;1&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order2Near&lt;class Relation, class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation</classname> can be any of <classname>EqualNearRelation</classname>,
+			    <classname>LessNearRelation</classname>,
+			    <classname>MoreNearRelation</classname> and
+			    <classname>DifferentNearRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER3_NEAR</primary></indexterm>
+			<title>
+				<code>rbORDER3_NEAR(a, op1, b, op2, c, diff), rbvORDER3_NEAR(a, op1, b, op2, c, diff)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code>, <code>b</code> and <code>c</code> satisfy the relations
+			<code>a op1 b</code> and <code>b op2 c</code>, allowing a tolerance of <code>diff</code>.
+			<code>op1</code> and <code>op2</code> can be <code>==</code>,
+			<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>Note: Assertion macros that return a value, and have <code>rbvORDER3</code> as the condition, will
+			return the third argument (i.e. the second value), not the first value.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;2&gt; &lt; `b':&lt;1&gt; &lt; `c':&lt;3&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order3Near&lt;class Relation1, class Relation2, class GetValue1=Value, class GetValue2=Value,
+				class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation1</classname> and <classname>Relation2</classname> can be any of <classname>EqualNearRelation</classname>,
+			    <classname>LessNearRelation</classname>,
+			    <classname>MoreNearRelation</classname>, and
+			    <classname>DifferentNearRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbORDER4_NEAR</primary></indexterm>
+			<title>
+				<code>rbORDER4_NEAR(a, op1, b, op2, c, op3, d, diff)</code>
+			</title>
+			<para>This macro checks whether its arguments <code>a</code>, <code>b</code>, <code>c</code>
+			and <code>d</code> satisfy the relations <code>a op1 b</code>, <code>b op2 c</code> and
+			<code>c op3 d</code>. <code>op1</code>, <code>op2</code> and <code>op3</code> can be <code>==</code>,
+			<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+			<code>&gt;=</code> or <code>!=</code>. Upon failure, it converts its arguments to strings, which will be shown in the output.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1&gt; &lt; `b':&lt;2&gt; &lt;= `c':&lt;2&gt; &lt; `d':&lt;0&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>Order4&lt;class Relation1, class Relation2, class Relation3, class GetValue1=Value, 
+				class GetValue2=Value, class GetValue3=Value, class GetValue4=Value, class Stringize=MakeString&gt;</classname>
+				<classname>Relation1</classname>, <classname>Relation2</classname> and <classname>Relation3</classname>
+				can be any of <classname>EqualRelation</classname>,
+			    <classname>LessRelation</classname>, <classname>LessOrEqualRelation</classname>,
+			    <classname>MoreRelation</classname>, <classname>MoreOrEqualRelation</classname> and
+			    <classname>DifferentRelation</classname>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbREL_NEAR</primary></indexterm>
+			<title>
+				<code>rbREL_NEAR(a,b,diff), rbvREL_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether its two first arguments are close enough, i.e. if their difference isn't more
+        than the third argument multiplied by the biggest of the absolute values of the two numbers. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>This Rich Boolean is to be preferred over <code>rbNEAR(a,b,diff)</code> if you expect both small
+        and big values for <code>a</code> and <code>b</code>, with about the same proportional error.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>relative difference of `a':&lt;10&gt; and `b':&lt;8.99&gt; = 0.101 &lt;= `diff':&lt;0.1&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>RelNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbLESS_REL_NEAR</primary></indexterm>
+			<title>
+				<code>rbLESS_REL_NEAR(a,b,diff), rbvLESS_REL_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether the first argument is less than the second,
+			 but allowing a tolerance of <code>diff*max(a,b)</code>, i.e. if the first is between <code>b</code>
+			 and <code>b+diff*max(a,b)</code>, it is still accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>less</emphasis> strict than <code>rbLESS</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; &lt;~ `b':&lt;2.0&gt; (relative difference is &lt;0.5&gt;, `diff':&lt;0.1&gt; allowed) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>LessRelativeNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbMORE_REL_NEAR</primary></indexterm>
+			<title>
+				<code>rbMORE_REL_NEAR(a,b,diff), rbvMORE_REL_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether the first argument is more than the second,
+			 but allowing a tolerance of <code>diff*max(a,b)</code>, i.e. if the first is between <code>b</code>
+			 and <code>b-diff*max(a,b)</code>, it is still accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>less</emphasis> strict than <code>rbMORE</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; &gt;~ `b':&lt;2.0&gt; (relative difference is &lt;0.5&gt;, `diff':&lt;0.1&gt; allowed) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>MoreRelativeNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDIFF_REL_NEAR</primary></indexterm>
+			<title>
+				<code>rbDIFF_REL_NEAR(a,b,diff), rbvIFF_REL_NEAR(a,b,diff)</code>
+			</title>
+			<para>This macro checks whether the first argument is different from the second,
+			 requiring a tolerance of <code>diff*max(a,b)</code>, i.e. if the first is between <code>b-diff</code>
+			 and <code>b+diff</code>, it is neither accepted. Upon
+        failure, it converts its arguments to strings, which will be shown in the output.
+        The actual difference is also shown.
+        This can only be used with floating point numbers, and objects
+        on which <code>operator-</code> is defined and for which the function <code>fabs</code> is overloaded.</para>
+			<para>Note that this is <emphasis>more</emphasis> strict than <code>rbDIFF</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>`a':&lt;1.0&gt; !=~`b':&lt;2.0&gt; (relative difference is &lt;1&gt;, should be at least`diff':&lt;0.1&gt;) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>DiffRelativeNear&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbEQUAL_BITWISE</primary></indexterm>
+			<title>
+				<code>rbEQUAL_BITWISE(bits1, bits2), rbvEQUAL_BITWISE(bits1, bits2)</code>
+			</title>
+			<para>This macro checks whether <code>bits1</code> and <code>bits2</code> are equal bitwise. They can be
+            of different types, but they must have the same size. Upon failure, it will show which bits
+            are different.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>1: 00001111 00000000 00000000 00000000
+C:   XXXX                             
+2: 00110011 00000000 00000000 00000000</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+            <para>Note: the different bytes are shown in the same order as they appear in memory,
+			so the output is different on little endian and big endian machines. In a byte, the most
+			significant bit is shown first, the least significant bit last.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualBitwise&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbEQUAL_DATA</primary></indexterm>
+			<title>
+				<code>rbEQUAL_DATA(buf1, buf2, size)</code>
+			</title>
+			<para>This macro checks whether the buffers <code>buf1</code> and <code>buf2</code>
+			of length <code>size</code> bytes have equal contents. Upon failure, it will show which bytes
+            are different.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>1: 00 15 ff 78
+C:       XX   
+2: 00 15 fe 78</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualData&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbEQUAL_DATA_BITWISE</primary></indexterm>
+			<title>
+				<code>rbEQUAL_DATA_BITWISE(buf1, buf2, size)</code>
+			</title>
+			<para>This macro checks whether the buffers <code>buf1</code> and <code>buf2</code>
+			of length <code>size</code> bytes have equal contents. Upon failure, it will show which bits
+            are different.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>1: 00001111 00000000 11111111 00000000
+C:   XXXX                             
+2: 00110011 00000000 11111111 00000000</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>EqualDataBitwise&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbBITS_ON</primary></indexterm>
+			<title>
+				<code>rbBITS_ON(bits, mask), rbvBITS_ON(bits, mask)</code>
+			</title>
+			<para>This macro checks whether the bits that are on in <code>mask</code>, are also on in <code>bits</code>.
+            <code>bits</code> and <code>mask</code> can be
+            of different types, but they must have the same size. Upon failure, it will show which bits
+            in <code>bits</code> are not on, but should be on.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>bits: 00111100 00000000 00000000 00000000
+err :       XX                           
+mask: 00001111 00000000 00000000 00000000</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+            <para>Note: the different bytes are shown in the same order as they appear in memory,
+			so the output is different on little endian and big endian machines. In a byte, the most
+			significant bit is shown first, the least significant bit last.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>BitsOn&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbBITS_OFF</primary></indexterm>
+			<title>
+				<code>rbBITS_OFF(bits, mask), rbvBITS_OFF(bits, mask)</code>
+			</title>
+			<para>This macro checks whether the bits that are on in <code>mask</code>, are off in <code>bits</code>.
+            <code>bits</code> and <code>mask</code> can be
+            of different types, but they must have the same size. Upon failure, it will show which bits
+            in <code>bits</code> are not off, but should be off.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>bits: 00001111 00000000 00000000 00000000
+err :       XX                           
+mask: 00110011 00000000 00000000 00000000</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+            <para>Note: the different bytes are shown in the same order as they appear in memory,
+			so the output is different on little endian and big endian machines. In a byte, the most
+			significant bit is shown first, the least significant bit last.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>BitsOff&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbBITS_ARE</primary></indexterm>
+			<title>
+				<code>rbBITS_ARE(bits, mask), rbvBITS_ARE(bits, mask)</code>
+			</title>
+			<para>This macro checks whether the bits in <code>bits</code> are what is specified in the string <code>mask</code>.
+            The string <code>mask</code> contains a character <code>0</code> where a bit should be off and
+			a character <code>1</code> where a bit should be on; a character <code>#</code> means the bit can be both 0 and 1.
+			Bits in the string <code>mask</code> can be separated by a space, dot, colon, dash and comma.
+			The number of bits in <code>bits</code> and the number of bits specified in <code>mask</code>
+            must be the same. Upon failure, it will show which bits
+            in <code>bits</code> are not what is expected.</para>
+			<para>Example:
+<programlisting>rbBITS_ARE(n, "0##0:1111 0100:#100 0000:0000 0000:0000")</programlisting>
+	<emphasis>Example output:</emphasis>
+				<screen>bits: 0011:1100 0100:1000 0000:0000 0000:0000
+err :        XX       X                    
+mask: 0##0:1111 0100:#100 0000:0000 0000:0000</screen>
+			</para>
+            <para>Note: to display the output of this rich boolean, it is best to use a non-proportional font,
+            so the comparison is easily understood.</para>
+            <para>Note: the different bytes are shown in the same order as they appear in memory,
+			so the output is different on little endian and big endian machines. In a byte, the most
+			significant bit is shown first, the least significant bit last.</para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>BitsAre&lt;class GetValue1=Value, class GetValue2=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		
+		<sect3>
+			<indexterm><primary>rb1_PRED</primary></indexterm>
+			<indexterm><primary>rb2_PRED</primary></indexterm>
+			<indexterm><primary>rb3_PRED</primary></indexterm>
+			<indexterm><primary>rb4_PRED</primary></indexterm>
+			<title><code>rb1_PRED(a,pred), rbv1_PRED(a,pred)</code>, <code>rb2_PRED(a,b,pred), rbv2_PRED(a,b,pred)</code>,
+				<code>rb3_PRED(a,b,c,pred), rbv3_PRED(a,b,c,pred)</code>, <code>rb4_PRED(a,b,c,d,pred), rbv4_PRED(a,b,c,d,pred)</code></title>
+			<para>These macros check whether the predicate <code>pred</code> returns true if the arguments
+        are given to its method <code>bool operator()(...)</code>. If not,
+        it converts the arguments to a string, which will be shown in the output.</para>
+		<para><code>pred</code> could be a C++0X lambda if your compiler supports them (gcc 4.5 and Visual C++ 2010).</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>predicate(`a':&lt;5&gt;) - nok</screen>
+			</para>
+			<para>
+				<emphasis>Corresponding classes:</emphasis>
+			</para>
+			<para>
+				<classname>Pred1&lt;class GetValue1=Value, class Stringize=MakeString&gt;</classname>
+			</para>
+			<para>
+				<classname>Pred2&lt;class GetValue1=Value, class GetValue2=Value,
+                class Stringize1=MakeString, class Stringize2=MakeString&gt;</classname>
+			</para>
+			<para>
+				<classname>Pred3&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value,
+                class Stringize1=MakeString, class Stringize2=MakeString, class Stringize3=MakeString&gt;</classname>
+			</para>
+			<para>
+				<classname>Pred4&lt;class GetValue1=Value, class GetValue2=Value, class GetValue3=Value, class GetValue4=Value,
+                class Stringize1=MakeString, class Stringize2=MakeString, class Stringize3=MakeString, class Stringize4=MakeString&gt;</classname>
+			</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rb1_RB</primary></indexterm>
+			<indexterm><primary>rb2_RB</primary></indexterm>
+			<indexterm><primary>rb3_RB</primary></indexterm>
+			<indexterm><primary>rb4_RB</primary></indexterm>
+			<indexterm><primary>rb5_RB</primary></indexterm>
+			<indexterm><primary>rb6_RB</primary></indexterm>
+			<title><code>rb1_RB(a,rb)</code>, <code>rbv1_1_RB(a,rb)</code>,
+			<code>rb2_RB(a,b,rb)</code>, <code>rbv2_1_RB(a,b,rb)</code>, <code>rbv2_2_RB(a,b,rb)</code>,
+			<code>rb3_RB(a,b,c,rb)</code>, <code>rbv3_1_RB(a,b,c,rb)</code>, <code>rbv3_2_RB(a,b,c,rb)</code>,
+			<code>rbv3_3_RB(a,b,c,rb)</code>,
+            <code>rb4_RB(a,b,c,d,rb)</code>, <code>rb5_RB(a,b,c,d,e,rb)</code>,
+			<code>rb6_RB(a,b,c,d,e,f,rb)</code></title>
+			<para>These macros check whether the rich boolean functor <code>rb</code>
+			evaluates to true if the arguments
+			are given to it. If not, the information in the rich boolean functor will be given.</para>
+			<para>See <xref linkend='richboolobjects' /> on how to make a rich boolean functor.</para>
+			<para>Note: assertion macros that return a value, should use
+			<code>rbv&lt;n&gt;_&lt;p&gt;_RB(a,b,c,rb)</code>, where &lt;n&gt; is the number
+			of arguments and &lt;p&gt; is the index of the value that should be returned.</para>
+			<para><emphasis>Corresponding classes:</emphasis> none</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>Pointer safety</primary></indexterm>
+			<title>Note:</title>
+			<para>The macros in this section are pointersafe. I.e.,
+        if you pass them a dereferenced pointer that is <literal>NULL</literal>, it will not be dereferenced,
+        the evaluation will be considered to fail, and the debugging information will tell that a
+        <literal>NULL</literal> pointer was given.
+        <example>
+					<title>Safely using a pointer that could be <literal>NULL</literal></title>
+					<programlisting>
+    int *p = 0;
+    MOD_ASSERT(rbEQUAL(5, *p));</programlisting>
+				</example>
+        Here there will be no memory read error. Instead the <code>MOD_ASSERT</code> will safely fail,
+        and when streamed out, the Rich Boolean
+        will return "`5':&lt;5&gt; == `*p':@0x00000000 - has bad value" (valid results are given between &lt;
+        and &gt;, invalid results start with @).
+        Actually, pointers whose address is up to <literal>0x0000000f</literal>,
+        are treated the same way as a <literal>NULL</literal> pointer. This is handy with classes where
+        pointers with a low address like <literal>0x01</literal>, <literal>0x02</literal>, ..., have a special
+        meaning. Also, this means that referring to a struct or class member of a null pointer often can be done
+        safely, like <code>p->name</code>, as long as the member <code>name</code> starts before the 16th
+        byte in the struct.
+        </para>
+		<para>On Windows 32 and above, uninitialized memory at every memory location is detected
+        in Debug mode (using the function <code>IsBadReadPtr()</code>), and handled in the same way.
+		If you can use
+        another function that checks for valid addresses, adjust the file <filename>functors.cpp</filename>. Note that functions that only
+        check whether a pointer is a valid heap pointer, cannot be used for this, because the argument
+        of a rich boolean can also be a variable on the stack.</para>
+		</sect3>
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Comparing strings</secondary></indexterm>
+		<indexterm><primary>Comparing strings</primary></indexterm>
+		<title>Comparing strings</title>
+		<para>The Rich Booleans allows to compare strings in many ways,
+        both strings that use char and widecharacter strings.
+		</para>
+		<sect3><title><code>rbSTRING(str1, operator, str2, compareObj)</code>, <code>rbvSTRING(str1, operator, str2, compareObj)</code></title>
+			<indexterm><primary>rbSTRING</primary></indexterm>
+			<indexterm><primary>rbSTRING_CS</primary></indexterm>
+			<indexterm><primary>rbSTRING_CI</primary></indexterm>
+			<para><code>str1</code> and <code>str2</code> are two strings. The allowed types for these
+			strings are determined by <code>compareObj</code>. <code>operator</code> can be <code>==</code>,
+			<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code> or
+			<code>!=</code>. <code>compareObj</code> is an object of a suitable class, of which several
+			classes are provided (see below).</para>	
+
+            <para>When you check for equality, the output shows which characters are different.
+            This uses dynamic matching, so missing characters are easily spotted.
+            When you don't check for equality, only the first character that causes the condition
+            to fail is marked; mismatches after it are not marked.</para>
+
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>CompareStrings&lt;class CompareCompletely&lt;class CompareType, class Relation=EqualRelation&gt;
+			    class GetValue1_=Value, class GetValue2_=Value&gt;</classname>. Here
+			    <code>CompareType</code> can be any of the classes discussed below.
+			    <code>Relation</code> can be any of <classname>EqualRelation</classname>,
+			    <classname>LessRelation</classname>, <classname>LessOrEqualRelation</classname>,
+			    <classname>MoreRelation</classname>, <classname>MoreOrEqualRelation</classname> and
+			    <classname>DifferentRelation</classname> (all still in the namespace
+			    <code>RichBool</code>).</para>
+			
+			<para>There are two simplified versions of this Rich Boolean:
+			<itemizedlist mark='bullet'>
+				<listitem><code>rbSTRING_CS(str1, operator, str2)</code>: performs a case sensitive comparison</listitem>
+				<listitem><code>rbSTRING_CI(str1, operator, str2)</code>: performs a case insensitive comparison</listitem>
+			</itemizedlist>
+			These work with both ordinary and wide strings.
+			</para>
+		</sect3>
+
+		<sect3><title><code>rbSTRING_BEGINS_WITH(str1, str2, compareObj)</code>,
+			<code>rbvSTRING_BEGINS_WITH(str1, str2, compareObj)</code></title>
+			<indexterm><primary>rbSTRING_BEGINS_WITH</primary></indexterm>
+			<indexterm><primary>rbSTRING_BEGINS_WITH_CS</primary></indexterm>
+			<indexterm><primary>rbSTRING_BEGINS_WITH_CI</primary></indexterm>
+			<para>This checks if the string <code>str1</code> begins with the string <code>str2</code>.
+			The allowed types for these strings are determined by <code>compareObj</code>.
+			<code>compareObj</code> is an object of a suitable class, of which several classes are provided (see below).</para>
+
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>CompareStrings&lt;class StringBeginsWith&lt;class CompareType&gt;
+			    class GetValue1_=Value, class GetValue2_=Value&gt;</classname>. Here
+			    <code>CompareType</code> can be any of the classes discussed below.</para>
+
+			<para>There are two simplified versions of this Rich Boolean:
+			<itemizedlist mark='bullet'>
+				<listitem><code>rbSTRING_BEGINS_WITH_CS(str1, operator, str2)</code>: performs a case sensitive comparison</listitem>
+				<listitem><code>rbSTRING_BEGINS_WITH_CI(str1, operator, str2)</code>: performs a case insensitive comparison</listitem>
+			</itemizedlist>
+			These work with both ordinary and wide strings.
+			</para>
+
+		</sect3>
+
+		<sect3><title><code>rbSTRING_ENDS_WITH(str1, str2, compareObj)</code>,
+			<code>rbvSTRING_ENDS_WITH(str1, str2, compareObj)</code></title>
+			<indexterm><primary>rbSTRING_ENDS_WITH</primary></indexterm>
+			<indexterm><primary>rbSTRING_ENDS_WITH_CS</primary></indexterm>
+			<indexterm><primary>rbSTRING_ENDS_WITH_CI</primary></indexterm>
+			<para>This checks if the string <code>str1</code> ends with the string <code>str2</code>.
+			The allowed types for these strings are determined by <code>compareObj</code>.
+			<code>compareObj</code> is an object of a suitable class, of which several classes are provided (see below).</para>
+
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>CompareStrings&lt;class StringEndsWith&lt;class CompareType&gt;
+			    class GetValue1_=Value, class GetValue2_=Value&gt;</classname>. Here
+			    <code>CompareType</code> can be any of the classes discussed below.</para>
+
+			<para>There are two simplified versions of this Rich Boolean:
+			<itemizedlist mark='bullet'>
+				<listitem><code>rbSTRING_ENDS_WITH_CS(str1, operator, str2)</code>: performs a case sensitive comparison</listitem>
+				<listitem><code>rbSTRING_ENDS_WITH_CI(str1, operator, str2)</code>: performs a case insensitive comparison</listitem>
+			</itemizedlist>
+			These work with both ordinary and wide strings.
+			</para>
+
+			</sect3>
+
+		<sect3><title><code>rbSTRING_CONTAINS(str1, str2, compareObj)</code>,
+			<code>rbvSTRING_CONTAINS(str1, str2, compareObj)</code></title>
+			<indexterm><primary>rbSTRING_CONTAINS</primary></indexterm>
+			<indexterm><primary>rbSTRING_CONTAINS_CS</primary></indexterm>
+			<indexterm><primary>rbSTRING_CONTAINS_CI</primary></indexterm>
+			<para>This checks if the string <code>str1</code> contains the string <code>str2</code>.
+			The allowed types for these strings are determined by <code>compareObj</code>.
+			<code>compareObj</code> is an object of a suitable class, of which several classes are provided (see below).</para>
+			
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>CompareStrings&lt;class StringContains&lt;class CompareType&gt;
+			    class GetValue1_=Value, class GetValue2_=Value&gt;</classname>. Here
+			    <code>CompareType</code> can be any of the classes discussed below.</para>
+
+			<para>There are two simplified versions of this Rich Boolean:
+			<itemizedlist mark='bullet'>
+				<listitem><code>rbSTRING_CONTAINS_CS(str1, operator, str2)</code>: performs a case sensitive comparison</listitem>
+				<listitem><code>rbSTRING_CONTAINS_CI(str1, operator, str2)</code>: performs a case insensitive comparison</listitem>
+			</itemizedlist>
+			These work with both ordinary and wide strings.
+			</para>
+
+		</sect3>
+
+		<sect3><title>Classes to use as the last argument in string comparisons</title>
+			<para>Note: the string comparisons that use collation, don't take care well of
+			characters that are ignored in a collation. Dynamic matching often matches the surrounding
+			characters, so ignored characters are shown as a superfluous character (or a mismatch),
+			but it is up to you to know which are the false negatives. When you compare strings with
+			collation but not for equality, the comparison therefor doesn't stop at the first offending character,
+			because it could be an ignored character.
+            </para>
+
+			<sect4><title>Comparing character pointers</title>
+			<indexterm><primary>BasicStrcmp</primary></indexterm>
+			<indexterm><primary>Strcmp</primary></indexterm>
+			<indexterm><primary>Wcscmp</primary></indexterm>
+			<indexterm><primary>rbSTRCMP</primary></indexterm>
+			<indexterm><primary>rbWCSCMP</primary></indexterm>
+            <para>In the file <filename>richbool/string.hpp</filename> there is the template class
+			<classname>BasicStrcmp</classname>, that has one template argument, the
+            character type. You can use
+            two specializations, <classname>BasicStrcmp&lt;char&gt;</classname> that uses <code>strcmp()</code>,
+            (typedef'ed as <classname>Strcmp</classname>)
+            and <classname>BasicStrcmp&lt;wchar&gt;</classname> that uses <code>wcscmp()</code>
+            (typedef'ed as <classname>Wcscmp</classname>). These have a constructor that takes no arguments.
+            These can only have character pointers as arguments, no string objects.
+            For convenience, the Rich Booleans <code>rbSTRCMP(str1, operator, str2)</code>,
+            <code>rbWCSCMP(str1, operator, str2)</code>, <code>rbvSTRCMP(str1, operator, str2)</code> and
+            <code>rbvWCSCMP(str1, operator, str2)</code> are defined, that are equivalent to
+            <code>rbSTRING(str1, operator, str2, RichBool::Strcmp())</code>,
+            <code>rbSTRING(str1, operator, str2, RichBool::Wcscmp())</code>,
+			<code>rbvSTRING(str1, operator, str2, RichBool::Strcmp())</code>
+            and <code>rbvSTRING(str1, operator, str2, RichBool::Wcscmp())</code> respectively.</para>
+			</sect4>
+            
+			<sect4><title>Comparing std::string objects</title>
+			<indexterm><primary>BasicStringCompare</primary></indexterm>
+			<indexterm><primary>BasicStringCompareToUpper</primary></indexterm>
+			<indexterm><primary>BasicStringCompareToLower</primary></indexterm>
+			<indexterm><primary>StringCompare</primary></indexterm>
+			<indexterm><primary>StringCompareToUpper</primary></indexterm>
+			<indexterm><primary>StringCompareToLower</primary></indexterm>
+			<indexterm><primary>WStringCompare</primary></indexterm>
+			<indexterm><primary>WStringCompareToUpper</primary></indexterm>
+			<indexterm><primary>WStringCompareToLower</primary></indexterm>
+			<indexterm><primary>rbSTD_STRING</primary></indexterm>
+			<indexterm><primary>rbSTD_WSTRING</primary></indexterm>
+			<indexterm><primary>StringsEqualCS</primary></indexterm>
+			<indexterm><primary>WStringsEqualCS</primary></indexterm>
+			<indexterm><primary>StringsEqualCI</primary></indexterm>
+			<indexterm><primary>WStringsEqualCI</primary></indexterm>
+            <para>In the file <filename>richbool/stdstring.hpp</filename> there is the template class
+            <classname>BasicStringCompare</classname>, that compares <classname>std::string</classname> objects and/or
+            character pointers using <code>strcmp</code> or
+            <code>wcscmp</code>, depending on the character type.
+            <classname>BasicStringCompareToUpper</classname> and
+			<classname>BasicStringCompareToLower</classname> do the same, but first make a copy of the
+            strings and convert these copies to respectively uppercase and lowercase.
+            Those three template classes respectively have typedefs <classname>StringCompare</classname>,
+            <classname>StringCompareToUpper</classname> and <classname>StringCompareToLower</classname>
+            for <code>char</code>, and <classname>WStringCompare</classname>,
+            <classname>WStringCompareToUpper</classname> and <classname>WStringCompareToLower</classname>
+            for <code>wchar_t</code>.</para>
+			
+			<para>For convenience, there are the Rich Booleans <code>rbSTD_STRING(str1, operator, str2)</code>
+			and <code>rbSTD_WSTRING(str1, operator, str2)</code>
+			that are respectively equivalent to <code>rbSTRING(str1, operator, str2, RichBool::StringCompare())</code>
+			and <code>rbSTRING(str1, operator, str2, RichBool::WStringCompare())</code>. So what they check is
+			equivalent to using the operators directly on the strings.</para>
+
+			<para>For convenience, there are the following typedefs that make comparisons in ranges easier:
+			<itemizedlist mark='bullet'>
+				<listitem>typedef CompareStrings&lt;CompareCompletely&lt;StringCompare, EqualRelation&gt;, GetStringValue, GetStringValue&gt; StringsEqualCS;</listitem>
+				<listitem>typedef CompareStrings&lt;CompareCompletely&lt;WStringCompare, EqualRelation&gt;, GetStringValue, GetStringValue&gt; WStringsEqualCS;</listitem>
+				<listitem>typedef CompareStrings&lt;CompareCompletely&lt;StringCompareToUpper, EqualRelation&gt;, GetStringValue, GetStringValue&gt; StringsEqualCI;</listitem>
+				<listitem>typedef CompareStrings&lt;CompareCompletely&lt;WStringCompareToUpper, EqualRelation&gt;, GetStringValue, GetStringValue&gt; WStringsEqualCI;</listitem>
+			</itemizedlist>
+			This allows you to e.g. compare strings in two std::vector objects with std::string objects in them, with
+			<programlisting>MOD_ASSERT(
+  rbIN_CONTAINERS(vec1, vec2, RichBool::Compare&lt;&gt;().That(RichBool::StringsEqualCS()))
+);</programlisting>.
+			</para>
+			</sect4>
+            
+			<sect4><title>Comparing std::string objects with collation</title>
+			<indexterm><primary>BasicCollate</primary></indexterm>
+			<indexterm><primary>BasicCollateToUpper</primary></indexterm>
+			<indexterm><primary>BasicCollateToLower</primary></indexterm>
+			<para>In the same file <filename>richbool/stdstring.hpp</filename> there are also the template classes
+			<classname>BasicCollate</classname>, <classname>BasicCollateToUpper</classname> and
+			<classname>BasicCollateToLower</classname>. They have one template argument, the
+            character type. These have a constructor that has a locale
+			as argument, for which the global locale is the default.
+            <classname>BasicCollate</classname> collates strings
+			using the <code>compare</code> method of the given locales <code>collate</code> facet.
+			<classname>BasicCollateToUpper</classname> and
+			<classname>BasicCollateToLower</classname> also do this, but first make a copy of the strings,
+            and convert these copies to upper case and lower case
+			respectively, using the <code>toupper</code> and <code>tolower</code> methods
+			of the given locales <code>ctype</code> facet.</para>
+
+            <para>Note that converting to uppercase or lowercase only behaves differently
+			if the strings contain characters between 'Z' and 'a', and when you don't check
+			for equality.</para>
+			</sect4>
+
+			<sect4><title>Comparing wxString objects</title>
+			<indexterm><primary>WxStringCmp</primary></indexterm>
+			<indexterm><primary>WxStringCmpNoCase</primary></indexterm>
+			<para>In the file <filename>richbool/wxstring.hpp</filename> there are the classes
+			<classname>WxStringCmp</classname> and <classname>WxStringCmpNoCase</classname>,
+			that compare <classname>wxString</classname> objects and/or character pointers.
+			These have a constructor that takes no arguments. The first one compares strings
+			using the <code>Cmp</code> method of <classname>wxString</classname>,
+			the second uses the <code>CmpNoCase</code> method of <classname>wxString</classname>.
+			There is also the Rich Boolean macro <code>rbWX_STRING(str1, op, str2)</code>, which is
+			equivalent to <code>rbSTRING(str1, op, str2, RichBool::WxStringCmp())</code></para>
+			</sect4>
+
+			<sect4><title>Comparing MFC CString objects</title>
+			<indexterm><primary>CStringCompare</primary></indexterm>
+			<indexterm><primary>CStringCompareNoCase</primary></indexterm>
+			<indexterm><primary>CStringCollate</primary></indexterm>
+			<indexterm><primary>CStringCollateNoCase</primary></indexterm>
+			<indexterm><primary>CStringACompare</primary></indexterm>
+			<indexterm><primary>CStringACompareNoCase</primary></indexterm>
+			<indexterm><primary>CStringACollate</primary></indexterm>
+			<indexterm><primary>CStringACollateNoCase</primary></indexterm>
+			<indexterm><primary>CStringWCompare</primary></indexterm>
+			<indexterm><primary>CStringWCompareNoCase</primary></indexterm>
+			<indexterm><primary>CStringWCollate</primary></indexterm>
+			<indexterm><primary>CStringWCollateNoCase</primary></indexterm>
+			<para>There are similar classes for MFC <classname>CString</classname> objects.
+			In the file <filename>richbool/mfcstring.hpp</filename> there are the classes
+			<classname>CStringCompare</classname>, <classname>CStringCompareNoCase</classname>,
+			<classname>CStringCollate</classname> and <classname>CStringCollateNoCase</classname>,
+			that compare <classname>CString</classname> objects and/or character pointers.
+			These have a constructor that takes no
+			arguments. They respectively compare strings
+			using the methods <code>Compare</code>, <code>CompareNoCase</code>, <code>Collate</code> and
+			<code>CollateNoCase</code> methods of <classname>CString</classname>.
+			With Visual Studio .NET 2003 and later, you can also use
+			<classname>CStringACompare</classname>, <classname>CStringACompareNoCase</classname>,
+			<classname>CStringACollate</classname>, <classname>CStringACollateNoCase</classname>,
+			<classname>CStringWCompare</classname>, <classname>CStringWCompareNoCase</classname>,
+			<classname>CStringWCollate</classname> and <classname>CStringWCollateNoCase</classname>,
+			which use the same methods on <classname>CStringA</classname> and
+			<classname>CStringW</classname> objects.
+			In template code you can use the template classes
+			<classname>TmplCStringCompare&lt;T&gt;</classname>, <classname>TmplCStringCompareNoCase&lt;T&gt;</classname>,
+			<classname>TmplCStringCollate&lt;T&gt;</classname> and <classname>TmplCStringCollateNoCase&lt;T&gt;</classname>,
+			of which the previous ones are typedefs.</para>
+			<para>
+			There is also the Rich Boolean macro <code>rbCSTRING(str1, op, str2)</code>, which is
+			equivalent to <code>rbSTRING(str1, op, str2, RichBool::CStringCompare())</code>
+            </para>
+
+			<para>Example usage:
+			    <programlisting>
+    String str1 = "abc";
+    MOD_ASSERT(rbSTRING(str1, ==, "abd", RichBool::StringCompare()));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>`str1':&lt;abc&gt; == `"abd"':&lt;abd&gt; (locale C) - nok
+str1: abc
+diff:   X
+str2: abd</screen>
+			</para>
+			<para>Example usage:
+			    <programlisting>
+    String str1 = "abc", str2 = "AB&#xc9;";
+    MOD_ASSERT(rbSTRING(str1, &gt;, str2, RichBool::CollateToUpper(std::locale("fr"))));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>`str1':&lt;abc&gt; &gt; `str2':&lt;AB&#xc9;&gt; (locale French_France.1252 toupper) - nok
+str1: ab   c
+diff:      X
+str2: ab\xc9</screen>
+			</para>
+			</sect4>
+		</sect3>
+
+		<para>The next four macros are only available on compilers that support
+		C++0X regular expressions. At the moment of writing this works with Visual C++ 2010, but not with gcc.</para>
+		
+		<sect3><title><code>rbREGEXP(str, regex)</code>,
+			<code>rbvREGEXP(str, regex)</code></title>
+			<indexterm><primary>rbREGEXP</primary></indexterm>
+			<para>This checks if the string <code>str</code> matches the
+			regular expression in the string <code>regex</code> (of the ECMAScript type).
+			The strings <code>str</code> and <code>regex</code> can be of the <code>char</code> or <code>wchar</code> type,
+			as long as they are the same type.
+			</para>
+			<para>If the condition fails, the regular expression is split up in pieces in the analysis,
+			and the analysis shows which pieces could be matched to which pieces of the regular expression.
+			</para>
+			
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>RegExp&lt;class GetValue1_=Value, class GetValue2_=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3><title><code>rbREGEXP_F(str, regex, flags)</code>,
+			<code>rbvREGEXP_F(str, regex, flags)</code></title>
+			<indexterm><primary>rbREGEXP_F</primary></indexterm>
+			<para>This checks if the string <code>str</code> matches the
+			regular expression in the string <code>regex</code> (of the ECMAScript type), using the flags in <code>flags</code> with <code>std::regex_search</code>.
+			The strings <code>str</code> and <code>regex</code> can be of the <code>char</code> or <code>wchar</code> type,
+			as long as they are the same type.
+			</para>
+			<para>If the condition fails, the analysis is similar to the one created by <code>rbREGEXP</code>.
+			</para>
+			
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>RegExp&lt;class GetValue1_=Value, class GetValue2_=Value&gt;</classname></para>
+		</sect3>
+		
+		<sect3><title><code>rbHAS_REGEXP(str, regex)</code>,
+			<code>rbvHAS_REGEXP(str, regex)</code></title>
+			<indexterm><primary>rbHAS_REGEXP</primary></indexterm>
+			<para>This checks if the string <code>str</code> contains a substring that matches the
+			regular expression in the string <code>regex</code> (of the ECMAScript type).
+			The strings <code>str</code> and <code>regex</code> can be of the <code>char</code> or <code>wchar</code> type,
+			as long as they are the same type.
+			</para>
+			<para>If the condition fails, the regular expression is split up in pieces in the analysis,
+			and the analysis shows which pieces could be matched to which pieces of the regular expression.
+			</para>
+			
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>HasRegExp&lt;class GetValue1_=Value, class GetValue2_=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3><title><code>rbHAS_REGEXP_F(str, regex, flags)</code>,
+			<code>rbvHAS_REGEXP_F(str, regex, flags)</code></title>
+			<indexterm><primary>rbHAS_REGEXP_F</primary></indexterm>
+			<para>This checks if the string <code>str</code> contains a substring that matches the
+			regular expression in the string <code>regex</code> (of the ECMAScript type), using the flags in <code>flags</code> with <code>std::regex_search</code>.
+			The strings <code>str</code> and <code>regex</code> can be of the <code>char</code> or <code>wchar</code> type,
+			as long as they are the same type.
+			</para>
+			<para>If the condition fails, the analysis is similar to the one created by <code>rbHAS_REGEXP</code>.
+			</para>
+			
+			<para><emphasis>Corresponding class:</emphasis>
+			<classname>HasRegExp&lt;class GetValue1_=Value, class GetValue2_=Value&gt;</classname></para>
+		</sect3>
+		
+		<!--<para>Note: using the free space flag, e.g. <code>(?x)</code>, is not recommended. The Rich Booleans will decide correctly
+		whether the condition is satisfied, but in case it fails the analysis might be wrong.</para>-->
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>File system</primary></indexterm>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>File system</secondary></indexterm>
+		<title>Filesystem</title>
+		<sect3>
+			<indexterm><primary>rbFILE</primary></indexterm>
+			<title>
+				<code>rbFILE(file, func)</code>, <code>rbvFILE(file, func)</code>
+			</title>
+			<para><code>file</code> is the name of a file, a file descriptor or a <classname>FILE</classname>
+			pointer, <code>func</code> specifies the condition(s) that the file should fulfill.
+			If the file does not exist, is a directory or does not fulfill the requirements,
+			the Rich Boolean fails, otherwise it succeeds. See below for what <code>func</code>
+			can be. If the first argument is a filename, then on Windows it can be a basic character string or a wide character string
+			(except with the Cygwin compiler);
+			on POSIX systems it can only be a basic character string (because POSIX doesn't have wide character filenames).</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbFILE(filename, RichBool::IsWritable()));</programlisting>
+				<emphasis>Example output 1a (Windows):</emphasis>
+				<screen>file `filename':&lt;results.txt&gt; should be writable - nok</screen>
+				<emphasis>Example output 1b (Posix):</emphasis>
+				<screen>file `filename':&lt;results.txt&gt; should be writable - nok
+  -r--r----- 1 mark(1000)+ users(100)+;
+  "process user and group: mark(1000) users(100)</screen>
+				<emphasis>Example output 2:</emphasis>
+				<screen>file `filename':&lt;results&gt; should be writable - ? - nok
+is a directory</screen>
+			Note that on Posix systems there is an epilogue that shows the file type and
+			the permissions of the file, in almost the same way as the command <code>ls</code> does
+			when the <code>-l</code> option is given.
+			The name of the user is followed by a plus if the process runs with that id as its real user id,
+			a minus otherwise. The name of the group is followed by a plus if the process runs
+			with a real user id that belongs to that group, a minus otherwise. If the process
+			runs as a superuser, these are both replaced by asterisks.
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>File&lt;class Func, class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDIRECTORY</primary></indexterm>
+			<title>
+				<code>rbDIRECTORY(name, func)</code>, <code>rbvDIRECTORY(name, func)</code>
+			</title>
+			<para><code>name</code> is the name of a directory,
+			<code>func</code> specifies the checks that the directory should fulfill.
+			If the directory does not exist, is a file or does not fulfill the requirements,
+			the Rich Boolean fails, otherwise it succeeds. See below for what <code>func</code>
+			can be. On Windows the name of the directory can be a basic character string or a wide character string
+			(except with the Cygwin compiler);
+			on POSIX systems it can only be a basic character string (because POSIX doesn't have wide character directory names).</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbDIRECTORY(name, RichBool::IsWritable()));</programlisting>
+				<emphasis>Example output 1:</emphasis>
+				<screen>directory `name':&lt;results&gt; should be writable - nok</screen>
+				<emphasis>Example output 2:</emphasis>
+				<screen>directory `name':&lt;results.txt&gt; should be writable - ? - nok
+is a file</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>Directory&lt;class Func, class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3><title>Possible checks for <code>rbFILE</code>, <code>rbvFILE</code>,
+			<code>rbDIRECTORY</code> and <code>rbvDIRECTORY</code></title>
+			<indexterm><primary>IsReadable</primary></indexterm>
+			<indexterm><primary>IsWritable</primary></indexterm>
+			<indexterm><primary>IsExecutable</primary></indexterm>
+			<indexterm><primary>IsLink</primary></indexterm>
+			<indexterm><primary>IsRegular</primary></indexterm>
+			<indexterm><primary>IsCharacterDevice</primary></indexterm>
+			<indexterm><primary>IsBlockDevice</primary></indexterm>
+		<para>The following table lists the classes that you can use in <code>rbFILE</code>, <code>rbvFILE</code>,
+			<code>rbDIRECTORY</code> and <code>rbvDIRECTORY</code>, and whether you can use them with
+			a filename, a file descriptor or a directory, and whether it can be used on Windows. 
+<table frame='all' pgwide='1'><title>Possible checks for <code>rbFILE</code>, <code>rbvFILE</code>,
+			<code>rbDIRECTORY</code> and <code>rbvDIRECTORY</code></title>
+<?dbhtml table-width="75%" ?>
+<?dbfo table-width="75%" ?>
+    <tgroup cols='5' colsep='1' rowsep='1'>
+    <colspec align='left'  colwidth='1*'/>
+    <colspec align='center' colwidth="1*"/>
+    <colspec align='center' colwidth="1*"/>
+    <colspec align='center' colwidth="1*"/>
+    <colspec align='center' colwidth="1*"/>
+    <thead>
+    <row>
+        <entry>Class</entry>
+        <entry>Filename</entry>
+        <entry>File descriptor / FILE pointer</entry>
+        <entry>Directory</entry>
+        <entry>Windows</entry>
+    </row>
+    </thead>
+    <tbody>
+    <row>
+        <entry>IsReadable</entry>       <entry>Y</entry><entry>Y</entry><entry>Y</entry><entry>Y</entry>
+    </row>
+    <row>
+        <entry>IsWritable</entry>       <entry>Y</entry><entry>Y</entry><entry>Y</entry><entry>Y</entry>
+    </row>
+    <row>
+        <entry>IsExecutable</entry>     <entry>Y</entry><entry>Y</entry><entry>Y</entry><entry>Y</entry>
+    </row>
+    <row>
+        <entry>IsPipe</entry>           <entry>N</entry><entry>Y</entry><entry>N</entry><entry>Y</entry>
+    </row>
+    <row>
+        <entry>IsLink</entry>           <entry>Y</entry><entry>Y</entry><entry>Y</entry><entry>N</entry>
+    </row>
+    <row>
+        <entry>IsRegular</entry>        <entry>Y</entry><entry>Y</entry><entry>N</entry><entry>N</entry>
+    </row>
+    <row>
+        <entry>IsCharacterDevice</entry><entry>Y</entry><entry>Y</entry><entry>N</entry><entry>N</entry>
+    </row>
+    <row>
+        <entry>IsBlockDevice</entry>    <entry>Y</entry><entry>Y</entry><entry>N</entry><entry>N</entry>
+    </row>
+    </tbody>
+    </tgroup>
+</table>
+</para>
+	<para>Note: on Windows a file or a directory is always readable (unless it is in a directory
+	that is not accessible to the process).</para>
+	
+	<para>Note: on Windows a file is considered executable if its extension is that of an executable
+	file, like exe, com and bat. On Linux a file is considered executable if its mode says so.</para>
+	
+	<para>Note: on Windows a directory is always considered executable.
+	On Linux a directory is considered executable if its mode says so, meaning that the process can see the
+	contents of the directory.</para>
+	
+	<para>Note: because these are Rich Boolean functors, you can also negate them with <code>operator!</code>
+	and combine them with <code>operator&amp;</code>.
+	<programlisting>
+    // check that the file is not writable:
+    MOD_ASSERT(rbFILE(filename, !RichBool::IsWritable()));
+
+    // check that the file is readable and writable:
+    MOD_ASSERT(
+        rbFILE(filename, RichBool::IsReadable()&amp;RichBool::IsWritable())
+    );</programlisting>
+	You could also use <code>operator|</code>, <code>operator||</code> and <code>operator^</code>
+	to combine them, but that usually is not needed. You could also use <code>operator&amp;&amp;</code>
+	to combine them, but then you would only see the result of the conditions up to the first one that
+	failed.
+	</para>
+
+	<para>Note: if you pass a file descriptor to <code>rbFILE</code> or <code>rbvFILE</code>,
+	the checks test the properties
+	that the file has, not the way that you opened the file. So if you open a writable
+	file in readonly mode, a check using the file descriptor will tell that the file
+	is writable, just as if the filename was used.</para>
+	</sect3>
+
+		<sect3><title>User and group id on Linux</title>
+			<indexterm><primary>SetFsUid</primary></indexterm>
+			<indexterm><primary>SetFsGid</primary></indexterm>
+		<para>On Linux the permissions to use a file or directory are determined using the
+		file system user id and group id. These are the same as the effective user id and
+		group id, except when they were set to a different value with <code>setfsuid</code>
+		and <code>setfsgid</code>. Because these can not be queried, the Rich Booleans library
+		cannot know these. If you call these functions, you should therefore call
+		<code>void SetFsUid(uid_t fsuid)</code> and/or <code>void SetFsGid(uid_t fsgid)</code>
+		(both in the namespace <code>RichBool</code>)
+		with the same values, so the Rich Booleans can perform these checks correctly.
+		If you don't call these, the Rich Booleans library uses
+		<code>geteuid</code> and <code>getegid</code>, i.e. the effective user id and group id.
+		</para>
+		<para>Note that it is unlikely that you will need this,
+		and that this is only needed when using file descriptors and pointers to <code>FILE</code>
+		objects.
+		</para>
+		</sect3>
+		
+		<sect3>
+			<indexterm><primary>rbFILE_EXISTS</primary></indexterm>
+			<title>
+				<code>rbFILE_EXISTS(file)</code>, <code>rbvFILE_EXISTS(file, func)</code>
+			</title>
+			<para><code>file</code> is the name of a file.
+			If the file does not exist, or is a directory,
+			the Rich Boolean fails, otherwise it succeeds.
+			On Windows the filename can be a basic character string or a wide character string;
+			on POSIX systems it can only be a basic character string (because POSIX doesn't have wide character filenames).</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbFILE_EXISTS(filename));</programlisting>
+				<emphasis>Example outputs:</emphasis>
+				<screen>file `filename':&lt;results.txt&gt; should exist - nok
+ is a directory</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>FileExists&lt;class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDIRECTORY_EXISTS</primary></indexterm>
+			<title>
+				<code>rbDIRECTORY_EXISTS(name)</code>, <code>rbvDIRECTORY_EXISTS(name)</code>
+			</title>
+			<para><code>name</code> is the name of a directory.
+			If the directory does not exist, or is a file,
+			the Rich Boolean fails, otherwise it succeeds.
+			On Windows the name of the directory can be a basic character string or a wide character string
+			(except with the Cygwin compiler);
+			on POSIX systems it can only be a basic character string (because POSIX doesn't have wide character directory names).</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbDIRECTORY_EXISTS(name));</programlisting>
+				<emphasis>Example outputs:</emphasis>
+				<screen>directory `name':&lt;results.txt&gt; should exist - nok
+ is a file</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>DirectoryExists&lt;class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDOES_NOT_EXIST</primary></indexterm>
+			<title>
+				<code>rbDOES_NOT_EXIST(name)</code>, <code>rbvDOES_NOT_EXIST(name)</code>
+			</title>
+			<para><code>name</code> is a name.
+			If a file or directory with that name exists,
+			the Rich Boolean fails, otherwise it succeeds.
+			On Windows the name can be a basic character string or a wide character string
+			(except with the Cygwin compiler);
+			on POSIX systems it can only be a basic character string (because POSIX doesn't have wide character filenames).</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbDOES_NOT_EXIST(name));</programlisting>
+				<emphasis>Example outputs:</emphasis>
+				<screen>`name':&lt;results.txt&gt; should not exist - nok
+ is a file</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>DoesNotExist&lt;class GetValue1=Value&gt;</classname></para>
+		</sect3>
+		
+		<sect3>
+			<indexterm><primary>GetFileLength</primary></indexterm>
+			<title>
+				<code>GetFileLength</code>
+			</title>
+			<para><code>GetFileLength</code> is a function that takes one argument, a filename
+			in a <code>const char *</code>, <code>const wchar_t *</code>, <classname>std::string</classname> or a <classname>std::wstring</classname>,
+			and returns the length of the file (on Linux the filename can only be <code>const char *</code> or <classname>std::string</classname>).</para>
+			<para>If the file does not exist or is a directory, -1 is returned.</para>
+			<para>Example usage:
+			    <programlisting>
+    MOD_ASSERT(rbLESS(RichBool::GetFileLength(filename), 512));</programlisting>
+			</para>
+		</sect3>
+		
+		<para>The Rich Booleans in this section are very useful in combination with
+		the test directories you can make in UquoniTest:
+			<programlisting>
+	uqtTEST(ProcessDirectory)
+	{
+	    UquoniTest::UseDirectory dir;
+	    dir.MakeFile("file1.txt", "1 2");
+	    dir.MakeFile("file2.txt", "3 7");
+	    ProcessDirectory(dir); // conversion to std::string
+		
+	    uqtASSERT(rbFILE_EXISTS(dir/"results.txt"));
+	}
+			</programlisting>
+		</para>
+
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Type checking</secondary></indexterm>
+		<indexterm><primary>Type checking</primary></indexterm>
+		<title>Type checking with RTTI</title>
+		<para>Note: the rich booleans in this section only work when RTTI is enabled in
+		your application (RTTI doesn't have to be enabled when the Rich Booleans library
+		itself is built).</para>
+		<para>Warning: make sure you don't include the headerfile <filename>typeinfo.h</filename>
+			in files where you use Rich Booleans. That file contains older versions of classes that are
+			in the headerfile <filename>typeinfo</filename>, which is included by the Rich Booleans
+			package. Including both leads to conflicts.</para>
+
+		<sect3>
+			<indexterm><primary>rbEQUAL_TYPES</primary></indexterm>
+			<title>
+				<code>rbEQUAL_TYPES(pobj1, pobj2)</code>, <code>rbvEQUAL_TYPES(pobj1, pobj2)</code>
+			</title>
+			<para><code>pobj1</code> and <code>pobj2</code> are two pointers to polymorph objects.
+			The Rich Boolean only succeeds if they have the same type, which is checked
+			at runtime. If they have different types, an
+        <classname>Analysis</classname> object is created that tells what the types are.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a1 = new B;
+    A *a2 = new C;
+    MOD_ASSERT(rbEQUAL_TYPES(a1, a2));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(*`a1'):&lt;class B&gt; == typeid(*`a2'):&lt;class C&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>EqualTypes&lt;class GetValue1=Value, class GetValue2=Value&gt;</classname></para>
+			<para>This is especially useful when you have methods to clone polymorph objects.
+			Add a non-virtual <code>clone</code> method in the base class, that calls a
+			protected virtual method <code>do_clone</code>
+			that does the actual cloning, and check if the types are equal after that call.
+			If the <code>do_clone</code> method is forgotten in a child class,
+			it will be noticed at runtime.</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbHAS_TYPE</primary></indexterm>
+			<title>
+				<code>rbHAS_TYPE(pobj, type)</code>, <code>rbvHAS_TYPE(pobj, type)</code>
+			</title>
+			<para><code>pobj</code> is a pointer to a polymorph object.
+			The Rich Boolean only succeeds if it has the given type, which is checked
+			at runtime. If it has a different type, an
+        <classname>Analysis</classname> object is created that tells what the types are.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a = new B;
+    MOD_ASSERT(rbHAS_TYPE(a, C));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(*`a'):&lt;class B&gt; == typeid(`C'):&lt;class C&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>HasType&lt;typename Type, class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbDYNAMIC_CASTABLE</primary></indexterm>
+			<title>
+				<code>rbDYNAMIC_CASTABLE(obj, type)</code>, <code>rbvDYNAMIC_CASTABLE(obj, type)</code>
+			</title>
+			<para><code>obj</code> is a polymorph object.
+			The Rich Boolean only succeeds if the object can be casted to the given type
+			with <code>dynamic_cast</code>, which is checked at runtime. If it cannot be casted
+			dynamically, an <classname>Analysis</classname> object is created that tells
+			what the types are. The argument types are the same as for <code>dynamic_cast</code>,
+			i.e. a pointer to an object and a pointer type, or a reference to an object and
+			a reference type.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a = new B;
+    MOD_ASSERT(rbDYNAMIC_CASTABLE(*a1, C&amp;));
+    MOD_ASSERT(rbDYNAMIC_CASTABLE(a1,  C*)); // equivalent</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(`*a'):&lt;class B&gt; -> typeid(`C&amp;'):&lt;class C&amp;&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>DynamicCastable&lt;typename Type, class GetValue1=Value&gt;</classname></para>
+			<para>Note: if your compiler can't do partial specialization of templates, you can't use
+			this Rich Boolean. Instead, use <code>rbDYNAMIC_CASTABLE_PTR(obj, type)</code> for pointers, or
+			<code>rbDYNAMIC_CASTABLE_REF(obj, type)</code> for references. Their corresponding classes respectively
+			are <classname>DynamicCastablePointer&lt;typename Type, class GetValue1=Value&gt;</classname>
+			and <classname>DynamicCastableReference&lt;typename Type, class GetValue1=Value&gt;</classname>.</para>
+		</sect3>
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Type checking with wxWidgets</secondary></indexterm>
+		<indexterm><primary>Type checking with wxWidgets</primary></indexterm>
+		<title>Type checking with wxWidgets</title>
+		<para>wxWidgets provides a runtime typechecking system for classes that are derived from <classname>wxObject</classname>.
+		For such classes, there are Rich Booleans that do runtime typechecking, equivalent to the ones for real RTTI.</para>
+
+		<sect3>
+			<indexterm><primary>rbWX_EQUAL_TYPES</primary></indexterm>
+			<title>
+				<code>rbWX_EQUAL_TYPES(pobj1, pobj2)</code>, <code>rbvWX_EQUAL_TYPES(pobj1, pobj2)</code>
+			</title>
+			<para><code>pobj1</code> and <code>pobj2</code> are two pointers to polymorph objects.
+			The Rich Boolean only succeeds if they have the same type, which is checked
+			at runtime. If they have different types, an
+        <classname>Analysis</classname> object is created that tells what the types are.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a1 = new B;
+    A *a2 = new C;
+    MOD_ASSERT(rbWX_EQUAL_TYPES(a1, a2));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(*`a1'):&lt;B&gt; == typeid(*`a2'):&lt;C&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>WxEqualTypes&lt;class GetValue1=Value, class GetValue2=Value&gt;</classname></para>
+			<para>This is especially useful when you have methods to clone polymorph objects.
+			Add a non-virtual <code>clone</code> method in the base class, that calls a
+			protected virtual method <code>do_clone</code>
+			that does the actual cloning, and check if the types are equal after that call.
+			If the <code>do_clone</code> method is forgotten in a child class,
+			it will be noticed at runtime.</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbWX_HAS_TYPE</primary></indexterm>
+			<title>
+				<code>rbWX_HAS_TYPE(pobj, type)</code>, <code>rbvWX_HAS_TYPE(pobj, type)</code>
+			</title>
+			<para><code>pobj</code> is a pointer to a polymorph object. <code>type</code> is either a pointer to an object
+			of the type <classname>wxClassInfo</classname>, or a <code>const wxChar *</code> string that contains the name
+			of the class. The Rich Boolean only succeeds if it has the given type, which is checked
+			at runtime. If it has a different type, an
+        <classname>Analysis</classname> object is created that tells what the types are.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a = new B;
+    MOD_ASSERT(rbWX_HAS_TYPE(a, "C"));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(*`a'):&lt;class B&gt; == typeid(`C'):&lt;class C&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>WxHasType&lt;class GetValue1=Value&gt;</classname></para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbWX_IS_KIND_OF</primary></indexterm>
+			<title>
+				<code>rbWX_IS_KIND_OF(obj, type)</code>, <code>rbvWX_IS_KIND_OF(obj, type)</code>
+			</title>
+			<para>Here <code>obj</code> is a pointer to a polymorph object. <code>type</code> is either a pointer to an object
+			of the class <classname>wxClassInfo</classname>, or a <code>const wxChar *</code> string that contains the name
+			of the class. The Rich Boolean only succeeds if the object can be casted to the given type,
+			which is checked with the method <code>IsKindOf</code>. If it cannot be casted,
+			an <classname>Analysis</classname> object is created that tells
+			what the types are.</para>
+			<para>Example usage:
+			    <programlisting>
+    A *a = new B;
+    MOD_ASSERT(rbWX_IS_KIND_OF(a, "C"));</programlisting>
+				<emphasis>Example output:</emphasis>
+				<screen>typeid(`*a'):&lt;B&gt; -&gt; typeid(`C&amp;'):&lt;C&amp;&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> <classname>WxIsKindOf&lt;class GetValue1=Value&gt;</classname></para>
+		</sect3>
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Logical expressions</secondary></indexterm>
+		<indexterm><primary>Logical expressions</primary></indexterm>
+		<title>Logical expressions with Rich Booleans</title>
+		<para>To use the Rich Booleans in this section, include <filename>richbool/richbool.hpp</filename></para>
+		<sect3>
+			<indexterm><primary>rbOR</primary></indexterm>
+			<title>
+				<code>rbOR(cond1, cond2)</code>
+			</title>
+			<para><code>cond1</code> and <code>cond2</code> can be Rich Booleans
+			(except for <code>rbOR</code> and <code>rbAND</code>) or booleans.
+        Evaluation uses shortcut logic, so it evaluates <code>cond1</code>, and if and only if this is false, also <code>cond2</code>.
+        If <code>cond2</code> is also false, an
+        <classname>Analysis</classname> object is created that contains the
+        <classname>Analysis</classname> objects of both conditions.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>condition 1:
+  `a':&lt;2&gt; == `b':&lt;1&gt; - nok
+condition 2:
+  `a':&lt;3&gt; &gt;= `c':&lt;4&gt; - nok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbAND</primary></indexterm>
+			<title>
+				<code>rbAND(cond1, cond2)</code>
+			</title>
+			<para><code>cond1</code> and <code>cond2</code> can be Rich Booleans
+			(except for <code>rbOR</code> and <code>rbAND</code>) or booleans.
+        Evaluates <code>cond1</code>, and if this is true, also <code>cond2</code>. If the first is false, a
+        <classname>Analysis</classname> object is created that contains the
+        <classname>Analysis</classname> objects of the first condition. If the first is true
+        and the second is false, an <classname>Analysis</classname> object is created with
+        the <classname>Analysis</classname> objects of both conditions.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>condition 1:
+  `a':&lt;1&gt; == `b':&lt;1&gt; - ok
+condition 2:
+  `a':&lt;3&gt; &gt;= `c':&lt;4&gt; - nok</screen>
+			</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>condition 1:
+  `a':&lt;2&gt; == `b':&lt;1&gt; - nok
+condition 2:
+  not evaluated</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbXOR</primary></indexterm>
+			<title>
+				<code>rbXOR(cond1, cond2)</code>
+			</title>
+			<para><code>cond1</code> and <code>cond2</code> can be Rich Booleans
+			(except for <code>rbOR</code> and <code>rbAND</code>) or booleans.
+        It evaluates <code>cond1</code> and <code>cond2</code>, and succeeds if one of the conditions
+		is true and one is false. If they both are true, or they both are false, an
+        <classname>Analysis</classname> object is created that contains the
+        <classname>Analysis</classname> objects of the two conditions.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>condition 1:
+  `a':&lt;1&gt; == `b':&lt;1&gt; - ok
+condition 2:
+  `a':&lt;1&gt; &lt;= `c':&lt;1&gt; - ok</screen>
+			</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>Note that <code>rbOR</code> and <code>rbAND</code> can't be nested.
+		If you try to, you will get a compile error, which was introduced on purpose.
+		Otherwise, nesting <code>rbOR</code> and <code>rbAND</code> would give false results.
+        This has to do with the complex task of maintaining the short circuit logic without losing the
+        <classname>Analysis</classname> object.
+        The next four Rich Booleans remedy that, but they have drawbacks. You most likely won't need
+        them, since nesting <code>rbOR</code> and <code>rbAND</code> is rarely needed.
+        Note that this problem is non-existent with <code>rbXOR</code>, it can be used
+        inside <code>rbOR</code> and <code>rbAND</code>.</sect3>
+		<sect3>
+			<indexterm><primary>rbOR_DE</primary></indexterm>
+			<title>
+				<code>rbOR_DE(cond1, cond2)</code>
+			</title>
+			<para>The suffix _DE here stands for "double evaluation".
+        <code>cond1</code> and <code>cond2</code> can be Rich Booleans
+        (except for <code>rbOR</code> and <code>rbAND</code>) or booleans. Unlike
+        <code>rbOR</code>, it can be used inside <code>rbOR</code> and <code>rbAND</code>.
+        It can however, evaluate the conditions twice, which may not be desirable, but
+        <code>cond2</code> will only be evaluated if <code>cond1</code> is false.</para>
+			<para><emphasis>Example output:</emphasis> see rbOR</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbOR_BE</primary></indexterm>
+			<title>
+				<code>rbOR_BE(cond1, cond2)</code>
+			</title>
+			<para>The suffix _BE here stands for "both evaluated".
+        <code>cond1</code> and <code>cond2</code> can be Rich Booleans (except for <code>rbOR</code>
+        and <code>rbAND</code>) or booleans. Unlike
+        <code>rbOR</code>, it can be used inside <code>rbOR</code> and <code>rbAND</code>.
+        It will however, evaluate both conditions,
+        even if the first one is true, which may not be desirable.</para>
+			<para><emphasis>Example output:</emphasis> see rbOR</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbAND_DE</primary></indexterm>
+			<title>
+				<code>rbAND_DE(cond1, cond2)</code>
+			</title>
+			<para>The suffix _DE here stands for "double evaluation".
+        <code>cond1</code> and <code>cond2</code> can be Rich Booleans
+        (except for <code>rbOR</code> and <code>rbAND</code>) or booleans. Unlike
+        <code>rbAND</code>, it can be used inside <code>rbOR</code> and <code>rbAND</code>.
+        It can however, evaluate the conditions twice, which may not be desirable, but
+        <code>cond2</code> will only be evaluated if <code>cond1</code> is true.</para>
+			<para><emphasis>Example output:</emphasis> see rbAND</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+		<sect3>
+			<indexterm><primary>rbAND_BE</primary></indexterm>
+			<title>
+				<code>rbAND_BE(cond1, cond2)</code>
+			</title>
+			<para>The suffix _BE here stands for "both evaluated".
+        <code>cond1</code> and <code>cond2</code> can be Rich Booleans (except for <code>rbOR</code>
+        and <code>rbAND</code>) or booleans. Unlike
+        <code>rbAND</code>, it can be used inside <code>rbOR</code> and <code>rbAND</code>.
+        It will however, evaluate both conditions,
+        even if the first one is false, which may not be desirable.</para>
+			<para><emphasis>Example output:</emphasis> see rbAND</para>
+			<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+	</sect2>
+	
+	<sect2><title>Exceptions</title>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Exceptions</secondary></indexterm>
+		<indexterm><primary>Exceptions</primary></indexterm>
+		<sect3>
+			<indexterm><primary>rbEXCEPTION</primary></indexterm>
+			<indexterm><primary>RICHBOOL_MAKE_EXCEPTION_TYPE_NAME</primary></indexterm>
+			<title><code>rbEXCEPTION(exc)</code></title>
+			<para>This macro gives information about the exception <code>exc</code>. Include the file
+			<filename>richbool/exceptions.hpp</filename> if you need it. This Rich Boolean is peculiar,
+			because it always fails, as an exception that was thrown is always an error. To use it
+			with a certain type of exception, there should be two functions overloaded in the
+			<code>RichBool</code> namespace for the type:
+			<itemizedlist mark='bullet'>
+			<listitem><code>GetExceptionTypeName(ExceptionType &amp;)</code>: this should return a string
+			with the type name</listitem>
+			<listitem><code>GetExceptionInfo(ExceptionType &amp;)</code>: this should return a string with the info
+			in the exception</listitem>
+			</itemizedlist>
+		<example><title>Defining overloaded functions to use <code>rbEXCEPTION(exc)</code></title>
+			<programlisting>
+namespace RichBool {
+	inline const char* GetExceptionTypeName(const MyException &amp;) {
+		return "MyException";
+	}
+	inline std::string GetExceptionInfo(const MyException &amp;exc) {
+		return exc.info();
+	}
+}</programlisting>
+        </example>
+		You can use the macro <code>RICHBOOL_MAKE_EXCEPTION_TYPE_NAME</code> to define the
+		function <code>GetExceptionTypeName(ExceptionType &amp;)</code>, so the code is simplified to
+		<example><title>Defining overloaded functions to use <code>rbEXCEPTION(exc)</code></title>
+			<programlisting>
+RICHBOOL_MAKE_EXCEPTION_TYPE_NAME(MyException);
+namespace RichBool {
+	inline std::string GetExceptionInfo(const MyException &amp;exc) {
+		return exc.info();
+	}
+}</programlisting>
+        </example>
+
+		If you have a class hierarchy of exceptions, with a base class that has a (virtual) method to give information
+		about the exeption, it usually suffices to overload <code>GetExceptionInfo(ExceptionType &amp;)</code>
+		for the base class, and use the macro <code>RICHBOOL_MAKE_EXCEPTION_TYPE_NAME</code>
+		for the derived classes.</para>
+		<para><emphasis>Corresponding class:</emphasis> <classname>RichBool::Exception</classname></para>
+		
+		This Rich Boolean is useful in a catch block, because it lets you easily
+		fire an assertion:
+		<para>Example usage:
+		    <programlisting>
+    try {
+        ...
+    }
+    catch (MyException &amp;exc) {
+        MOD_ASSERT(rbEXCEPTION(exc));
+        ...
+    }</programlisting>
+		</para>
+
+		<sect4><title>STD exceptions</title>
+			<indexterm><primary>STD exceptions</primary></indexterm>
+		<para><code>GetExceptionTypeName(ExceptionType &amp;)</code> and
+		<code>GetExceptionInfo(ExceptionType &amp;)</code> are already overloaded for all
+		the exceptions that are defined in the C++ standard. To use these overloads, include the file
+		<filename>richbool/stdexceptions.hpp</filename>.
+		</para>
+		</sect4>
+
+		<sect4><title>MFC exceptions</title>
+			<indexterm><primary>MFC exceptions</primary></indexterm>
+		<para><code>GetExceptionTypeName(ExceptionType &amp;)</code> and
+		<code>GetExceptionInfo(ExceptionType &amp;)</code> are already overloaded for all
+		MFC exceptions. To use these overloads, include the file
+		<filename>richbool/mfcexceptions.hpp</filename>.
+		</para>
+		</sect4>
+
+		</sect3>
+	</sect2>
+	
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Checking a range</secondary></indexterm>
+		<indexterm><primary>Checking a range</primary></indexterm>
+		<title>Checking a range</title>
+		<para>To use the Rich Booleans in this section, include <filename>richbool/richbool.hpp</filename>.
+        </para>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGE</primary></indexterm>
+			<title>
+				<code>rbIN_RANGE(begin, end, check)</code>
+			</title>
+			<para>This macro gives begin and end to the rich boolean functor
+        <code>check</code>.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAY</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAY(array, check)</code>
+			</title>
+			<para>This macro gives the begin and end of the array to the rich boolean functor
+        <code>check</code>. It is equivalent to
+        <code>rbIN_RANGE(array, sizeof(array)/sizeof(array[0]), check)</code>.
+		The variable <code>array</code> should be an array, not a pointer.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_VALUES</primary></indexterm>
+			<title>
+				<code>rbIN_VALUES(initializer_list, check)</code>
+			</title>
+			<para>This macro is still experimental. It is only available on compilers that support
+			C++0X initializer lists. At the moment of writing this works on gcc 4.5, but not with Visual C++.</para>
+			<para>This macro gives the begin and end of the initializer list to the rich boolean functor
+        <code>check</code>. The initializer list should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		<example><code>rbIN_VALUES(({ 2, 4, 8}), Sorted&lt;&gt;())</code></example>
+		</sect3>
+
+		</sect2>
+
+		<sect2 id='check_range'><title>Available Rich Boolean functor classes for checking a range</title>
+		<para>There are several Rich Boolean functor classes provided that work on a range, and thus can be
+		given as the last argument to Rich Boolean macros that work on a range, like <code>rbIN_RANGE</code>.
+		Some of these can be used directly, others are actually Rich Boolean functor factories,
+		i.e. they create rich boolean functors on the fly, when you give a Rich Boolean functor to
+		their factory method. It should be a Rich Boolean functor that takes one argument.
+		See <xref linkend='richboolobjects' /> on how to make a rich boolean functor.
+		</para>
+
+		<sect3><title>Sorted</title>
+			<indexterm><primary>Sorted</primary></indexterm>
+		<para>The template class <classname>Sorted&lt;bool multiPass=true&gt;</classname>
+		takes two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. It checks whether the given range is
+		sorted. The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<example><title>Using Sorted to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array[] = { 1, 5, 3, 6 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Sorted&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that the range [array, array+4) is sorted".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>range is sorted: `array'-`array+4' - nok
+X: [1]:&lt;5&gt; &lt;= [2]:&lt;3&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using Sorted to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Sorted&lt;&gt;(<emphasis>true</emphasis>)));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>range is sorted: `array'-`array+4' - nok
+M: [0]:&lt;1&gt; &lt;= [1]:&lt;5&gt; - ok
+X: [1]:&lt;5&gt; &lt;= [2]:&lt;3&gt; - nok
+M: [2]:&lt;3&gt; &lt;= [3]:&lt;6&gt; - ok</screen>
+        </para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+        <example><title>Using Sorted to check the elements of a range, using the number of elements</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, <emphasis>4</emphasis>, Sorted&lt;&gt;()));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>range is sorted: `array'-`4' - nok
+X: [1]:&lt;5&gt; &lt;= [2]:&lt;3&gt; - nok</screen>
+        </para>
+        </example>
+		</sect3>
+
+		<sect3><title>SortedStrictly</title>
+			<indexterm><primary>SortedStrictly</primary></indexterm>
+		<para>The template class <classname>SortedStrictly&lt;bool multiPass=true&gt;</classname>
+		takes two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. It checks whether the given range is
+		sorted strictly (i.e. sorted and no two successive elements are equal).
+		The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<example><title>Using SortedStrictly to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array[] = { 1, 3, 3, 6 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, SortedStrictly&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that the range [array, array+4) is sorted strictly".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>range is sorted strictly: `array'-`array+4' - nok
+X: [1]:&lt;3&gt; &lt; [2]:&lt;3&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using SortedStrictly to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, SortedStrictly&lt;&gt;(<emphasis>true</emphasis>)));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>range is sorted strictly: `array'-`array+4' - nok
+M: [0]:&lt;1&gt; &lt; [1]:&lt;3&gt; - ok
+X: [1]:&lt;3&gt; &lt; [2]:&lt;3&gt; - nok
+M: [2]:&lt;3&gt; &lt; [3]:&lt;6&gt; - ok</screen>
+        </para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		</sect3>
+		
+		<sect3><title>AllUnique</title>
+			<indexterm><primary>AllUnique</primary></indexterm>
+		<para>The class <classname>AllUnique</classname>
+		takes two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. It checks whether the elements in the given range are all unique.
+		The range should be multi-pass (see <xref linkend='multi-or-single-pass' />).
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the comparisons
+		(even the ones that are ok) or only the failing ones;
+		the default value is false (i.e. only show the failing comparisons).</para>
+		<example><title>Using AllUnique to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array[] = { 1, 4, 6, 4 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, AllUnique()));</programlisting>
+        <para>The last line can be read as "assert that the elements in the range [array, array+4) are all unique".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>all elements are unique in range: `array'-`array+4' - nok
+X: [1]:&lt;4&gt; != [3]:&lt;4&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		</sect3>
+		
+		<sect3><title>All</title>
+			<indexterm><primary>All</primary></indexterm>
+		<para>The template class <classname>All&lt;bool multiPass=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>Are</code> creates,
+		check whether the given Rich Boolean functor applies to <emphasis>all</emphasis> elements in the
+		given range. These objects take two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones for which it is ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<para>To create a Rich Boolean functor, pass a Rich Boolean functor to its method <code>Are</code>.</para>
+		<example><title>Using All to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    struct IsEven {
+        bool operator()(int n) const { return n%2==0; }
+    };
+    int array[] = { 4, 6, 7, 10 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, All&lt;&gt;().Are(Pred1&lt;IsEven&gt;())));</programlisting>
+        <para>The last line can be read as "assert that in the range [array, array+4) all
+        elements are even".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to all elements in range `array'-`array+4' - nok
+X: predicate([2]:&lt;7&gt;) - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using All to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, All&lt;&gt;(<emphasis>true</emphasis>).Are(Pred1&lt;IsEven&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to all elements in range `array'-`array+4' - nok
+M: predicate([0]:&lt;4&gt;) - ok
+M: predicate([1]:&lt;6&gt;) - ok
+X: predicate([2]:&lt;7&gt;) - nok
+M: predicate([3]:&lt;10&gt;) - ok</screen>
+        </para>
+        </example>
+        An 'M' at the begin of a line indicates success, an 'X' a failure.
+      <example><title>Using All to check the elements of a range, using the number of elements to use</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, <emphasis>4</emphasis>, All&lt;&gt;().Are(Pred1&lt;IsEven&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to all elements in range `array'-`4' - nok
+X: predicate([2]:&lt;7&gt;) - nok</screen>
+        </para>
+        </example>
+		</sect3>
+
+		<sect3><title>Has</title>
+			<indexterm><primary>Has</primary></indexterm>
+		<para>The template class <classname>Has&lt;bool multiPass=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>That</code> creates,
+		check whether the given Rich Boolean functor applies to <emphasis>at least one element</emphasis> in the
+		given range. These functors take two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range or just tell that there was no element for which the rich boolean
+		passes;
+		the default value is false (i.e. don't show the elements).</para>
+		<example><title>Using Has to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    struct IsEven {
+        bool operator()(int n) const { return n%2==0; }
+    };
+    int array[] = { 3, 5, 7, 9 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Has&lt;&gt;().That(Pred1&lt;IsEven&gt;())));</programlisting>
+        <para>The last line can be read as "assert that the range [array, array+4) has
+        elements that are even".</para>
+		<emphasis>Output:</emphasis>
+        <screen>predicate applies to all elements in range `array'-`array+4' - nok</screen>
+        </example>
+        <example><title>Using Has to check the elements of a range, showing all the elements</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Has&lt;&gt;(<emphasis>true</emphasis>).That(Pred1&lt;IsEven&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to all elements in range `array'-`array+4' - nok
+X: predicate([0]:&lt;3&gt;) - nok
+X: predicate([1]:&lt;5&gt;) - nok
+X: predicate([2]:&lt;7&gt;) - nok
+X: predicate([3]:&lt;9&gt;) - nok</screen></para>
+        </example>
+		</sect3>
+
+		<sect3><title>Unique</title>
+			<indexterm><primary>Unique</primary></indexterm>
+		<para>The template class <classname>Unique&lt;bool multiPass=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>That</code> creates,
+		check whether the given Rich Boolean functor applies to <emphasis>exactly one element</emphasis> in the
+		given range. These functors take two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range or only the ones for which the rich boolean passes;
+		the default value is false (i.e. only show the succeeding ones).</para>
+		<example><title>Using Unique to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    struct IsEven {
+        bool operator()(int n) const { return n%2==0; }
+    };
+    int array[] = { 3, 6, 7, 10 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Unique&lt;&gt;().That(Pred1&lt;IsEven&gt;())));</programlisting>
+        <para>The last line can be read as "assert that in the range [array, array+4) there is
+        a unique element that is even".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to exactly one element in range `array'-`array+4' - nok
+M: predicate([1]:&lt;6&gt;) - ok
+M: predicate([3]:&lt;10&gt;) - ok</screen>
+        Note that this is different from the previous ones: now the elements for which
+        the rich boolean passes, are shown. Because there should be only one, and there are
+        two, these are shown.</para>
+        </example>
+        <example><title>Using Unique to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Unique&lt;&gt;(<emphasis>true</emphasis>).That(Pred1&lt;IsEven&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to exactly one element in range `array'-`array+4' - nok
+X: predicate([0]:&lt;3&gt;) - nok
+M: predicate([1]:&lt;6&gt;) - ok
+X: predicate([2]:&lt;7&gt;) - nok
+M: predicate([3]:&lt;10&gt;) - ok</screen>
+        </para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure (although the
+        real failure here is that there is more than one element that doesn't 'fail').</para>
+		</sect3>
+
+		<sect3><title>Adjacent</title>
+			<indexterm><primary>Adjacent</primary></indexterm>
+		<para>The template class <classname>Adjacent&lt;bool multiPass=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>Are</code> creates
+		check whether the given Rich Boolean functor applies to <emphasis>all adjacent
+		elements</emphasis> in the
+		given range. These functors take two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. The template argument tells whether the range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass' />). Its default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones for which it is ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<example><title>Using Adjacent to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array[] = { 10, 6, 8, 4 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Adjacent&lt;&gt;().Are(More&lt;&gt;())));</programlisting>
+        <para>The last line can be read as "assert that in the range [array, array+4) for every
+        two adjacent elements, the first is more than the second".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to adjacent elements in range `array'-`array+4' - nok
+X: [1]:&lt;6&gt; &gt; [2]:&lt;8&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using Adjacent to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGE(array, array+4, Adjacent&lt;&gt;(<emphasis>true</emphasis>).Are(More&lt;&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to adjacent elements in range `array'-`array+4' - nok
+M: [0]:&lt;10&gt; &gt; [1]:&lt;6&gt; - ok
+X: [1]:&lt;6&gt; &gt; [2]:&lt;8&gt; - nok
+M: [2]:&lt;8&gt; &gt; [3]:&lt;4&gt; - ok</screen>
+        </para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		</sect3>
+		
+		<sect3><title>AllPairs</title>
+			<indexterm><primary>AllPairs</primary></indexterm>
+		<para>The template class <classname>AllPairs&lt;&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>Are</code> creates
+		check whether the given Rich Boolean functor applies to <emphasis>all pairs of
+		elements</emphasis> in the
+		given range. These functors take two arguments: the begin and end of a range, or the begin of a range and the number of elements to
+		use in that range. The range should be multi-pass (see <xref linkend='multi-or-single-pass' />).
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the comparisons
+		in the range (even the ones for which it is ok) or only the failing comparisons;
+		the default value is false (i.e. only show the failing comparisons).</para>
+		<example><title>Using AllPairs to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array[] = { 10, 6, 8, 6 };
+    MOD_ASSERT(rbIN_RANGE(array, array+4, AllPairs&lt;&gt;().Are(Different&lt;&gt;())));</programlisting>
+        <para>The last line can be read as "assert that in the range [array, array+4) for every
+        pair of elements, the elements are different".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to all pairs in `array'-`array+4' - nok
+X: [1]:&lt;6&gt; != [3]:&lt;6&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		</sect3>
+		
+		<sect3><title>Rich Boolean functor classes that take one argument</title>
+			<indexterm><primary>Equals</primary></indexterm>
+			<indexterm><primary>IsLessThan</primary></indexterm>
+			<indexterm><primary>IsLessOrEqualTo</primary></indexterm>
+			<indexterm><primary>IsMoreThan</primary></indexterm>
+			<indexterm><primary>IsMoreOrEqualTo</primary></indexterm>
+			<indexterm><primary>IsDifferentFrom</primary></indexterm>
+			<indexterm><primary>EqualTo</primary></indexterm>
+			<indexterm><primary>LessThan</primary></indexterm>
+			<indexterm><primary>LessOrEqualTo</primary></indexterm>
+			<indexterm><primary>MoreThan</primary></indexterm>
+			<indexterm><primary>MoreOrEqualTo</primary></indexterm>
+			<indexterm><primary>IsDifferentFrom</primary></indexterm>
+		<para>One operation that is often performed, is checking whether a certain value
+		is present in a range, or all values are less than a certain value.
+		This could be done by binding an argument of the
+		Rich Boolean functor classes like <classname>Equal</classname> and <classname>Less</classname>.
+		To make this easier, you can use the following Rich Boolean functor classes that take one argument:
+		<itemizedlist mark='bullet'>
+			<listitem><classname>Equals&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument equals the argument given in its constructor</listitem>
+			<listitem><classname>IsLessThan&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument is less than the argument given in its constructor</listitem>
+			<listitem><classname>IsLessOrEqualTo&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument less than or equal to the argument given in its constructor</listitem>
+			<listitem><classname>IsMoreThan&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument is more than the argument given in its constructor</listitem>
+			<listitem><classname>IsMoreOrEqualTo&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument more than or equal to the argument given in its constructor</listitem>
+			<listitem><classname>IsDifferentFrom&lt;typename T, GetValue=Value&gt;</classname>:
+				checks whether its argument differs from the argument given in its constructor</listitem>
+		</itemizedlist>
+		Their constructors take an argument of type T, which is copied.
+		You can also use the following template functions to create these Rich Boolean Functors,
+		that save you from specifying the template argument:
+		<itemizedlist mark='bullet'>
+			<listitem><code>EqualTo(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>Equals&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+			<listitem><code>LessThan(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>IsLessThan&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+			<listitem><code>LessOrEqualTo(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>IsLessOrEqualTo&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+			<listitem><code>MoreThan(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>IsMoreThan&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+			<listitem><code>MoreOrEqualTo(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>IsMoreOrEqualTo&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+			<listitem><code>IsDifferentFrom(const T &amp;t)</code>: returns a Rich Boolean Functor of the class
+				<classname>IsDifferentFrom&lt;typename T, Value&gt;</classname>
+				and gives <code>t</code> as an argument of the constructor.</listitem>
+		</itemizedlist>
+		Elements of a range are then compared to the given argument. For
+		<classname>Equals&lt;typename T, GetValue=Value&gt;</classname> this is especially useful
+		with <classname>Has&lt;...&gt;</classname> and <classname>Unique&lt;...&gt;</classname>,
+		for the others it is also useful with <classname>All&lt;...&gt;</classname>.
+		<example><title>Checking if a value is present in a range</title>
+		This example checks if 5 is present in the range [begin, end) of integers.
+		<programlisting>
+	MOD_ASSERT(rbIN_RANGE(begin, end, Has&lt;&gt;().That(EqualTo(5))));</programlisting>
+		</example>
+		<example><title>Checking if a value is present exactly once in a range</title>
+		This example checks if 5 is present exactly once in the range [begin, end) of integers.
+		<programlisting>
+	MOD_ASSERT(rbIN_RANGE(begin, end, Unique&lt;&gt;().That(EqualTo(5))));</programlisting>
+		</example>
+		<example><title>Checking if all values in a range are less than 5</title>
+		This example checks if all the integers in the range [begin, end) are less than 5.
+		<programlisting>
+	MOD_ASSERT(rbIN_RANGE(begin, end, All&lt;&gt;().Are(LessThan(5))));</programlisting>
+		</example>
+		</para>
+		</sect3>
+
+	</sect2>
+
+	<sect2 id='multi-or-single-pass'>
+		<title>Multi-pass and single-pass ranges</title>
+		<para>The methods of the classes in the previous section have iterators as arguments.
+		These iterators can be multi-pass or single-pass. If they are multi-pass (a copy of an
+		old iterator still points to the same value), they only have to
+        conform to the concept of forward iterators. This is specified by their boolean
+		template argument, which should be <literal>true</literal> if you pass multi-pass
+		iterators, <literal>false</literal> if you pass single-pass iterators. The default
+		is <literal>true</literal>.
+        Sometimes the concept of multi-pass input iterators is used; these can also be used as
+        multi-pass iterators.
+        Using single-pass iterators with a class that expects multi-pass iterators, results in
+        undefined behaviour. Using multi-pass iterators with a class that expects single-pass
+        iterators works fine, but is less performant.</para>
+	</sect2>
+
+	<sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Comparing two ranges</secondary></indexterm>
+		<indexterm><primary>Comparing two ranges</primary></indexterm>
+		<title>Comparing two ranges</title>
+		<para>To use the Rich Booleans in this section, include <filename>richbool/richbool.hpp</filename>.</para>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGES</primary></indexterm>
+			<title>
+				<code>rbIN_RANGES(begin1, end1, begin2, end2, check)</code>
+			</title>
+			<para>This macro gives <code>begin1</code>, <code>end1</code>,
+			<code>begin2</code> and <code>end2</code> to the rich boolean functor
+        <code>check</code>.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAYS</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAYS(array1, array2, check)</code>
+			</title>
+			<para>This macro gives the begin and end of both arrays to
+			the rich boolean functor <code>check</code>.
+			It is equivalent to
+            <code>rbIN_RANGES(array1, array1+sizeof(array1)/sizeof(array1[0]),
+            array2, array2+sizeof(array2)/sizeof(array2[0]), check)</code>.
+			The variables <code>array1</code> and <code>array2</code> should be arrays, not pointers.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGE_ARRAY</primary></indexterm>
+			<title>
+				<code>rbIN_RANGE_ARRAY(begin, end, array, check)</code>
+			</title>
+			<para>This macro gives <code>begin</code>, <code>end</code> and 
+			the begin and end of <code>array</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			It is equivalent to
+            <code>rbIN_RANGES(begin, end, array, array+sizeof(array)/sizeof(array[0]), check)</code>.
+			The variable <code>array</code> should be an array, not a pointer.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAY_RANGE</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAY_RANGE(array, begin, end, check)</code>
+			</title>
+			<para>This macro gives the begin and end of <code>array</code> and <code>begin</code> and
+			<code>end</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			It is equivalent to
+            <code>rbIN_RANGES(array, array+sizeof(array)/sizeof(array[0]), begin, end, check)</code>.
+			The variable <code>array</code> should be an array, not a pointer.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<para>The following 5 macros (that have VALUES in their name) are
+			still experimental. They are only available on compilers that support
+			C++0X initializer lists. At the moment of writing this works on gcc 4.5, but not with Visual C++.</para>
+			
+		<sect3>
+			<indexterm><primary>rbIN_VALUES_VALUES</primary></indexterm>
+			<title>
+				<code>rbIN_VALUES_VALUES(il1, il2, check)</code>
+			</title>
+			<para>This macro gives the begin and end of both initializer lists to
+			the rich boolean functor <code>check</code>.
+			 The initializer lists should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGE_VALUES</primary></indexterm>
+			<title>
+				<code>rbIN_RANGE_VALUES(begin, end, il, check)</code>
+			</title>
+			<para>This macro gives <code>begin</code>, <code>end</code> and 
+			the begin and end of <code>il</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			The initializer list should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_VALUES_RANGE</primary></indexterm>
+			<title>
+				<code>rbIN_VALUES_RANGE(il, begin, end, check)</code>
+			</title>
+			<para>This macro gives the begin and end of <code>il</code> and <code>begin</code> and
+			<code>end</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			The initializer list should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAY_VALUES</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAY_VALUES(array, il, check)</code>
+			</title>
+			<para>This macro gives the begin and end of <code>array</code> and 
+			the begin and end of <code>il</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			The initializer list should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_VALUES_ARRAY</primary></indexterm>
+			<title>
+				<code>rbIN_VALUES_ARRAY(il, array, check)</code>
+			</title>
+			<para>This macro gives the begin and end of <code>il</code> and the begin and end of
+			<code>array</code> to
+			the rich boolean functor <code>check</code>, in that order.
+			The initializer list should be enclosed in parens.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		</sect2>
+
+		<sect2 id='check_ranges'><title>Available classes for performing checks on two ranges</title>
+		<para>There are several Rich Boolean functor classes provided that work on two ranges, and
+		thus can be given as the last argument
+		to Rich Boolean macros that work on two ranges, like <code>rbIN_RANGES</code>.
+		Some of these can be used directly, others are actually Rich Boolean functor factories,
+		i.e. they create rich boolean functors on the fly, when you give a Rich Boolean functor to
+		their factory method. It should be a Rich Boolean functor that takes two arguments.
+		See <xref linkend='richboolobjects' /> on how to make a rich boolean functor.</para>
+
+		<sect3><title>AllEqual</title>
+			<indexterm><primary>AllEqual</primary></indexterm>
+		<para>The template class <classname>AllEqual&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		checks whether the elements in the two given ranges are equal.
+		It takes four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether
+		the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). Their default values are both true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the different ones;
+		the default value is false (i.e. only show the different ones).</para>
+		<example><title>Using AllEqual to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 6, 8, 10 }, array2[] = { 4, 6, 7, 10 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4, AllEqual&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that in the ranges [array1, array1+4) and
+        [array2, array2+4) all elements are equal".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+4' and `array2'-`array2+4' - nok
+X: [2]:&lt;8&gt; == [2]:&lt;7&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using AllEqual to check the elements of a range, and also show the equal ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4, AllEqual&lt;&gt;(<emphasis>true</emphasis>)));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+4' and `array2'-`array2+4' - nok
+M: [0]:&lt;4&gt; == [0]:&lt;4&gt; - ok
+M: [1]:&lt;6&gt; == [1]:&lt;6&gt; - ok
+X: [2]:&lt;8&gt; == [2]:&lt;7&gt; - nok
+M: [3]:&lt;10&gt; == [3]:&lt;10&gt; - ok</screen></para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		<example><title>Using AllEqual to check the elements of a range, using the number of elements to use</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 6, 8, 10 }, array2[] = { 4, 6, 7, 10 };
+    MOD_ASSERT(rbIN_RANGES(array1, <emphasis>4</emphasis>, array2, <emphasis>4</emphasis>, AllEqual&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that in the ranges [array1, array1+4) and
+        [array2, array2+4) all elements are equal".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`4' and `array2'-`4' - nok
+X: [2]:&lt;8&gt; == [2]:&lt;7&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+		</sect3>
+
+		<sect3><title>AllEqualUnordered</title>
+			<indexterm><primary>AllEqualUnordered</primary></indexterm>
+		<para>The template class <classname>AllEqualUnordered&lt;bool multiPass1=true&gt;</classname>
+		checks whether the elements in the two given ranges are equal, <emphasis>in any order</emphasis>.
+		It takes four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether the first range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). The second range should be muli-pass.
+		The default value is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the different ones;
+		the default value is false (i.e. only show the different ones).</para>
+		<example><title>Using AllEqualUnordered to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 6, 8, 10 }, array2[] = { 6, 7, 4, 10 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        AllEqualUnordered&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that in the ranges [array1, array1+4) and
+        [array2, array2+4) all elements are equal, in any order".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+4' and `array2'-`array2+4' - nok
+1: [2]:&lt;8&gt; X  - nok
+2: X [1]:&lt;7&gt; - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+        <example><title>Using AllEqualUnordered to check the elements of a range, and also show the equal ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        AllEqualUnordered&lt;&gt;(<emphasis>true</emphasis>)));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+4' and `array2'-`array2+4' - nok
+M: [0]:&lt;4&gt; == [2]:&lt;4&gt; - ok
+M: [1]:&lt;6&gt; == [0]:&lt;6&gt; - ok
+M: [3]:&lt;10&gt; == [3]:&lt;10&gt; - ok
+1: [2]:&lt;8&gt; X  - nok
+2: X [1]:&lt;7&gt; - nok</screen></para>
+        </example>
+        <para>An 'M' at the begin of a line indicates success, an 'X' a failure.</para>
+		</sect3>
+
+		<sect3><title>IsSubsetOf</title>
+			<indexterm><primary>IsSubsetOf</primary></indexterm>
+		<para>The template class <classname>IsSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		checks whether the first range is a subset of the second.
+		It takes four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). At least one should be multi-pass.
+		The default value for both is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using IsSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 5, 3, 1 }, array2[] = { 4, 5, 1, 7, 9 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        IsSubsetOf&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) is a subset of the range
+        [array2, array2+4)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' is subset of `array2'-`array2+4' - nok
+1: [1]:&lt;3&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+		</sect3>
+
+		<sect3><title>IsSubsetOfSorted</title>
+			<indexterm><primary>IsSubsetOfSorted</primary></indexterm>
+		<para>The template class <classname>IsSubsetOfSorted&lt;bool multiPass1=true&gt;</classname>
+		is identical to <classname>IsSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>,
+		except that the second range should be random access and its elements should be sorted.
+		This has the advantage that it is faster than
+		<classname>IsSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		</sect3>
+
+		<sect3><title>IsOrderedSubsetOf</title>
+			<indexterm><primary>IsOrderedSubsetOf</primary></indexterm>
+		<para>The template class <classname>IsOrderedSubsetOf&lt;bool multiPass=true&gt;</classname>
+		checks whether the first range is a subset of the second, where the elements of the first range
+		are found in the same order in the second.
+		It takes four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether one or both the ranges are single pass,
+		or both multi-pass (see <xref linkend='multi-or-single-pass2' />).
+		The default value is true, i.e. both are multi-pass.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using IsOrderedSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 5, 3, 1 }, array2[] = { 4, 5, 1, 7, 3 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        IsOrderedSubsetOf&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) is an ordered subset of the range
+        [array2, array2+4)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' is ordered subset of `array2'-`array2+4' - nok
+1: [2]:&lt;1&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;. In this output you see that the <code>1</code> could not be matched
+		after the <code>3</code> was matched, because the algorithm doesn't walk backwards.</para>
+        </example>
+		</sect3>
+
+		<sect3><title>IsOrderedSubsetOfSorted</title>
+			<indexterm><primary>IsOrderedSubsetOfSorted</primary></indexterm>
+		<para>The template class <classname>IsOrderedSubsetOfSorted&lt;bool multiPass1=true&gt;</classname>
+		is identical to
+		<classname>IsOrderedSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>,
+		except that the second range should be random access and its elements should be sorted.
+		This has the advantage that it is faster than
+		<classname>IsOrderedSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		</sect3>
+
+		<sect3><title>IsMultiSubsetOf</title>
+			<indexterm><primary>IsMultiSubsetOf</primary></indexterm>
+		<para>The template class <classname>IsMultiSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		checks whether the first range is a subset of the second, where an element in the first range can appear
+		more than once if it appears at least once in the second range.
+		It takes four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). At least one should be multi-pass.
+		The default value for both is true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using IsSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 5, 3, 5, 1, 1, 5 }, array2[] = { 4, 5, 1, 7, 9 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        IsMultiSubsetOf&lt;&gt;()));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) is a multisubset of the range
+        [array2, array2+4)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' is multisubset of `array2'-`array2+4' - nok
+1: [1]:&lt;3&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+		</sect3>
+		
+		<sect3><title>IsMultiSubsetOfSorted</title>
+			<indexterm><primary>IsMultiSubsetOfSorted</primary></indexterm>
+		<para>The template class <classname>IsMultiSubsetOfSorted&lt;bool multiPass1=true&gt;</classname>
+		is identical to <classname>IsMultiSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>,
+		except that the second range should be random access and its elements should be sorted.
+		This has the advantage that it is faster than
+		<classname>IsMultiSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		</sect3>
+
+		<para>Note that the concepts of `ordered subset' and `multisubset' don't exist in the usual
+		mathematical theory of sets, because there an element can appear only once in a set,
+		and sets don't have an order. Many C++ containers don't have these restrictions.</para>
+
+		<para>Note: it is obvious that an optimization could be made for subsets and multisubsets if the second range is a
+		<classname>std::set</classname>, <classname>std::multiset</classname> etc. This will be done
+		in a future release.</para>
+
+		<sect3><title>Compare</title>
+			<indexterm><primary>Compare</primary></indexterm>
+		<para>The template class <classname>Compare&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>That</code> creates,
+		check whether the given Rich Boolean functor applies to the <emphasis>corresponding elements</emphasis> in the
+		given ranges.
+		These functors can be used in Rich Booleans that work on two ranges or containers
+		(because they take four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range - you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). Their default values are both true.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones for which it is ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<example><title>Using Compare to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 1, 4, 8, 9, 11 }, array2[] = { 4, 6, 7, 10 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+5, array2, array2+4,
+        Compare&lt;&gt;().That(Less&lt;&gt;())));</programlisting>
+        <para>The last line can be read as "assert that when the ranges [array1, array1+5) and
+        [array2, array2+4) are compared, the elements in the first are less than
+        the elements in the second".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+5' and `array2'-`array2+4' - nok
+X: [2]:&lt;8&gt; &lt; [2]:&lt;7&gt; - nok
+1: [4]:&lt;11&gt; X - nok</screen>
+        The number between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;. An 'M' at the begin of a line indicates success, an 'X' a failure,
+		a '1' an unmatched element in the first range, a '2' an unmatched element in the second range.</para>
+        </example>
+        <example><title>Using Compare to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    // continued from previous listing
+    MOD_ASSERT(rbIN_RANGES(array1, array1+5, array2, array2+4,
+        Compare&lt;&gt;(<emphasis>true</emphasis>).That(Less&lt;&gt;())));</programlisting>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to ranges `array1'-`array1+4' and `array2'-`array2+4' - nok
+M: [0]:&lt;1&gt; &lt; [0]:&lt;4&gt; - ok
+M: [1]:&lt;4&gt; &lt; [1]:&lt;6&gt; - ok
+X: [2]:&lt;8&gt; &lt; [2]:&lt;7&gt; - nok
+M: [3]:&lt;9&gt; &lt; [3]:&lt;10&gt; - ok
+1: [4]:&lt;11&gt; X - nok</screen>
+        </para>
+        </example>
+ 		</sect3>
+
+		<sect3><title>CompareUnordered</title>
+			<indexterm><primary>CompareUnordered</primary></indexterm>
+		<para>The template class <classname>CompareUnordered&lt;bool multiPass1=true&gt;</classname>
+		is a Rich Boolean functor factory class. The Rich Boolean functors that its method <code>That</code> creates,
+		check whether the given rich boolean functor applies to the elements in the
+		given ranges, <emphasis>in any order</emphasis>.
+		These objects can be used in Rich Booleans that work on two ranges or containers
+		(because they take four arguments for two ranges, that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range - you can mix these two types).
+		The template argument tells whether the first range is single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). The default value is true. The second range should always be multi-pass.
+		This class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones for which it is ok) or only the failing ones;
+		the default value is false (i.e. only show the failing ones).</para>
+		<example><title>Using CompareUnordered to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 2, 3, 1 }, array2[] = { 3, 0, 2 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+3, array2, array2+3,
+        CompareUnordered&lt;&gt;().That(Equal&lt;&gt;())));</programlisting>
+        <para>The last line can be read as "assert that when the ranges [array1, array1+3) and
+        [array2, array2+3) are compared unordered, the elements in the first are equal to
+        the elements in the second".</para>
+		<para><emphasis>Output:</emphasis>
+        <screen>predicate applies to unordered ranges `a'-`a+3' and `b'-`b+3' - nok
+1: [2]:&lt;1&gt; X  - nok
+2: X [1]:&lt;0&gt; - nok</screen>
+        The number between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;. A '1' at the begin of a line indicates an
+		unmatched element in the first range, a '2' an unmatched element in the second range.</para>
+        </example>
+		<example><title>Using CompareUnordered to check the elements of a range, also showing the good ones</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 2, 3, 1 }, array2[] = { 3, 0, 2 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+3, array2, array2+3,
+        CompareUnordered&lt;&gt;(<emphasis>true</emphasis>).That(Equal&lt;&gt;())));</programlisting>
+        <para><emphasis>Output:</emphasis>
+        <screen>predicate applies to unordered ranges `a'-`a+3' and `b'-`b+3' - nok
+M: [0]:&lt;2&gt; == [2]:&lt;2&gt; - ok
+M: [1]:&lt;3&gt; == [0]:&lt;3&gt; - ok
+1: [2]:&lt;1&gt; X  - nok
+2: X [1]:&lt;0&gt; - nok</screen>
+        An 'M' at the begin of a line indicates success,
+		a '1' an unmatched element in the first range, a '2' an unmatched element in the second range.</para>
+        </example>
+		</sect3>
+		
+		<sect3><title>MatchesSubsetOf</title>
+			<indexterm><primary>MatchesSubsetOf</primary></indexterm>
+		<para>The template class <classname>MatchesSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		is a Rich Boolean factory, that has a method <code>That</code> that has a Rich Boolean functor
+		<code>rb</code>
+		as an argument, and returns a Rich Boolean functor that checks whether for every element <code>a</code>
+		in the first range there
+		is an element <code>b</code> in the second for which <code>rb(a, b)</code> returns <code>true</code>,
+		where every element in the second range can be matched to only one element in the first range.
+		The Rich Boolean object that is returned by <code>That</code> can be used in Rich Booleans
+		that work on two ranges or containers (because it takes four arguments for two ranges,
+		that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range - you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). At least one should be multi-pass.
+		The default value for both is true.
+		This template class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using MatchesSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+    Pred2&lt;ProductIs12&gt; productIs12;
+    int array1[] = { 4, 3, 1, 3 }, array2[] = { 12, 4, 5, 9 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        MatchesSubsetOf&lt;&gt;().That(productIs12)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) matches with a subset of the range [array2, array2+4) where the product is 12".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' matches subset of `array2'-`array2+4' - nok
+1: [0]:&lt;4&gt; X  - nok
+1: [3]:&lt;3&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;</para>
+        </example>
+		</sect3>
+
+		<sect3><title>MatchesMultiSubsetOf</title>
+			<indexterm><primary>MatchesMultiSubsetOf</primary></indexterm>
+		<para>The template class <classname>MatchesMultiSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		is a Rich Boolean factory, that has a method <code>That</code> that has a Rich Boolean functor
+		<code>rb</code>
+		as an argument, and returns a Rich Boolean that checks whether for every element <code>a</code>
+		in the first range there
+		is an element <code>b</code> in the second for which <code>rb(a, b)</code> returns <code>true</code>,
+		where every element in the second range can be matched to more than one element in the first range.
+		The Rich Boolean object that is returned by <code>That</code> takes four arguments for two ranges,
+		that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). At least one should be multi-pass.
+		The default value for both is true.
+		This template class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using MatchesMultiSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+	Pred2&lt;ProductIs12&gt; productIs12;
+    int array1[] = { 4, 3, 1, 3 }, array2[] = { 12, 4, 5, 9 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        MatchesMultiSubsetOf&lt;&gt;().That(productIs12)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) matches with a subset of the range [array2, array2+4) where the product is 12".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' matches subset of `array2'-`array2+4' - nok
+1: [0]:&lt;4&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;. Note that both threes in the first range are matched
+		to the four in the second range.</para>
+        </example>
+		</sect3>
+
+		<sect3><title>MatchesOrderedSubsetOf</title>
+			<indexterm><primary>MatchesOrderedSubsetOf</primary></indexterm>
+		<para>The template class <classname>MatchesOrderedSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>
+		is a Rich Boolean factory, that has a method <code>That</code> that has a Rich Boolean functor
+		<code>rb</code>
+		as an argument, and returns a Rich Boolean that checks whether for every element <code>a</code>
+		in the first range there
+		is an element <code>b</code> in the second for which <code>rb(a, b)</code> returns <code>true</code>,
+		where the matched elements in the second range are in the same order as the elements in the first range.
+		The Rich Boolean object that is returned by <code>That</code> takes four arguments for two ranges,
+		that are each the begin and end of a range, or
+		the begin of a range and the number of elements to use in that range (you can mix these two types).
+		The template arguments tell whether the ranges are single pass
+		or multi-pass (see <xref linkend='multi-or-single-pass2' />). At least one should be multi-pass.
+		The default value for both is true.
+		This template class has a constructor that takes a boolean, that tells
+		whether the analysis should contain the analysis for all the elements
+		in the range (even the ones that are equal) or only the mismatched elements;
+		the default value is false (i.e. only show the mismatches).</para>
+		<example><title>Using MatchesOrderedSubsetOf to check the elements of a range</title>
+        <programlisting>
+    using namespace RichBool;
+	Pred2&lt;ProductIs12&gt; productIs12;
+    int array1[] = { 4, 3, 1, 6 }, array2[] = { 4, 2, 12, 9 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+4,
+        MatchesOrderedSubsetOf&lt;&gt;().That(productIs12)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) matches with a subset of the range [array2, array2+4) where the product is 12".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' matches subset of `array2'-`array2+4' - nok
+1: [0]:&lt;4&gt; X  - nok
+1: [3]:&lt;6&gt; X  - nok</screen>
+        The value between [ ] is the index of the element in the range. The value
+        of the element is between &lt; &gt;. Note that the 6 could not be matched with the 2,
+		because the 1 was already matched with the 12, so matching the 6 with the 2 would violate
+		the order.</para>
+        </example>
+		</sect3>
+
+		<sect3><title>IsSubsetOfCustomSorted</title>
+			<indexterm><primary>IsSubsetOfCustomSorted</primary></indexterm>
+		<para>The template class <classname>IsSubsetOfCustomSorted&lt;bool multiPass1=true&gt;</classname>
+		is a Rich Boolean factory, whose method <code>By</code> takes a predicate <code>pred</code>
+		as an argument and returns a Rich Boolean identical to
+		<classname>IsSubsetOf&lt;bool multiPass1=true&gt;</classname>,
+		except that the second range should be sorted by <code>pred</code>, i.e. such that for every element
+		<code>a</code> that is followed by an element <code>b</code>, <code>pred(a, b)</code> returns
+		<code>true</code>.
+		This has the advantage that it is faster than
+		<classname>IsSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		<example><title>Using IsSubsetOfCustomSorted to check the elements of two ranges</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 3, 1, 6 }, array2[] = { 9, 6, 4, 2, 1 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+5,
+        IsSubsetOfCustomSorted&lt;&gt;().By(more)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) is a subset of the range [array2, array2+5)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' is subset of `array2'-`array2+5' - nok
+1: [2]:&lt;1&gt; X  - nok</screen>
+		</para>
+		</example>
+		</sect3>
+
+		<sect3><title>IsMultiSubsetOfCustomSorted</title>
+			<indexterm><primary>IsMultiSubsetOfCustomSorted</primary></indexterm>
+		<para>The template class <classname>IsMultiSubsetOfCustomSorted&lt;bool multiPass1=true&gt;</classname>
+		is a Rich Boolean factory, whose method <code>By</code> takes a predicate <code>pred</code>
+		as an argument and returns a Rich Boolean identical to
+		<classname>IsMultiSubsetOf&lt;bool multiPass1=true&gt;</classname>,
+		except that the second range should be sorted by <code>pred</code>, i.e. such that for every element
+		<code>a</code> that is followed by an element <code>b</code>, <code>pred(a, b)</code> returns
+		<code>true</code>.
+		This has the advantage that it is faster than
+		<classname>IsMultiSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		<example><title>Using IsMultiSubsetOfCustomSorted to check the elements of two ranges</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 3, 6, 1, 6 }, array2[] = { 9, 6, 4, 2, 1 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+5, array2, array2+5,
+        IsMultiSubsetOfCustomSorted&lt;&gt;().By(more)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+=54) is a multi subset of the range [array2, array2+5)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+5' is multisubset of `array2'-`array2+5' - nok
+1: [2]:&lt;3&gt; X  - nok</screen>
+		Note that the six in the first range is matched twice with the same six in the second range.
+		</para>
+		</example>
+		</sect3>
+
+		<sect3><title>IsOrderedSubsetOfCustomSorted</title>
+			<indexterm><primary>IsOrderedSubsetOfCustomSorted</primary></indexterm>
+		<para>The template class <classname>IsOrderedSubsetOfCustomSorted&lt;bool multiPass1=true&gt;</classname>
+		is a Rich Boolean factory, whose method <code>By</code> takes a predicate <code>pred</code>
+		as an argument and returns a Rich Boolean identical to
+		<classname>IsOrderedSubsetOf&lt;bool multiPass1=true&gt;</classname>,
+		except that the second range should be sorted by <code>pred</code>, i.e. such that for every element
+		<code>a</code> that is followed by an element <code>b</code>, <code>pred(a, b)</code> returns
+		<code>true</code>.
+		This has the advantage that it is faster than
+		<classname>IsOrderedSubsetOf&lt;bool multiPass1=true, bool multiPass2=true&gt;</classname>.
+		Note that this does not check if the second range is sorted.</para>
+		<example><title>Using IsOrderedSubsetOfCustomSorted to check the elements of two ranges</title>
+        <programlisting>
+    using namespace RichBool;
+    int array1[] = { 4, 6, 3, 1 }, array2[] = { 9, 6, 4, 2, 1 };
+    MOD_ASSERT(rbIN_RANGES(array1, array1+4, array2, array2+5,
+        IsOrderedSubsetOfCustomSorted&lt;&gt;().By(more)));</programlisting>
+        <para>The last line can be read as "assert that the range [array1, array1+4) is a subset of the range [array2, array2+5)".
+        </para>
+		<para><emphasis>Output:</emphasis>
+        <screen>`array1'-`array1+4' is subset of `array2'-`array2+5' - nok
+1: [1]:&lt;6&gt; X  - nok
+1: [2]:&lt;3&gt; X  - nok</screen>
+		Note that the 6 could not be matched, because the 4 was already matched in the second range,
+		which comes after the 6 in the second range.
+		</para>
+		</example>
+		</sect3>
+	</sect2>
+
+	<sect2 id='multi-or-single-pass2'><title>Multi-pass and single-pass ranges</title>
+		<para>The methods of the classes in the previous
+		section have iterators as arguments.
+		These iterators can be multi-pass or single-pass. If they are multi-pass (a copy of an
+		old iterator still points to the same value), they only have to
+        conform to the concept of forward iterators. This is specified by the two boolean
+		template arguments of the classes, which should be <literal>true</literal> if you pass multi-pass
+		iterators, <literal>false</literal> if you pass single-pass iterators. The first boolean
+		applies to the first range, the second boolean applies to the second range.
+		If one is single-pass and the other is multi-pass, the single-pass should be the first range
+		(the specializations <code>&lt;true, false&gt;</code> are not defined,
+		because the specializations <code>&lt;false, true&gt;</code> can be used by swapping
+		the arguments). The default for both is <literal>true</literal>.
+        Sometimes the concept of multi-pass input iterators is used; these can also be used as
+        multi-pass iterators.
+        Using single-pass iterators where multi-pass iterators are expected, results in
+        undefined behaviour. Using multi-pass iterators where single-pass
+        iterators are expected works fine, but is less performant.</para>
+        <para>Note: if both ranges are single-pass, you have to supply both template arguments,
+        but in that case you can not define the object inside
+        the macro, because the preprocessor doesn't understand templates, and would suppose
+        that it is two arguments of the macro, and therefore it doesn't compile.
+        Adding parentheses only works portably if you give an argument to its constructor
+        (because of C++ parsing rules), so give false or true as an argument to the
+        constructor. An alternative is to define the object before the macro.</para>
+    </sect2>
+
+	<sect2><title>Dynamic matching</title>
+		<indexterm><primary>Dynamic matching</primary></indexterm>
+	<para><classname>Compare&lt;...&gt;</classname> and <classname>AllEqual&lt;...&gt;</classname>
+	from the previous sections perform dynamic matching. This means that if a mismatch is found
+	between two elements, it will try to search a match for each of the two in the following
+	ten elements (if at least one of the two ranges is multi-pass). In fact it even does more than that
+	if the two ranges are both multi-pass; in that case it checks which of the ten next elements in
+	both ranges matches with which, and finds an optimal path.</para>
+	<para>This means that elements may be unmatched. This is shown with a '1' or '2' instead of
+	'M' or 'X' at the begin of a line, to indicate that an unmatched element is only in the first
+	or second range. Suppose you have two ranges of integers with the values { 1, 2, 12, 3 } and
+	{ 1, 10, 2, 3 }, and compare them with <classname>AllEqual&lt;...&gt;</classname>. Then the
+	output would be
+        <screen>predicate does not apply on ranges `array1'-`array1+' and `array2'-`array2+4'
+M: [0]:&lt;1&gt; == [0]:&lt;1&gt; - ok
+2: X   [1]:&lt;10&gt;
+M: [1]:&lt;2&gt; == [2]:&lt;2&gt; - ok
+1: [2]:&lt;12&gt;   X
+M: [3]:&lt;3&gt; == [3]:&lt;3&gt; - ok</screen>
+    An X represents the missing element in the other range.
+    </para>
+    </sect2>
+
+	<sect2>
+		<title>Containers with methods <code>begin()</code> and <code>end()</code></title>
+		<para>To use the Rich Booleans in this section, include <filename>richbool/containers.hpp</filename>.</para>
+		<para>Note: The containers that are given to the Rich Booleans in this section, should have
+        const methods <code>begin()</code> and <code>end()</code> that return iterators that together
+        specify the range of the container. Containers in the standard template library have
+        such methods, but every other container that has these methods can be used. Furthermore
+        the elements in the containers should be streamable (see <xref linkend='ChooseYourStrings' />).
+        </para>
+		<para>Note: The containers that are given to the Rich Booleans that take two containers, can be of different types,
+        e.g. <classname>std::vector</classname> and <classname>std::list</classname>.
+        Even their elements can be of different types, as long as the Rich Boolean functor
+        can have them as arguments.</para>
+		<sect3>
+			<indexterm><primary>rbIN_CONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_CONTAINER(container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container fulfill
+            the check, by giving <code>container.begin()</code> and <code>container.end()</code>
+            to <code>check</code>. It is equivalent to
+            <code>rbIN_RANGE(container.begin(), container.end(), check)</code>.
+            See <xref linkend='check_range' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InContainer&lt;class Algorithm, class GetValue1=Value&gt;</classname>
+				This class has the following constructors:
+				<itemizedlist mark='bullet'>
+				    <listitem>a default constructor</listitem>
+				    <listitem>a constructor that takes one argument of the type
+				        <classname>Algorithm</classname></listitem>
+				</itemizedlist>
+				If the default constructor is used, the default constructor of
+				<classname>Algorithm</classname> is called.
+				Objects of this template class can also be made with the template function
+				<code>template&lt;Algorithm&gt; InContainer&lt;class Algorithm&gt;
+				MakeInContainer(Algorithm algorithm)</code>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_CONTAINERS</primary></indexterm>
+			<title>
+				<code>rbIN_CONTAINERS(container1, container2, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the containers fulfill
+            the check, by giving <code>container1.begin()</code>, <code>container1.end()</code>,
+            <code>container2.begin()</code> and <code>container2.end()</code>
+            to <code>check</code>. It is equivalent to
+            <code>rbIN_RANGES(container1.begin(), container1.end(), 
+            container2.begin(), container2.end(), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InContainers&lt;class Algorithm, class GetValue1=Value&gt;</classname>
+				This class has the following constructors:
+				<itemizedlist mark='bullet'>
+				    <listitem>a default constructor</listitem>
+				    <listitem>a constructor that takes one argument of the type
+				        <classname>Algorithm</classname></listitem>
+				</itemizedlist>
+				If the default constructor is used, the default constructor of
+				<classname>Algorithm</classname> is called.
+				Objects of this template class can also be made with the template function
+				<code>template&lt;Algorithm&gt; InContainers&lt;class Algorithm&gt;
+				MakeInContainers(Algorithm algorithm)</code>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_CONTAINER_RANGE</primary></indexterm>
+			<title>
+				<code>rbIN_CONTAINER_RANGE(container, begin, end, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container and the range
+			<code>[begin, end)</code> fulfill
+            the check, by giving <code>container.begin()</code>, <code>container.end()</code>,
+            and <code>begin</code> and <code>end</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(container.begin(), container.end(), 
+            begin, end, check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGE_CONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_RANGE_CONTAINER(begin, end, container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the range <code>[begin, end)</code>
+			and the container fulfill the check, by giving <code>begin</code>, <code>end</code>,
+            <code>container.begin()</code> and <code>container.end()</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(begin, end, container.begin(), container.end(), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_CONTAINER_ARRAY</primary></indexterm>
+			<title>
+				<code>rbIN_CONTAINER_ARRAY(container, array, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container and the array fulfill
+            the check, by giving <code>container.begin()</code>, <code>container.end()</code>,
+            and the begin and end of the array
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(container.begin(), container.end(), 
+            array, array+sizeof(array)/sizeof(array[0]), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAY_CONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAY_CONTAINER(array, container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the array and the container fulfill
+            the check, by giving the begin and end of the array,
+            and <code>container.begin()</code>, <code>container.end()</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(array, array+sizeof(array)/sizeof(array[0]),
+            container.begin(), container.end(), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<para>The following 2 macros (that have VALUES in their name) are
+			still experimental. They are only available on compilers that support
+			C++0X initializer lists. At the moment of writing this works on gcc 4.5, but not with Visual C++.</para>
+
+		<sect3>
+			<indexterm><primary>rbIN_CONTAINER_VALUES</primary></indexterm>
+			<title>
+				<code>rbIN_CONTAINER_VALUES(container, il, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container and the array fulfill
+            the check, by giving <code>container.begin()</code>, <code>container.end()</code>,
+            and the begin and end of the array
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(container.begin(), container.end(), 
+            array, array+sizeof(array)/sizeof(array[0]), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_VALUES_CONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_VALUES_CONTAINER(il, container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the array and the container fulfill
+            the check, by giving the begin and end of the array,
+            and <code>container.begin()</code>, <code>container.end()</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(array, array+sizeof(array)/sizeof(array[0]),
+            container.begin(), container.end(), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3 id='equal-pair'>
+			<indexterm><primary>EqualPair</primary></indexterm>
+			<title>
+				<code>Checking maps</code>
+			</title>
+			<para>For maps, the rich boolean functor class <classname>EqualPair</classname> can be used,
+			which checks if the first and second element of two pairs are both equal.
+			E.g. <code>rbIN_CONTAINERS(map1, map2, Compare&lt;&gt;().That(EqualPair()))</code>.</para>
+			<para>
+				<emphasis>Example output:</emphasis>
+				<screen>predicate doesn't apply on ranges `map1.begin()'-`map1.end()'
+and `map2.begin()'-`map2.end()'
+M: keys: {(1) == (1) - ok}, values: {(a) == (a) - ok} - ok
+X: keys: {(2) == (2) - ok}, values: {(b) == (q) - nok} - nok
+M: keys: {(3) == (3) - ok}, values: {(c) == (c) - ok} - ok</screen>
+			</para>
+			<para>Note: The matching algorithm uses partial matches for this rich boolean, which means that
+        two different elements in the range of which either the key or the value is equal, will be matched
+        in preference to elements that are totally different</para>
+		</sect3>
+    </sect2>
+
+	<sect2>
+		<title>Creating an inline container</title>
+			<indexterm><primary>Values</primary></indexterm>
+			<indexterm><primary>inline container</primary></indexterm>
+		<para>The function <code>Values</code> takes from one to eight arguments of the same type,
+			and returns a container that contains these values. This container can be used in any
+			Rich Boolean where a container is expected.
+		</para>
+        <programlisting>
+  std::vector&lt;int&gt; vec;
+  ...
+  // check that vec contains the values 2, 4 and 5:
+  RB_ASSERT(rbIN_CONTAINERS(RichBool::Values(2, 4, 5), vec, RichBool::AllEqual&lt;&gt;()));
+        </programlisting>
+	</sect2>
+
+        <sect2 id='xiterator'>
+		<title>Containers with overloaded funtions <code>begin()</code> and <code>end()</code></title>
+
+        <para>To use the Rich Booleans in this section, include <filename>richbool/xcontainers.hpp</filename>.</para>
+		<para>Note: the containers that are given to the Rich Booleans that take two containers, can be of different types.
+        Even their elements can be of different types, as long as the Rich Boolean functor
+        can have them as arguments.</para>
+		<para>The Rich Booleans in this section work with every container for which overloaded non-member functions <code>begin</code> and <code>end</code>
+        exist that return iterators over the container, and whose elements can be streamed out (see <xref linkend='ChooseYourStrings' />).
+		A method to stream out the whole container not necessary.</para>
+		
+			<indexterm><primary>WX_DEFINE_ARRAY_ITERATOR</primary></indexterm>
+			<indexterm><primary>WX_DEFINE_LIST_ITERATOR</primary></indexterm>
+		<para>Defining overloaded functions that return iterators can be done easily
+        for the <code>wxArray</code> (whether they are defined with <code>WX_DEFINE_ARRAY</code>
+        or with <code>WX_DECLARE_OBJ_ARRAY</code> and <code>WX_DEFINE_OBJ_ARRAY</code>) and <code>wxList</code>
+        containers in wxWidgets, with the macros <code>WX_DEFINE_ARRAY_ITERATOR</code> and <code>WX_DEFINE_LIST_ITERATOR</code>,
+        that are defined in the file <filename>richbool/wx_iter.hpp</filename>.
+        </para>
+		<para>
+			<example><title>Making iterators for a wxArray</title>
+        <programlisting>
+    #include "richbool/xcontainers.hpp"
+    #include "richbool/wx_iter.hpp"
+
+    WX_DECLARE_OBJARRAY(MyClass, MyArray);
+    WX_DEFINE_ARRAY_ITERATOR(MyClass, MyArray, MyArrayIterator);
+    MyArray arr1, arr2;
+    ...
+    MOD_ASSERT(rbIN_XCONTAINERS(arr1, arr2, AllEqual&lt;&gt;()));</programlisting>
+        For arrays that contain primitive elements, add a suffix _P to avoid compiler warnings
+        about <code>operator-&gt;</code>:
+        <programlisting>
+    WX_DEFINE_ARRAY_INT(int, IntArray);
+    WX_DEFINE_ARRAY_ITERATOR_P(int, IntArray, IntArrayIterator);
+    IntArray arr1, arr2;
+    ...
+    MOD_ASSERT(rbIN_XCONTAINERS(arr1, arr2, AllEqual&lt;&gt;()));</programlisting>
+        </example>
+		</para>
+		<para>Note that wxWidgets 2.6 added the methods <code>begin</code> and <code>end</code>
+        to many of the containers (but not all), so that the equivalent Rich Booleans for STL-like containers can be used.
+        For these containers it is easier to use these versions instead of the ones in this section, since
+        you don't have to define iterators on them.</para>
+		<sect3>
+			<indexterm><primary>rbIN_XCONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_XCONTAINER(container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container fulfill
+            the check, by giving <code>begin(container)</code> and <code>end(container)</code>
+            to <code>check</code>. It is equivalent to
+            <code>rbIN_RANGE(begin(container), end(container), check)</code>.
+            See <xref linkend='check_range' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InXContainer&lt;class Algorithm, class GetValue1=Value&gt;</classname>
+				This class has the following constructors:
+				<itemizedlist mark='bullet'>
+				    <listitem>a default constructor</listitem>
+				    <listitem>a constructor that takes one argument of the type
+				        <classname>Algorithm</classname></listitem>
+				</itemizedlist>
+				If the default constructor is used, the default constructor of
+				<classname>Algorithm</classname> is called.
+				Objects of this template class can also be made with the template function
+				<code>template&lt;Algorithm&gt; InXContainer&lt;class Algorithm&gt;
+				MakeInXContainer(Algorithm algorithm)</code>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_XCONTAINERS</primary></indexterm>
+			<title>
+				<code>rbIN_XCONTAINERS(container1, container2, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the containers fulfill
+            the check, by giving <code>begin(container1)</code>, <code>end(container1)</code>,
+            <code>begin(container2)</code> and <code>end(container2)</code>
+            to <code>check</code>. It is equivalent to
+            <code>rbIN_RANGES(begin(container1), end(container1), 
+            begin(container2), end(container2), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis>
+				<classname>InXContainers&lt;class Algorithm, class GetValue1=Value,
+				    class GetValue2=Value&gt;</classname>
+				This class has the following constructors:
+				<itemizedlist mark='bullet'>
+				    <listitem>a default constructor</listitem>
+				    <listitem>a constructor that takes one argument of the type
+				        <classname>Algorithm</classname></listitem>
+				</itemizedlist>
+				If the default constructor is used, the default constructor of
+				<classname>Algorithm</classname> is called.
+				Objects of this template class can also be made with the template function
+				<code>template&lt;Algorithm&gt; InXContainers&lt;class Algorithm&gt;
+				MakeInXContainers(Algorithm algorithm)</code>.
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_XCONTAINER_RANGE</primary></indexterm>
+			<title>
+				<code>rbIN_XCONTAINER_RANGE(container, begin, end, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container and the range
+			<code>[begin, end)</code> fulfill
+            the check, by giving <code>begin(container)</code>, <code>end(container)</code>,
+            and <code>begin</code> and <code>end</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(begin(container), end(container), 
+            begin, end, check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGE_XCONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_RANGE_XCONTAINER(begin, end, container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the range <code>[begin, end)</code>
+			and the container fulfill the check, by giving <code>begin</code>, <code>end</code>,
+            <code>begin(container)</code> and <code>end(container)</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(begin, end, begin(container), end(container), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_XCONTAINER_ARRAY</primary></indexterm>
+			<title>
+				<code>rbIN_XCONTAINER_ARRAY(container, array, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the container and the array fulfill
+            the check, by giving <code>begin(container)</code>, <code>end(container)</code>,
+            and the begin and end of the array
+            to <code>check</code>. It is equivalent to
+            <code>rbIN_RANGES(begin(container), end(container),
+            array, array+sizeof(array)/sizeof(array[0]), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_ARRAY_XCONTAINER</primary></indexterm>
+			<title>
+				<code>rbIN_ARRAY_XCONTAINER(array, container, check)</code>
+			</title>
+			<para>This macro checks whether the elements in the array and the container fulfill
+            the check, by giving the begin and end of the array,
+            and <code>begin(container)</code>, <code>end(container)</code>
+            to <code>check</code>, in that order. It is equivalent to
+            <code>rbIN_RANGES(array, array+sizeof(array)/sizeof(array[0]),
+            begin(container), end(container), check)</code>.
+            See <xref linkend='check_ranges' /> for possible choices for
+            <code>check</code></para>
+			<para>
+				<emphasis>Corresponding class:</emphasis> none
+			</para>
+		</sect3>
+	</sect2>
+
+    <sect2>
+		<indexterm><primary>Rich Boolean macros</primary><secondary>Deprecated</secondary></indexterm>
+		<indexterm><primary>Deprecated Rich Boolean macros</primary></indexterm>
+		<title>Deprecated Rich Booleans</title>
+		<sect3>
+			<indexterm><primary>rbIN_RANGE_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_CONTAINER_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_XCONTAINER_ARG</primary></indexterm>
+			<title>Working on one range</title>
+			<para><code>rbIN_RANGE_ARG(begin, end, check, arg)</code>, <code>rbIN_CONTAINER_ARG(container, check, arg)</code>
+			and <code>rbIN_XCONTAINER_ARG(container, check, arg)</code>.</para>
+			<para>These are similar to their counterparts without the suffix <code>_ARG</code>, but
+			<code>check</code> is a Rich Boolean functor factory, and <code>arg</code> a Rich Boolean functor
+			(that takes one argument), that is given to <code>check</code> to create a Rich Boolean functor
+			that performs the check on the range.</para>
+		<para><emphasis>Corresponding class:</emphasis> none</para>
+		</sect3>
+
+		<sect3>
+			<indexterm><primary>rbIN_RANGES_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_RANGE_ARRAY_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_CONTAINERS_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_CONTAINER_ARRAY_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_XCONTAINERS_ARG</primary></indexterm>
+			<indexterm><primary>rbIN_XCONTAINER_ARRAY_ARG</primary></indexterm>
+			<title>Working on two ranges</title>
+			<para><code>rbIN_RANGES_ARG(begin1, end1, begin2, end2, check, arg)</code>,
+			<code>rbIN_RANGE_ARRAY_ARG(begin, end, array, check, arg)</code>,
+			<code>rbIN_CONTAINERS_ARG(container1, container2, check, arg)</code>,
+			<code>rbIN_CONTAINER_ARRAY_ARG(container, array, check, arg)</code>,
+			<code>rbIN_XCONTAINERS_ARG(container1, container2, check, arg)</code> and
+			<code>rbIN_XCONTAINER_ARRAY_ARG(container, array, check, arg)</code></para>.
+			<para>These are similar to their counterparts without the suffix <code>_ARG</code>, but
+			<code>check</code> is a Rich Boolean functor factory, and <code>arg</code> a Rich Boolean functor
+			(that takes two arguments), that is given to <code>check</code> to create a Rich Boolean functor
+			that performs the check on the two ranges.</para>
+		</sect3>
+	</sect2>
+
+</sect1>

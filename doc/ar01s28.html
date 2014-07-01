@@ -1,0 +1,22 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The package RichBoolTest (advanced)</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s27.html" title="Converting objects to a string"><link rel="next" href="ix01.html" title="Index"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The package RichBoolTest (advanced)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s27.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ix01.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id541309"></a>The package RichBoolTest (advanced)</h2></div></div></div><p>RichBoolTest, which is in the same download,
+is a package that contains tests for every Rich Boolean in this package. This is mainly of interest
+if you want to write Rich Booleans, but also if you want to see examples of how
+Rich Booleans behave.</p><p>If you want to write Rich Booleans, you should have a look at the RichBoolTest package.
+This is a simple testing framework for Rich Booleans. The tests are easy to understand
+by looking at the existing tests. The tests are self registering, i.e. if you write
+</p><pre class="programlisting">
+    RB_TEST(TestName)
+    {
+        // your tests here
+    )
+</pre><p>
+in a .cpp file, the tests in the body will be automatically executed if the program is launched.
+</p><p>In tests, there are two types of checks: <code class="code">RB_PASS</code> and <code class="code">RB_FAIL</code>.
+The first has a rich boolean macro as its argument, and checks whether it passes. The second
+has a rich boolean macro and a pointer to an <code class="classname">RichBool::Analysis</code>
+derived object as its arguments, and checks whether the rich boolean macro fails indeed
+with the given <code class="classname">RichBool::Analysis</code> derived object.
+</p><p>Every test is run four times, each time with a different value for richbool_level.
+It is checked that the Rich Booleans behave as expected for that value of richbool_level,
+e.g. no analysis when it is 0 or 1, always an analysis when it is 3.
+</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s27.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ix01.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Converting objects to a string </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Index</td></tr></table></div></body></html>

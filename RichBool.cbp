@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RichBool" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Mingw">
+				<Option output=".\lib\librichbool-mingw.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output=".objs-mingw" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option projectResourceIncludeDirsRelation="2" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-O3" />
+					<Add option="-ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Cygwin">
+				<Option platforms="Windows;" />
+				<Option output=".\lib\librichbool-cygwin.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output=".objs-cygwin" />
+				<Option type="2" />
+				<Option compiler="cygwin" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-O3" />
+					<Add option="-ansi -Wconversion -Wshadow -Wcast-qual -Wwrite-strings" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Mingw;Cygwin;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-O3" />
+			<Add option="-U__STRICT_ANSI__" />
+			<Add directory="include" />
+		</Compiler>
+		<Linker>
+			<Add option="-s" />
+		</Linker>
+		<Unit filename="include\richbool\analysis.hpp" />
+		<Unit filename="include\richbool\auto_link.hpp" />
+		<Unit filename="include\richbool\badblock.hpp" />
+		<Unit filename="include\richbool\base.hpp" />
+		<Unit filename="include\richbool\basic_rb.hpp" />
+		<Unit filename="include\richbool\bind.hpp" />
+		<Unit filename="include\richbool\bit_iterator.hpp" />
+		<Unit filename="include\richbool\bool.hpp" />
+		<Unit filename="include\richbool\config.hpp" />
+		<Unit filename="include\richbool\containers.hpp" />
+		<Unit filename="include\richbool\der_analysis.hpp" />
+		<Unit filename="include\richbool\exceptions.hpp" />
+		<Unit filename="include\richbool\expression.hpp" />
+		<Unit filename="include\richbool\fileutils.hpp" />
+		<Unit filename="include\richbool\finddiff.hpp" />
+		<Unit filename="include\richbool\findinrange.hpp" />
+		<Unit filename="include\richbool\functors.hpp" />
+		<Unit filename="include\richbool\getpoints.hpp" />
+		<Unit filename="include\richbool\getvalue.hpp" />
+		<Unit filename="include\richbool\logic.hpp" />
+		<Unit filename="include\richbool\pair.hpp" />
+		<Unit filename="include\richbool\portability.hpp" />
+		<Unit filename="include\richbool\ranges.hpp" />
+		<Unit filename="include\richbool\regexp.hpp" />
+		<Unit filename="include\richbool\relation.hpp" />
+		<Unit filename="include\richbool\richbool.hpp" />
+		<Unit filename="include\richbool\shared_ptr.hpp" />
+		<Unit filename="include\richbool\std.hpp" />
+		<Unit filename="include\richbool\stdexceptions.hpp" />
+		<Unit filename="include\richbool\stdstring.hpp" />
+		<Unit filename="include\richbool\string.hpp" />
+		<Unit filename="include\richbool\tmpbool.hpp" />
+		<Unit filename="include\richbool\tostring.hpp" />
+		<Unit filename="include\richbool\values.hpp" />
+		<Unit filename="include\richbool\version.hpp" />
+		<Unit filename="include\richbool\wx.hpp" />
+		<Unit filename="include\richbool\wx_iter.hpp" />
+		<Unit filename="include\richbool\wxstring.hpp" />
+		<Unit filename="include\richbool\xcontainers.hpp" />
+		<Unit filename="src\analysis.cpp" />
+		<Unit filename="src\badblock.cpp" />
+		<Unit filename="src\bit_iterator.cpp" />
+		<Unit filename="src\bool.cpp" />
+		<Unit filename="src\der_analysis.cpp" />
+		<Unit filename="src\expression.cpp" />
+		<Unit filename="src\fileutils.cpp" />
+		<Unit filename="src\functors.cpp" />
+		<Unit filename="src\portability.cpp" />
+		<Unit filename="src\ranges.cpp" />
+		<Unit filename="src\regexp.cpp" />
+		<Unit filename="src\string.cpp" />
+		<Unit filename="src\tmpbool.cpp" />
+		<Unit filename="src\values.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,28 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Projects that use Rich Booleans</title><link rel="stylesheet" href="style.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"><link rel="start" href="index.html" title="Rich booleans, version 2.2.2"><link rel="up" href="index.html" title="Rich booleans, version 2.2.2"><link rel="prev" href="ar01s04.html" title="Support"><link rel="next" href="ar01s06.html" title="Requirements"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Projects that use Rich Booleans</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="projects"></a>Projects that use Rich Booleans</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id502812"></a>ModAssert</h3></div></div></div><a href="http://sourceforge.net/projects/modassert/" target="_top">ModAssert</a> is an open source project
+    that allows to use Rich Booleans in 128 different assertion macros. The assertions can optionally have expressions that
+    are shown in case of a failure, a level, a group, and an action to be taken. Failing assertions are passed to
+    loggers and a displayer object that asks the user what to do. The loggers and the displayer object
+    can be set at runtime by the application. You can associate filters with loggers and the displayer,
+	so you can filter out assertions on several criteria. Two dialogs are provided to show
+    the Rich Boolean and the expressions, one for Win32 and one for wxWidgets.
+	There is also code to display the Rich Boolean and the expressions in command line applications.
+	Several loggers are provided that log to a stream, or to the trace window in Win32 applications.
+    For Rich Booleans version 2.2.2, you need at least ModAssert version 1.3. Note: the examples in
+    this document use the macro <code class="code">MOD_ASSERT</code> from the ModAssert package.
+</div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id502827"></a>UquoniTest</h3></div></div></div><p><a href="http://www.q-mentum.com/" target="_top">UquoniTest</a> is a unit testing package for C++
+    developed by Q-Mentum. Its assertions can use Rich Booleans. The assertions can
+	optionally have expressions that are shown in case of a failure. They stop the test after
+	a failure, but there are variations that continue after a failure, so assertions after it
+	are still evaluated. If the evaluation of the condition in an assertion causes problems,
+	the assertion can be modified so it is ignored, which causes 
+	a warning to remind the developer of the ignored assertion.</p><p>These eight variations of the assertion macro are made possible by using Rich Booleans,
+	because they allow the assertion macros to vary in their behaviour, and leave
+	the analysis to the Rich Boolean (just as with the assertions in ModAssert).</p><p>UquoniTest has other features like: automatic registering of tests, easy fixture tests,
+	parameterized and template tests, integration with assertions in domain code,
+	easy abstract tests (including multiple abstraction levels and multiple inheritance),
+	create test directories (optionally prefilled with files and directories),
+	an extensive mock library,
+	static and dynamic testsuites, custom testlisteners and testwrappers, orthodoxy testing,
+	timeouts on tests, test time measured up to microseconds, and more.
+	Unlike some other unit testing packages for C++, UquoniTest allows you to place
+	breakpoints in test code.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Support </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Requirements</td></tr></table></div></body></html>

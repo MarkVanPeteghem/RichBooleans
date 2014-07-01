@@ -1,0 +1,58 @@
+# Project: RichBool
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe -D__DEBUG__
+CC   = gcc.exe -D__DEBUG__
+WINDRES = windres.exe
+RES  = 
+OBJ  = GNUWin32/bool.o GNUWin32/functors.o GNUWin32/string.o GNUWin32/analysis.o GNUWin32/der_analysis.o GNUWin32/tmpbool.o GNUWin32/ranges.o GNUWin32/expression.o GNUWin32/badblock.o GNUWin32/portability.o $(RES)
+LINKOBJ  = GNUWin32/bool.o GNUWin32/functors.o GNUWin32/string.o GNUWin32/analysis.o GNUWin32/der_analysis.o GNUWin32/tmpbool.o GNUWin32/ranges.o GNUWin32/expression.o GNUWin32/badblock.o GNUWin32/portability.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib"  -g3 
+INCS =  -I"C:/Dev-Cpp/include"  -I"./include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"./include" 
+BIN  = lib/librichbool.a
+CXXFLAGS = $(CXXINCS) -ansi -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -U__STRICT_ANSI__   -fexceptions -g3
+CFLAGS = $(INCS)   -fexceptions -g3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before lib/librichbool.a all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+GNUWin32/bool.o: src/bool.cpp
+	$(CPP) -c src/bool.cpp -o GNUWin32/bool.o $(CXXFLAGS)
+
+GNUWin32/functors.o: src/functors.cpp
+	$(CPP) -c src/functors.cpp -o GNUWin32/functors.o $(CXXFLAGS)
+
+GNUWin32/string.o: src/string.cpp
+	$(CPP) -c src/string.cpp -o GNUWin32/string.o $(CXXFLAGS)
+
+GNUWin32/analysis.o: src/analysis.cpp
+	$(CPP) -c src/analysis.cpp -o GNUWin32/analysis.o $(CXXFLAGS)
+
+GNUWin32/der_analysis.o: src/der_analysis.cpp
+	$(CPP) -c src/der_analysis.cpp -o GNUWin32/der_analysis.o $(CXXFLAGS)
+
+GNUWin32/tmpbool.o: src/tmpbool.cpp
+	$(CPP) -c src/tmpbool.cpp -o GNUWin32/tmpbool.o $(CXXFLAGS)
+
+GNUWin32/ranges.o: src/ranges.cpp
+	$(CPP) -c src/ranges.cpp -o GNUWin32/ranges.o $(CXXFLAGS)
+
+GNUWin32/expression.o: src/expression.cpp
+	$(CPP) -c src/expression.cpp -o GNUWin32/expression.o $(CXXFLAGS)
+
+GNUWin32/badblock.o: src/badblock.cpp
+	$(CPP) -c src/badblock.cpp -o GNUWin32/badblock.o $(CXXFLAGS)
+
+GNUWin32/portability.o: src/portability.cpp
+	$(CPP) -c src/portability.cpp -o GNUWin32/portability.o $(CXXFLAGS)

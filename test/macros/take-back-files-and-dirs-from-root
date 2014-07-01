@@ -1,0 +1,29 @@
+# This script should be run as superuser before backing up if the ownership of
+# certain files is still given to root.
+# Give the name of the user as an argument.
+# Note that we don't call chmod here, that is not necessary for backups,
+# except for file-owner-n.txt and dir-owner-n.txt.
+
+chmod 777 file-owner-n.txt
+
+chown $1 file-group-rwx.txt
+chown $1 file-group-n.txt
+
+chown $1 file-other-rwx.txt
+chgrp users file-other-rwx.txt
+chown $1 file-other-n.txt
+chgrp users file-other-n.txt
+
+chown $1 file-group-n-other-rwx.txt
+
+chmod 777 dir-owner-n
+
+chown $1 dir-group-rwx
+chown $1 dir-group-n
+
+chown $1 dir-other-rwx
+chgrp users dir-other-rwx
+chown $1 dir-other-n
+chgrp users dir-other-n
+
+chown $1 dir-owner-rwx/dir-root
